@@ -1,0 +1,23 @@
+{
+  "name": "back",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {},
+  "keywords": [],
+  "author": "Grupo 4 - Uni-FACEF",
+  "license": "ISC",
+  "description": "Tralho para o TIC de 2025 do grupo 4 no curso de Eng. de Software",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.2.0",
+    "prisma": "^6.13.0",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.2"
+  }
+}
