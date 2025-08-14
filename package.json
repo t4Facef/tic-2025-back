@@ -2,15 +2,31 @@
   "name": "back",
   "version": "1.0.0",
   "main": "index.js",
-  "scripts": {},
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "scripts": {
+    "dev": "tsx watch src/server.ts",
+    "seed": "npx prisma db seed"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/t4Facef/tic-2025-back.git"
+  },
   "keywords": [],
-  "author": "Grupo 4 - Uni-FACEF",
+  "author": "",
   "license": "ISC",
-  "description": "Tralho para o TIC de 2025 do grupo 4 no curso de Eng. de Software",
+  "bugs": {
+    "url": "https://github.com/t4Facef/tic-2025-back/issues"
+  },
+  "homepage": "https://github.com/t4Facef/tic-2025-back#readme",
+  "description": "",
   "dependencies": {
+    "@prisma/client": "^6.13.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.1",
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "tsx": "^4.20.3"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
