@@ -1,0 +1,196 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Model de Endereço
+
+model Endereco {
+  id          Int     @id @default(autoincrement())
+  cep         String
+  estado      String
+  cidade      String
+  bairro      String
+  rua         String
+  numero      String
+  complemento String?
+
+  candidato Candidato?
+  empresa   Empresa?
+}
+
+// Models dos Usuarios (Empresa e Candidato)
+
+model Empresa {
+  id                Int      @id @default(autoincrement())
+  nome              String
+  razaoSocial       String
+  nomeFantasia      String
+  email             String   @unique
+  senha             String
+  cnpj              String?  @unique
+  telefoneComercial String
+  site              String?
+  descricao         String?
+  historia          String?
+  missao            String?
+  valores           String?
+  certificacoes     String[]
+
+  enderecoId Int?      @unique
+  endereco   Endereco? @relation(fields: [enderecoId], references: [id], onDelete: SetNull)
+
+  vagas JobPosition[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Candidato {
+  id             Int      @id @default(autoincrement())
+  nome           String
+  email          String   @unique
+  senha          String
+  cpf            String?  @unique
+  dataNascimento DateTime
+  sexo           String?
+  genero         String?
+  telefones      String[]
+
+  enderecoId Int?      @unique
+  endereco   Endereco? @relation(fields: [enderecoId], references: [id], onDelete: SetNull)
+
+  formacoes    FormacaoOuCurso[]
+  candidaturas Application[]
+  subtipos     CandidatoSubtipo[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Models dos Tipos Deficiencia
+
+model TipoDeficiencia {
+  id        Int                  @id @default(autoincrement())
+  nome      String               @unique
+  subtipos  SubtipoDeficiencia[]
+  createdAt DateTime             @default(now())
+  updatedAt DateTime             @updatedAt
+}
+
+model SubtipoDeficiencia {
+  id         Int                @id @default(autoincrement())
+  nome       String
+  tipoId     Int
+  tipo       TipoDeficiencia    @relation(fields: [tipoId], references: [id], onDelete: Cascade)
+  barreiras  SubtipoBarreira[]
+  candidatos CandidatoSubtipo[]
+  createdAt  DateTime           @default(now())
+  updatedAt  DateTime           @updatedAt
+
+  @@unique([tipoId, nome])
+}
+
+model CandidatoSubtipo {
+  candidatoId Int
+  subtipoId   Int
+  candidato   Candidato          @relation(fields: [candidatoId], references: [id], onDelete: Cascade)
+  subtipo     SubtipoDeficiencia @relation(fields: [subtipoId], references: [id], onDelete: Cascade)
+
+  @@id([candidatoId, subtipoId])
+}
+
+// Models de Barreiras e Acessibilidades
+
+model Barreira {
+  id              Int                      @id @default(autoincrement())
+  descricao       String                   @unique
+  subtipos        SubtipoBarreira[]
+  acessibilidades BarreiraAcessibilidade[]
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @updatedAt
+}
+
+model SubtipoBarreira {
+  subtipoId  Int
+  barreiraId Int
+  subtipo    SubtipoDeficiencia @relation(fields: [subtipoId], references: [id], onDelete: Cascade)
+  barreira   Barreira           @relation(fields: [barreiraId], references: [id], onDelete: Cascade)
+
+  @@id([subtipoId, barreiraId])
+  @@index([barreiraId])
+}
+
+model Acessibilidade {
+  id        Int                      @id @default(autoincrement())
+  descricao String                   @unique
+  barreiras BarreiraAcessibilidade[]
+  createdAt DateTime                 @default(now())
+  updatedAt DateTime                 @updatedAt
+}
+
+model BarreiraAcessibilidade {
+  barreiraId       Int
+  acessibilidadeId Int
+  barreira         Barreira       @relation(fields: [barreiraId], references: [id], onDelete: Cascade)
+  acessibilidade   Acessibilidade @relation(fields: [acessibilidadeId], references: [id], onDelete: Cascade)
+
+  @@id([barreiraId, acessibilidadeId])
+  @@index([acessibilidadeId])
+}
+
+// Models de Vagas e Candidaturas
+
+model JobPosition {
+  id           Int      @id @default(autoincrement())
+  titulo       String
+  descricao    String
+  requisitos   String[]
+  salario      Float?
+  modalidade   String?
+  cargaHoraria String?
+
+  empresaId Int
+  empresa   Empresa @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+
+  candidaturas Application[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Application {
+  id          Int       @id @default(autoincrement())
+  candidatoId Int
+  candidato   Candidato @relation(fields: [candidatoId], references: [id], onDelete: Cascade)
+
+  vagaId Int
+  vaga   JobPosition @relation(fields: [vagaId], references: [id], onDelete: Cascade)
+
+  status          String   @default("PENDENTE")
+  dataCandidatura DateTime @default(now())
+
+  @@unique([candidatoId, vagaId])
+}
+
+// Model de Formações ou Cursos
+
+model FormacaoOuCurso {
+  id          Int       @id @default(autoincrement())
+  candidatoId Int
+  candidato   Candidato @relation(fields: [candidatoId], references: [id], onDelete: Cascade)
+
+  nome        String
+  instituicao String
+  nivel       String
+  dataInicio  DateTime?
+  dataFim     DateTime?
+  descricao   String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
