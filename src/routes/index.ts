@@ -4,6 +4,14 @@ import subtiposRoutes from "./subtipos.routes";
 import barreirasRoutes from "./barreiras.routes";
 import acessibilidadesRoutes from "./acessibilidades.routes";
 import authRoutes from "./auth.routes";
+import vinculosRoutes from "./vinculos.routes";
+import candidatoSubtipoRoutes from "./candidato-subtipo.routes";
+import candidaturasRoutes from "./candidaturas.routes";
+import enderecoRoutes from "./endereco.routes";
+import experienciasRoutes from "./experiencias.routes";
+import formacaoRoutes from "./formacao.routes";
+import habilidadesRoutes from "./habilidades.routes";
+import vagasRoutes from "./vagas.routes";
 
 const router = Router();
 
@@ -13,5 +21,13 @@ router.use("/subtipos", subtiposRoutes);
 router.use("/barreiras", barreirasRoutes);
 router.use("/acessibilidades", acessibilidadesRoutes);
 router.use("/auth", authRoutes);
+router.use("/vinculos", vinculosRoutes);
+router.use("/candidato-subtipo", candidatoSubtipoRoutes);
+router.use("/candidaturas", candidaturasRoutes);
+router.use("/endereco", enderecoRoutes);
+router.use("/experiencias", experienciasRoutes);
+router.use("/formacao", formacaoRoutes);
+router.use("/habilidades", habilidadesRoutes);
+router.use("/vagas", vagasRoutes);
 
 export default router;

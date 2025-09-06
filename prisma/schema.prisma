@@ -8,7 +8,6 @@ datasource db {
 }
 
 // Model de Endereço
-
 model Endereco {
   id          Int     @id @default(autoincrement())
   cep         String
@@ -24,14 +23,13 @@ model Endereco {
 }
 
 // Models dos Usuarios (Empresa e Candidato)
-
 model Empresa {
   id                  Int      @id @default(autoincrement())
   razaoSocial         String
   nomeFantasia        String
   email               String   @unique
   senha               String
-  cnpj                String?  @unique
+  cnpj                String  @unique
   telefoneComercial   String
   numFunc             Int
   numFuncPcd          Int
@@ -47,7 +45,7 @@ model Empresa {
   enderecoId Int?      @unique
   endereco   Endereco? @relation(fields: [enderecoId], references: [id], onDelete: SetNull)
 
-  vagas          JobPosition[]
+  vagas          Vagas[]
   acessiblidades Acessibilidade[]
 
   createdAt DateTime @default(now())
@@ -72,7 +70,7 @@ model Candidato {
   endereco   Endereco? @relation(fields: [enderecoId], references: [id], onDelete: SetNull)
 
   formacoes    FormacaoOuCurso[]
-  candidaturas Application[]
+  candidaturas Candidaturas[]
   subtipos     CandidatoSubtipo[]
   habilidades  Habilidades[]
   experiencia  Experiencias[]
@@ -82,7 +80,6 @@ model Candidato {
 }
 
 // Models dos Tipos Deficiencia
-
 model TipoDeficiencia {
   id        Int                  @id @default(autoincrement())
   nome      String               @unique
@@ -116,7 +113,6 @@ model CandidatoSubtipo {
 }
 
 // Models de Barreiras e Acessibilidades
-
 model Barreira {
   id              Int                      @id @default(autoincrement())
   descricao       String                   @unique
@@ -160,8 +156,7 @@ model BarreiraAcessibilidade {
 }
 
 // Models de Vagas e Candidaturas
-
-model JobPosition {
+model Vagas {
   id           Int      @id @default(autoincrement())
   titulo       String
   descricao    String
@@ -176,28 +171,28 @@ model JobPosition {
   empresaId Int
   empresa   Empresa @relation(fields: [empresaId], references: [id], onDelete: Cascade)
 
-  candidaturas Application[]
+  candidaturas Candidaturas[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-//Status
-enum ApplicationStatus {
+// Enum Status
+enum StatusCandidaturas {
   PENDENTE
   APROVADO
   RECUSADO
 }
 
-model Application {
+model Candidaturas {
   id          Int       @id @default(autoincrement())
   candidatoId Int
   candidato   Candidato @relation(fields: [candidatoId], references: [id], onDelete: Cascade)
 
   vagaId Int
-  vaga   JobPosition @relation(fields: [vagaId], references: [id], onDelete: Cascade)
+  vaga   Vagas @relation(fields: [vagaId], references: [id], onDelete: Cascade)
 
-  status ApplicationStatus @default(PENDENTE)
+  status StatusCandidaturas @default(PENDENTE)
 
   dataCandidatura DateTime @default(now())
 
@@ -205,7 +200,6 @@ model Application {
 }
 
 // Model de Formações ou Cursos
-
 model FormacaoOuCurso {
   id          Int       @id @default(autoincrement())
   candidatoId Int
@@ -223,8 +217,7 @@ model FormacaoOuCurso {
   updatedAt DateTime @updatedAt
 }
 
-//model de Habilidades
-
+// Model de Habilidades
 model Habilidades {
   id          Int       @id @default(autoincrement())
   candidatoId Int
@@ -236,8 +229,7 @@ model Habilidades {
   updatedAt DateTime @updatedAt
 }
 
-//model de Experiencias
-
+// Model de Experiencias
 model Experiencias {
   id          Int       @id @default(autoincrement())
   candidatoId Int
