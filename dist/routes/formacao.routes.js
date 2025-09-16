@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const formacao_controller_1 = require("../controllers/formacao.controller");
+const router = (0, express_1.Router)();
+router.get("/", formacao_controller_1.FormacaoController.list);
+router.get("/:id", formacao_controller_1.FormacaoController.findById);
+router.get("/candidato/:candidatoId", formacao_controller_1.FormacaoController.getByCandidato);
+router.post("/", formacao_controller_1.FormacaoController.create);
+router.put("/:id", formacao_controller_1.FormacaoController.update);
+router.delete("/:id", formacao_controller_1.FormacaoController.delete);
+exports.default = router;

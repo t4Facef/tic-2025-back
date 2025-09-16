@@ -5,14 +5,22 @@ import { BarreirasService } from "../services/barreiras.service";
 export const BarreirasController = {
   // GET /barreiras
   async list(_req: Request, res: Response) {
-    const data = await BarreirasService.list();
-    res.json(data);
+    try {
+      const data = await BarreirasService.list();
+      res.json(data);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
   },
 
   // POST /barreiras
   async create(req: Request, res: Response) {
-    const { descricao } = req.body ?? {};
-    const created = await BarreirasService.create(descricao);
-    res.status(201).json(created);
+    try {
+      const { descricao } = req.body ?? {};
+      const created = await BarreirasService.create(descricao);
+      res.status(201).json(created);
+    } catch (error: any) {
+      res.status(error.status || 400).json({ error: error.message });
+    }
   },
 };

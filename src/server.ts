@@ -1,12 +1,16 @@
 import express from 'express';
 import cors from 'cors';
 import { PrismaClient } from '@prisma/client';
+import authRoutes from './routes/auth.routes';
 
 const app = express();
 const prisma = new PrismaClient();
 
 app.use(cors());
 app.use(express.json());
+
+// Rotas de autenticação
+app.use('/api/auth', authRoutes);
 
 // Rotas de Candidatos
 app.get('/api/candidatos', async (req, res) => {
@@ -136,7 +140,7 @@ app.get('/api/candidaturas', async (req, res) => {
   }
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });

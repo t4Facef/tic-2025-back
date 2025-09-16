@@ -12,6 +12,7 @@ import experienciasRoutes from "./experiencias.routes";
 import formacaoRoutes from "./formacao.routes";
 import habilidadesRoutes from "./habilidades.routes";
 import vagasRoutes from "./vagas.routes";
+import candidatoRoutes from "./candidato.routes";
 
 const router = Router();
 
@@ -29,5 +30,6 @@ router.use("/experiencias", experienciasRoutes);
 router.use("/formacao", formacaoRoutes);
 router.use("/habilidades", habilidadesRoutes);
 router.use("/vagas", vagasRoutes);
+router.use("/candidato", candidatoRoutes);
 
 export default router;

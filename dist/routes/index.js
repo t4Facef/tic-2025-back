@@ -1,0 +1,35 @@
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const tipos_routes_1 = __importDefault(require("./tipos.routes"));
+const subtipos_routes_1 = __importDefault(require("./subtipos.routes"));
+const barreiras_routes_1 = __importDefault(require("./barreiras.routes"));
+const acessibilidades_routes_1 = __importDefault(require("./acessibilidades.routes"));
+const auth_routes_1 = __importDefault(require("./auth.routes"));
+const vinculos_routes_1 = __importDefault(require("./vinculos.routes"));
+const candidato_subtipo_routes_1 = __importDefault(require("./candidato-subtipo.routes"));
+const candidaturas_routes_1 = __importDefault(require("./candidaturas.routes"));
+const endereco_routes_1 = __importDefault(require("./endereco.routes"));
+const experiencias_routes_1 = __importDefault(require("./experiencias.routes"));
+const formacao_routes_1 = __importDefault(require("./formacao.routes"));
+const habilidades_routes_1 = __importDefault(require("./habilidades.routes"));
+const vagas_routes_1 = __importDefault(require("./vagas.routes"));
+const router = (0, express_1.Router)();
+// Mapeamento das rotas
+router.use("/tipos", tipos_routes_1.default);
+router.use("/subtipos", subtipos_routes_1.default);
+router.use("/barreiras", barreiras_routes_1.default);
+router.use("/acessibilidades", acessibilidades_routes_1.default);
+router.use("/auth", auth_routes_1.default);
+router.use("/vinculos", vinculos_routes_1.default);
+router.use("/candidato-subtipo", candidato_subtipo_routes_1.default);
+router.use("/candidaturas", candidaturas_routes_1.default);
+router.use("/endereco", endereco_routes_1.default);
+router.use("/experiencias", experiencias_routes_1.default);
+router.use("/formacao", formacao_routes_1.default);
+router.use("/habilidades", habilidades_routes_1.default);
+router.use("/vagas", vagas_routes_1.default);
+exports.default = router;

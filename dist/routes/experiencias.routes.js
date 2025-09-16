@@ -1,0 +1,12 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const experiencias_controller_1 = require("../controllers/experiencias.controller");
+const router = (0, express_1.Router)();
+router.get("/", experiencias_controller_1.ExperienciasController.list);
+router.get("/:id", experiencias_controller_1.ExperienciasController.findById);
+router.get("/candidato/:candidatoId", experiencias_controller_1.ExperienciasController.getByCandidato);
+router.post("/", experiencias_controller_1.ExperienciasController.create);
+router.put("/:id", experiencias_controller_1.ExperienciasController.update);
+router.delete("/:id", experiencias_controller_1.ExperienciasController.delete);
+exports.default = router;
