@@ -13,20 +13,43 @@ export const AuthService = {
     return !!(candidato || empresa);
   },
 
-  async registrarCandidato(nome: string, email: string, senha: string, cpf: string, dataNascimento: Date) {
+  async registrarCandidato(dadosCandidato: any) {
+    const { nome, email, senha, cpf, dataNascimento, sexo, genero, telefones, endereco } = dadosCandidato;
+    
     const existeEmail = await prisma.candidato.findUnique({ where: { email } }) || 
                        await prisma.empresa.findUnique({ where: { email } });
     if (existeEmail) throw new Error("Email já cadastrado");
 
     const hash = await bcrypt.hash(senha, 10);
+    
+    // Criar endereço se fornecido
+    let enderecoId = null;
+    if (endereco && endereco.cep) {
+      const novoEndereco = await prisma.endereco.create({
+        data: {
+          cep: endereco.cep,
+          estado: endereco.estado,
+          cidade: endereco.cidade,
+          bairro: endereco.bairro,
+          rua: endereco.rua,
+          numero: endereco.numero,
+          complemento: endereco.complemento || null
+        }
+      });
+      enderecoId = novoEndereco.id;
+    }
+    
     return prisma.candidato.create({
       data: { 
         nome, 
         email, 
         senha: hash, 
         cpf, 
-        dataNascimento, 
-        telefones: [],
+        dataNascimento: new Date(dataNascimento), 
+        sexo: sexo || null,
+        genero: genero || null,
+        telefones: telefones || [],
+        enderecoId,
         laudo: Buffer.from('') // Campo obrigatório no schema
       },
     });

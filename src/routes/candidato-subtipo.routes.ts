@@ -4,7 +4,7 @@ import { CandidatoSubtipoController } from "../controllers/candidato-subtipo.con
 const router = Router();
 
 router.get("/candidato/:candidatoId", CandidatoSubtipoController.getByCandidato);
-router.post("/", CandidatoSubtipoController.create);
-router.delete("/:id", CandidatoSubtipoController.delete);
+router.post("/", CandidatoSubtipoController.vincular);
+router.delete("/", CandidatoSubtipoController.desvincular);
 
 export default router;

@@ -4,7 +4,7 @@ import { FormacaoController } from "../controllers/formacao.controller";
 const router = Router();
 
 router.get("/", FormacaoController.list);
-router.get("/:id", FormacaoController.findById);
+router.get("/:id", FormacaoController.getById);
 router.get("/candidato/:candidatoId", FormacaoController.getByCandidato);
 router.post("/", FormacaoController.create);
 router.put("/:id", FormacaoController.update);

@@ -17,8 +17,7 @@ export const AuthController = {
 
   async registrarCandidato(req: Request, res: Response) {
     try {
-      const { nome, email, senha, cpf, dataNascimento } = req.body;
-      const user = await AuthService.registrarCandidato(nome, email, senha, cpf, new Date(dataNascimento));
+      const user = await AuthService.registrarCandidato(req.body);
       res.status(201).json({ message: "Candidato registrado com sucesso", id: user.id });
     } catch (error: any) {
       res.status(400).json({ error: error.message });
