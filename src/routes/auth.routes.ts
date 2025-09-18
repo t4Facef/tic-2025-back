@@ -5,6 +5,7 @@ const router = Router();
 
 // Rotas de autenticação
 router.get("/check-email", AuthController.verificarEmail);
+router.get("/check-cpf", AuthController.verificarCPF);
 router.post("/candidato/register", AuthController.registrarCandidato);
 router.post("/empresa/register", AuthController.registrarEmpresa);
 router.post("/login", AuthController.login);

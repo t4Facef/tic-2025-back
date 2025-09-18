@@ -15,6 +15,19 @@ export const AuthController = {
     }
   },
 
+  async verificarCPF(req: Request, res: Response) {
+    try {
+      const { cpf } = req.query;
+      if (!cpf || typeof cpf !== 'string') {
+        return res.status(400).json({ error: 'CPF é obrigatório' });
+      }
+      const exists = await AuthService.VerificarCPFExiste(cpf);
+      res.json({ exists });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
   async registrarCandidato(req: Request, res: Response) {
     try {
       const user = await AuthService.registrarCandidato(req.body);

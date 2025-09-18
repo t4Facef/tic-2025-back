@@ -13,6 +13,11 @@ export const AuthService = {
     return !!(candidato || empresa);
   },
 
+  async VerificarCPFExiste(cpf: string): Promise<boolean> {
+    const candidato = await prisma.candidato.findUnique({ where: { cpf } });
+    return !!candidato;
+  },
+
   async registrarCandidato(dadosCandidato: any) {
     const { nome, email, senha, cpf, dataNascimento, sexo, genero, telefones, endereco } = dadosCandidato;
     
