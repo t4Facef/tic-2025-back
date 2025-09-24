@@ -18,6 +18,11 @@ export const AuthService = {
     return !!candidato;
   },
 
+  async VerificarCNPJExiste(cnpj: string): Promise<boolean> {
+    const empresa = await prisma.empresa.findUnique({ where: { cnpj } });
+    return !!empresa;
+  },
+
   async registrarCandidato(dadosCandidato: any) {
     const { nome, email, senha, cpf, dataNascimento, sexo, genero, telefones, endereco } = dadosCandidato;
     

@@ -28,6 +28,19 @@ export const AuthController = {
     }
   },
 
+  async verificarCNPJ(req: Request, res: Response) {
+    try {
+      const { cnpj } = req.query;
+      if (!cnpj || typeof cnpj !== 'string') {
+        return res.status(400).json({ error: 'CPF é obrigatório' });
+      }
+      const exists = await AuthService.VerificarCNPJExiste(cnpj);
+      res.json({ exists });
+    } catch (error: any) {
+      res.status(500).json({ error: error.message });
+    }
+  },
+
   async registrarCandidato(req: Request, res: Response) {
     try {
       const user = await AuthService.registrarCandidato(req.body);
