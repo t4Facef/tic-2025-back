@@ -1,4 +1,4 @@
-# TIC 2025 - Backend
+# Backend da aplicação Apojobs - Plataforma de Empregos Inclusiva
 
 ![Node.js](https://img.shields.io/badge/Node.js-20.x-339933?logo=node.js)  
 ![Express](https://img.shields.io/badge/Express-4.x-000000?logo=express)  
@@ -9,8 +9,6 @@
 API backend desenvolvida em **Node.js** com **Express** e **PostgreSQL**, utilizando **Prisma ORM** para modelagem de dados e migrations.  
 Este projeto faz parte do curso **TIC 2025** e tem como objetivo consolidar boas práticas no desenvolvimento de **APIs modernas**.  
 
----
-
 ## 🎯 Objetivo
 
 Fornecer uma API escalável e bem estruturada para consumo por aplicações frontend, abordando:  
@@ -18,8 +16,6 @@ Fornecer uma API escalável e bem estruturada para consumo por aplicações fron
 - Persistência de dados em **PostgreSQL** com **Prisma ORM**  
 - Organização de rotas, controladores e middlewares  
 - Uso de **TypeScript** para tipagem e segurança  
-
----
 
 ## 🚀 Tecnologias Utilizadas
 
@@ -29,8 +25,6 @@ Fornecer uma API escalável e bem estruturada para consumo por aplicações fron
 - **Prisma 5.x** – ORM moderno para PostgreSQL  
 - **PostgreSQL 16** – Banco de dados relacional  
 - **ts-node-dev / tsx** – Execução e hot reload de TypeScript  
-
----
 
 ## 📁 Estrutura do Projeto
 
@@ -53,8 +47,6 @@ tic-2025-back/
 ├── package.json # Dependências e scripts
 └── tsconfig.json # Configuração do TypeScript
 ```
-
----
 
 ## 🛠️ Instalação e Configuração
 
@@ -84,8 +76,6 @@ Edite o arquivo .env com a sua conexão PostgreSQL, por exemplo:
 DATABASE_URL="postgresql://usuario:senha@localhost:5432/tic2025"
 ```
 
----
-
 ## 🗄️ Banco de Dados e Prisma
 
 Rodar migrations para criar as tabelas no PostgreSQL:
@@ -99,8 +89,6 @@ Visualizar o banco de dados com Prisma Studio:
 ```bash
 npx prisma studio
 ```
-
----
 
 ## 🚀 Scripts Disponíveis
 
@@ -118,8 +106,6 @@ npm start
 npm run migrate
 ```
 
----
-
 ## 📱 Endpoints Principais
 (exemplo de possíveis endpoints – ajuste conforme suas rotas)
 - POST /auth/register → Registro de usuário
@@ -129,13 +115,15 @@ npm run migrate
 - POST /items → Criação de item
 - GET /items → Listagem de itens
 
----
 
-## 🔧 Desenvolvimento
-### Status Atual
-- ✅ Estrutura base do projeto configurada
-- ✅ Conexão com PostgreSQL via Prisma
-- ✅ Organização em rotas, controllers e middlewares
-- ✅ Variáveis de ambiente com .env
-- 🚧 Autenticação com JWT (em desenvolvimento)
-- 🚧 Testes automatizados (planejado)
+## 🚀 Roadmap
+
+- [x] Estrutura base do projeto configurada
+- [x] Conexão com PostgreSQL via Prisma
+- [x] Organização em rotas, controllers e middlewares
+- [ ] Variáveis de ambiente com .env
+- [ ] Autenticação com JWT (em desenvolvimento)
+- [ ] Testes automatizados (planejado)
+
+
+**Apojobs** - Conectando talentos às oportunidades certas.
