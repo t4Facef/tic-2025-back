@@ -15,7 +15,7 @@ Fornecer uma API escalável e bem estruturada para consumo por aplicações fron
 - Desenvolvimento backend com **Node.js + Express**  
 - Persistência de dados em **PostgreSQL** com **Prisma ORM**  
 - Organização de rotas, controladores e middlewares  
-- Uso de **TypeScript** para tipagem e segurança  
+- Uso de **TypeScript** para tipagem e segurança
 
 ## 🚀 Tecnologias Utilizadas
 
@@ -115,15 +115,45 @@ npm run migrate
 - POST /items → Criação de item
 - GET /items → Listagem de itens
 
+## 🔧 Desenvolvimento
 
-## 🚀 Roadmap
+- ✅ Estrutura base do projeto configurada
+- ✅ Conexão com PostgreSQL via Prisma
+- ✅ Organização em rotas, controllers e middlewares
+- ✅ Variáveis de ambiente com .env
+- 🚧 Autenticação com JWT (em desenvolvimento)
+- 🚧 Testes automatizados (planejado)
 
-- [x] Estrutura base do projeto configurada
-- [x] Conexão com PostgreSQL via Prisma
-- [x] Organização em rotas, controllers e middlewares
-- [ ] Variáveis de ambiente com .env
-- [ ] Autenticação com JWT (em desenvolvimento)
-- [ ] Testes automatizados (planejado)
+## 🧪 Testes
 
+Adicionar testes com Jest ou Vitest (planejado):
+```bash
+npm run test
+```
+
+## 📦 Deploy
+
+Sugestões de deploy:
+
+- Render ou Railway (deploy gratuito e simples)
+- Docker para containerização do backend e banco PostgreSQL
+
+## 🤝 Contribuição
+
+1. Faça um fork do projeto
+2. Crie uma branch para sua feature (git checkout -b feature/nova-feature)
+3. Commit suas mudanças (git commit -m 'Adiciona nova feature')
+4. Push para a branch (git push origin feature/nova-feature)
+5. Abra um Pull Request
+
+## 🎓 Contexto Acadêmico
+
+Projeto desenvolvido como trabalho acadêmico para o curso TIC 2025, com foco em:
+- Desenvolvimento de APIs modernas
+- Banco de dados relacionais com PostgreSQL
+- ORM com Prisma
+- Boas práticas de organização backend
+
+---
 
 **Apojobs** - Conectando talentos às oportunidades certas.
