@@ -1,10 +1,7 @@
 # Backend da aplicação Apojobs - Plataforma de Empregos Inclusiva
 
-![Node.js](https://img.shields.io/badge/Node.js-20.x-339933?logo=node.js)  
-![Express](https://img.shields.io/badge/Express-4.x-000000?logo=express)  
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?logo=postgresql)  
-![Prisma](https://img.shields.io/badge/Prisma-5.x-2D3748?logo=prisma)  
-![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow)  
+![Node.js](https://img.shields.io/badge/Node.js-20.x-339933?logo=node.js) ![Express](https://img.shields.io/badge/Express-4.x-000000?logo=express) ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-336791?logo=postgresql) ![Prisma](https://img.shields.io/badge/Prisma-5.x-2D3748?logo=prisma) ![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow)
+
 
 API backend desenvolvida em **Node.js** com **Express** e **PostgreSQL**, utilizando **Prisma ORM** para modelagem de dados e migrations.  
 Este projeto faz parte do curso **TIC 2025** e tem como objetivo consolidar boas práticas no desenvolvimento de **APIs modernas**.  
