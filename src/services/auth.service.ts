@@ -24,7 +24,7 @@ export const AuthService = {
   },
 
   async registrarCandidato(dadosCandidato: any) {
-    const { nome, email, senha, cpf, dataNascimento, sexo, genero, telefones, endereco } = dadosCandidato;
+    const { nome, email, senha, cpf, dataNascimento, sexo, genero, telefones, endereco, areaInteresse, formacao, experiencia } = dadosCandidato;
     
     const existeEmail = await prisma.candidato.findUnique({ where: { email } }) || 
                        await prisma.empresa.findUnique({ where: { email } });
@@ -48,19 +48,62 @@ export const AuthService = {
       });
       enderecoId = novoEndereco.id;
     }
+
+    let newFormationId = null
+    if (formacao) {
+      const novaFormacao = await prisma.formacaoOuCurso.create({
+        data: {
+          nomeCurso: formacao.nomeCurso,
+          candidatoId: , //Verificar necessidade de mudar
+          instituicao: formacao.instituicao,
+          nivel: formacao.nivel,
+          situacao: formacao.situacao,
+          area: formacao.area,
+          dataInicio: formacao.dataInicio,
+          dataFim: formacao.dataFim,
+          descricao: formacao.descricao,
+        }
+      })
+      newFormationId = novaFormacao.id
+    }
+
+    let newExperienceId = null
+    if (experiencia) {
+      const novaExperiencia = await prisma.experiencias.create({
+        data: {
+          candidatoId: experiencia.candidatoId, //Verificar necessidade de mudar
+          instituicao: experiencia.empresa,
+          cargo: experiencia.cargo,
+          dataInicio: experiencia.dataInicio,
+          dataFim: experiencia.dataFim,
+          descricao: experiencia.descricao,
+        }
+      })
+      newExperienceId = novaExperiencia.id
+    }
     
     return prisma.candidato.create({
       data: { 
+        // Step 1 - Completo
         nome, 
-        email, 
-        senha: hash, 
         cpf, 
         dataNascimento: new Date(dataNascimento), 
         sexo: sexo || null,
         genero: genero || null,
+
+        // Step 2 - Completo
+        email, 
         telefones: telefones || [],
         enderecoId,
-        laudo: Buffer.from('') // Campo obrigatório no schema
+
+        // Step 3
+        areaInteresse,
+        newFormationId,
+
+        // Step 4
+        laudo: Buffer.from(''), // Campo obrigatório no schema
+        // Step 5
+        senha: hash
       },
     });
   },
