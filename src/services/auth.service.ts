@@ -24,7 +24,7 @@ export const AuthService = {
   },
 
   async registrarCandidato(dadosCandidato: any) {
-    const { nome, email, senha, cpf, dataNascimento, sexo, genero, telefones, endereco, areaInteresse, formacao, experiencia } = dadosCandidato;
+    const { nome, email, senha, cpf, dataNascimento, sexo, genero, telefones, endereco, areaInteresse, formacao, experiencia, subtiposDeficiencia } = dadosCandidato;
     
     const existeEmail = await prisma.candidato.findUnique({ where: { email } }) || 
                        await prisma.empresa.findUnique({ where: { email } });
@@ -32,78 +32,63 @@ export const AuthService = {
 
     const hash = await bcrypt.hash(senha, 10);
     
-    // Criar endereço se fornecido
-    let enderecoId = null;
-    if (endereco && endereco.cep) {
-      const novoEndereco = await prisma.endereco.create({
-        data: {
-          cep: endereco.cep,
-          estado: endereco.estado,
-          cidade: endereco.cidade,
-          bairro: endereco.bairro,
-          rua: endereco.rua,
-          numero: endereco.numero,
-          complemento: endereco.complemento || null
-        }
-      });
-      enderecoId = novoEndereco.id;
-    }
-
-    let newFormationId = null
-    if (formacao) {
-      const novaFormacao = await prisma.formacaoOuCurso.create({
-        data: {
-          nomeCurso: formacao.nomeCurso,
-          candidatoId: , //Verificar necessidade de mudar
-          instituicao: formacao.instituicao,
-          nivel: formacao.nivel,
-          situacao: formacao.situacao,
-          area: formacao.area,
-          dataInicio: formacao.dataInicio,
-          dataFim: formacao.dataFim,
-          descricao: formacao.descricao,
-        }
-      })
-      newFormationId = novaFormacao.id
-    }
-
-    let newExperienceId = null
-    if (experiencia) {
-      const novaExperiencia = await prisma.experiencias.create({
-        data: {
-          candidatoId: experiencia.candidatoId, //Verificar necessidade de mudar
-          instituicao: experiencia.empresa,
-          cargo: experiencia.cargo,
-          dataInicio: experiencia.dataInicio,
-          dataFim: experiencia.dataFim,
-          descricao: experiencia.descricao,
-        }
-      })
-      newExperienceId = novaExperiencia.id
-    }
-    
     return prisma.candidato.create({
       data: { 
-        // Step 1 - Completo
         nome, 
         cpf, 
         dataNascimento: new Date(dataNascimento), 
         sexo: sexo || null,
         genero: genero || null,
-
-        // Step 2 - Completo
         email, 
         telefones: telefones || [],
-        enderecoId,
-
-        // Step 3
         areaInteresse,
-        newFormationId,
-
-        // Step 4
-        laudo: Buffer.from(''), // Campo obrigatório no schema
-        // Step 5
-        senha: hash
+        laudo: Buffer.from(''),
+        senha: hash,
+        
+        // Criar endereço junto (nested create)
+        endereco: endereco && endereco.cep ? {
+          create: {
+            cep: endereco.cep,
+            estado: endereco.estado,
+            cidade: endereco.cidade,
+            bairro: endereco.bairro,
+            rua: endereco.rua,
+            numero: endereco.numero,
+            complemento: endereco.complemento || null
+          }
+        } : undefined,
+        
+        // Criar formação junto (nested create)
+        formacoes: formacao ? {
+          create: {
+            nomeCurso: formacao.nomeCurso,
+            tipoFormacao: formacao.tipo,
+            instituicao: formacao.instituicao,
+            situacao: formacao.situacao,
+            dataInicio: new Date(formacao.dataInicio),
+            dataFim: new Date(formacao.dataFim),
+            descricao: formacao.descricao,
+          }
+        } : undefined,
+        
+        // Criar experiência junto (nested create)
+        experiencia: experiencia ? {
+          create: {
+            titulo: experiencia.titulo,
+            instituicao: experiencia.empresa,
+            dataInicio: new Date(experiencia.dataInicio),
+            dataFim: new Date(experiencia.dataFim),
+            descricao: experiencia.descricao,
+            tipoContrato: experiencia.tipo
+          }
+        } : undefined,
+        
+        // Conectar subtipos de deficiência (apenas IDs)
+        subtipos: subtiposDeficiencia && subtiposDeficiencia.length > 0 ? {
+          create: subtiposDeficiencia.map((subtipoId: number) => ({
+            subtipoId: subtipoId
+          }))
+        } : undefined,
       },
     });
   },

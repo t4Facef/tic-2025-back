@@ -1,180 +1,273 @@
-import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
+import { PrismaClient } from '@prisma/client';
+import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  // 🔹 Limpa as tabelas (para desenvolvimento)
-  await prisma.application.deleteMany();
-  await prisma.jobPosition.deleteMany();
+  // Limpar dados existentes
+  await prisma.candidaturas.deleteMany();
+  await prisma.vagas.deleteMany();
   await prisma.formacaoOuCurso.deleteMany();
+  await prisma.experiencias.deleteMany();
+  await prisma.habilidades.deleteMany();
   await prisma.candidatoSubtipo.deleteMany();
-  await prisma.subtipoBarreira.deleteMany();
   await prisma.barreiraAcessibilidade.deleteMany();
   await prisma.acessibilidade.deleteMany();
+  await prisma.subtipoBarreira.deleteMany();
+  await prisma.candidato.deleteMany();
+  await prisma.empresa.deleteMany();
+  await prisma.endereco.deleteMany();
   await prisma.barreira.deleteMany();
   await prisma.subtipoDeficiencia.deleteMany();
   await prisma.tipoDeficiencia.deleteMany();
-  await prisma.empresa.deleteMany();
-  await prisma.candidato.deleteMany();
-  await prisma.endereco.deleteMany();
 
-  // 🔹 Criar endereços
-  const enderecos = await prisma.endereco.createMany({
+  // Criar tipos de deficiência
+  const tipoVisual = await prisma.tipoDeficiencia.create({
+    data: { nome: "Deficiência Visual" }
+  });
+
+  const tipoAuditiva = await prisma.tipoDeficiencia.create({
+    data: { nome: "Deficiência Auditiva" }
+  });
+
+  const tipoFisica = await prisma.tipoDeficiencia.create({
+    data: { nome: "Deficiência Física" }
+  });
+
+  // Criar subtipos de deficiência
+  const cegueira = await prisma.subtipoDeficiencia.create({
+    data: { nome: "Cegueira", tipoId: tipoVisual.id }
+  });
+
+  const baixaVisao = await prisma.subtipoDeficiencia.create({
+    data: { nome: "Baixa Visão", tipoId: tipoVisual.id }
+  });
+
+  const surdez = await prisma.subtipoDeficiencia.create({
+    data: { nome: "Surdez", tipoId: tipoAuditiva.id }
+  });
+
+  const cadeirante = await prisma.subtipoDeficiencia.create({
+    data: { nome: "Cadeirante", tipoId: tipoFisica.id }
+  });
+
+  // Criar barreiras
+  const barreiraVisual = await prisma.barreira.create({
+    data: { descricao: "Barreira Visual" }
+  });
+
+  const barreiraAuditiva = await prisma.barreira.create({
+    data: { descricao: "Barreira Auditiva" }
+  });
+
+  const barreiraMobilidade = await prisma.barreira.create({
+    data: { descricao: "Barreira de Mobilidade" }
+  });
+
+  // Conectar subtipos com barreiras
+  await prisma.subtipoBarreira.createMany({
     data: [
-      { cep: "01000-000", estado: "SP", cidade: "São Paulo", bairro: "Centro", rua: "Av. Paulista", numero: "1000", complemento: "Conjunto 101" },
-      { cep: "20000-000", estado: "RJ", cidade: "Rio de Janeiro", bairro: "Copacabana", rua: "Rua Atlântica", numero: "500", complemento: null },
-      { cep: "30100-000", estado: "MG", cidade: "Belo Horizonte", bairro: "Savassi", rua: "Rua da Bahia", numero: "200", complemento: "Ap 12" },
-      { cep: "80000-000", estado: "PR", cidade: "Curitiba", bairro: "Batel", rua: "Av. Batel", numero: "1500", complemento: null }
+      { subtipoId: cegueira.id, barreiraId: barreiraVisual.id },
+      { subtipoId: baixaVisao.id, barreiraId: barreiraVisual.id },
+      { subtipoId: surdez.id, barreiraId: barreiraAuditiva.id },
+      { subtipoId: cadeirante.id, barreiraId: barreiraMobilidade.id },
     ]
   });
 
-  // 🔹 Criar empresas
-  const senhaEmpresa = await bcrypt.hash("senha123", 10);
+  // Criar endereços
+  const endereco1 = await prisma.endereco.create({
+    data: {
+      cep: "01310-100",
+      estado: "SP",
+      cidade: "São Paulo",
+      bairro: "Bela Vista",
+      rua: "Av. Paulista",
+      numero: "1000"
+    }
+  });
+
+  const endereco2 = await prisma.endereco.create({
+    data: {
+      cep: "22071-900",
+      estado: "RJ",
+      cidade: "Rio de Janeiro",
+      bairro: "Copacabana",
+      rua: "Av. Atlântica",
+      numero: "500"
+    }
+  });
+
+  // Criar empresas
   const empresa1 = await prisma.empresa.create({
     data: {
-      nome: "Tech Solutions",
-      razaoSocial: "Tech Solutions LTDA",
-      nomeFantasia: "TechSol",
-      email: "contato@techsol.com",
-      senha: senhaEmpresa,
-      cnpj: "12345678000199",
-      telefoneComercial: "1133224455",
-      site: "https://techsol.com",
-      descricao: "Empresa de tecnologia especializada em soluções web.",
-      missao: "Transformar negócios por meio da tecnologia.",
-      valores: "Inovação, Ética, Transparência",
-      certificacoes: ["ISO 9001", "Selo Acessibilidade Digital"],
-      endereco: { connect: { id: 1 } }
+      razaoSocial: "Tech Solutions Ltda",
+      nomeFantasia: "Tech Solutions",
+      email: "contato@techsolutions.com",
+      senha: await bcrypt.hash("123456", 10),
+      cnpj: "12345678000190",
+      telefoneComercial: "11123456789",
+      numFunc: 50,
+      numFuncPcd: 5,
+      area: "Tecnologia",
+      site: "https://techsolutions.com",
+      enderecoId: endereco1.id
     }
   });
 
   const empresa2 = await prisma.empresa.create({
     data: {
-      nome: "Inova RH",
-      razaoSocial: "Inova Recursos Humanos",
+      razaoSocial: "Inova RH Consultoria Ltda",
       nomeFantasia: "Inova RH",
       email: "contato@inovarh.com",
-      senha: senhaEmpresa,
-      cnpj: "22345678000188",
-      telefoneComercial: "2133445566",
+      senha: await bcrypt.hash("123456", 10),
+      cnpj: "98765432000110",
+      telefoneComercial: "21987654321",
+      numFunc: 30,
+      numFuncPcd: 3,
+      area: "Recursos Humanos",
       site: "https://inovarh.com",
-      descricao: "Consultoria em recrutamento inclusivo.",
-      missao: "Gerar oportunidades iguais no mercado de trabalho.",
-      valores: "Diversidade, Inclusão, Respeito",
-      certificacoes: ["Selo Diversidade"],
-      endereco: { connect: { id: 2 } }
+      enderecoId: endereco2.id
     }
   });
 
-  // 🔹 Criar candidatos
-  const senhaCandidato = await bcrypt.hash("123456", 10);
+  // Criar acessibilidades para as empresas
+  await prisma.acessibilidade.createMany({
+    data: [
+      { nome: "Rampa de acesso", empresaId: empresa1.id },
+      { nome: "Intérprete de Libras", empresaId: empresa1.id },
+      { nome: "Software leitor de tela", empresaId: empresa1.id },
+      { nome: "Rampa de acesso", empresaId: empresa2.id },
+      { nome: "Banheiro adaptado", empresaId: empresa2.id },
+    ]
+  });
+
+  // Criar candidatos
   const candidato1 = await prisma.candidato.create({
     data: {
-      nome: "Ana Silva",
-      email: "ana.silva@email.com",
-      senha: senhaCandidato,
-      cpf: "12345678901",
-      dataNascimento: new Date("1990-05-10"),
-      sexo: "Feminino",
-      genero: "Mulher cis",
-      telefones: ["11987654321"],
-      endereco: { connect: { id: 3 } }
+      nome: "João Silva",
+      email: "joao@email.com",
+      senha: await bcrypt.hash("123456", 10),
+      cpf: "12345678900",
+      dataNascimento: new Date("1990-05-15"),
+      sexo: "Masculino",
+      genero: "Masculino",
+      telefones: ["11999991111"],
+      areaInteresse: "Tecnologia",
+      laudo: Buffer.from("laudo-medico-joao")
     }
   });
 
   const candidato2 = await prisma.candidato.create({
     data: {
-      nome: "Carlos Souza",
-      email: "carlos.souza@email.com",
-      senha: senhaCandidato,
+      nome: "Maria Santos",
+      email: "maria@email.com",
+      senha: await bcrypt.hash("123456", 10),
       cpf: "98765432100",
-      dataNascimento: new Date("1985-08-22"),
-      sexo: "Masculino",
-      genero: "Homem cis",
-      telefones: ["21988776655"],
-      endereco: { connect: { id: 4 } }
+      dataNascimento: new Date("1985-08-20"),
+      sexo: "Feminino",
+      genero: "Feminino",
+      telefones: ["21888882222"],
+      areaInteresse: "Administração",
+      laudo: Buffer.from("laudo-medico-maria")
     }
   });
 
-  // 🔹 Formações
-  await prisma.formacaoOuCurso.createMany({
-    data: [
-      { candidatoId: candidato1.id, nome: "Ciência da Computação", instituicao: "USP", nivel: "Superior", dataInicio: new Date("2008-02-01"), dataFim: new Date("2012-12-01"), descricao: "Graduação completa." },
-      { candidatoId: candidato1.id, nome: "Acessibilidade Web", instituicao: "Alura", nivel: "Curso Livre", dataInicio: new Date("2020-01-01"), dataFim: new Date("2020-03-01"), descricao: "Curso de acessibilidade em desenvolvimento web." },
-      { candidatoId: candidato2.id, nome: "Administração", instituicao: "FGV", nivel: "Superior", dataInicio: new Date("2005-02-01"), dataFim: new Date("2009-12-01"), descricao: "Bacharelado em Administração." }
-    ]
-  });
-
-  // 🔹 Tipos e Subtipos de Deficiência
-  const motora = await prisma.tipoDeficiencia.create({ data: { nome: "Deficiência Motora" } });
-  const auditiva = await prisma.tipoDeficiencia.create({ data: { nome: "Deficiência Auditiva" } });
-
-  const subtipoMotora = await prisma.subtipoDeficiencia.create({ data: { nome: "Paraplegia", tipoId: motora.id } });
-  const subtipoAuditiva = await prisma.subtipoDeficiencia.create({ data: { nome: "Surdez Parcial", tipoId: auditiva.id } });
-
+  // Conectar candidatos com subtipos de deficiência
   await prisma.candidatoSubtipo.createMany({
     data: [
-      { candidatoId: candidato1.id, subtipoId: subtipoMotora.id },
-      { candidatoId: candidato2.id, subtipoId: subtipoAuditiva.id }
+      { candidatoId: candidato1.id, subtipoId: baixaVisao.id },
+      { candidatoId: candidato2.id, subtipoId: surdez.id },
     ]
   });
 
-  // 🔹 Barreiras e Acessibilidades
-  const escadas = await prisma.barreira.create({ data: { descricao: "Escadas íngremes" } });
-  const comunicacaoOral = await prisma.barreira.create({ data: { descricao: "Dificuldade de comunicação oral" } });
-
-  const rampa = await prisma.acessibilidade.create({ data: { descricao: "Rampa de acesso" } });
-  const interprete = await prisma.acessibilidade.create({ data: { descricao: "Intérprete de Libras" } });
-
-  await prisma.subtipoBarreira.createMany({
+  // Criar formações
+  await prisma.formacaoOuCurso.createMany({
     data: [
-      { subtipoId: subtipoMotora.id, barreiraId: escadas.id },
-      { subtipoId: subtipoAuditiva.id, barreiraId: comunicacaoOral.id }
+      {
+        candidatoId: candidato1.id,
+        nomeCurso: "Ciência da Computação",
+        instituicao: "USP",
+        nivel: "Superior",
+        situacao: "Concluído",
+        area: "Tecnologia",
+        dataInicio: new Date("2008-02-01"),
+        dataFim: new Date("2012-12-01"),
+        descricao: "Graduação completa."
+      },
+      {
+        candidatoId: candidato2.id,
+        nomeCurso: "Administração",
+        instituicao: "FGV",
+        nivel: "Superior",
+        situacao: "Concluído",
+        area: "Administração",
+        dataInicio: new Date("2005-02-01"),
+        dataFim: new Date("2009-12-01"),
+        descricao: "Bacharelado em Administração."
+      }
     ]
   });
 
-  await prisma.barreiraAcessibilidade.createMany({
+  // Criar experiências
+  await prisma.experiencias.createMany({
     data: [
-      { barreiraId: escadas.id, acessibilidadeId: rampa.id },
-      { barreiraId: comunicacaoOral.id, acessibilidadeId: interprete.id }
+      {
+        candidatoId: candidato1.id,
+        instituicao: "Empresa ABC",
+        dataInicio: new Date("2013-01-01"),
+        dataFim: new Date("2020-12-31"),
+        descricao: "Desenvolvedor Full Stack",
+        tipo: "CLT"
+      },
+      {
+        candidatoId: candidato2.id,
+        instituicao: "Consultoria XYZ",
+        dataInicio: new Date("2010-03-01"),
+        dataFim: new Date("2022-06-30"),
+        descricao: "Analista de RH",
+        tipo: "CLT"
+      }
     ]
   });
 
-  // 🔹 Vagas
-  const vaga1 = await prisma.jobPosition.create({
+  // Criar vagas
+  const vaga1 = await prisma.vagas.create({
     data: {
       titulo: "Desenvolvedor Frontend",
-      descricao: "Atuar no desenvolvimento de aplicações web acessíveis.",
-      requisitos: ["React", "TypeScript", "Acessibilidade Web"],
-      salario: 6000,
+      descricao: "Vaga para desenvolvedor frontend com foco em acessibilidade",
+      requisitos: ["React", "JavaScript", "HTML", "CSS"],
+      salario: 5000.00,
       modalidade: "Remoto",
       cargaHoraria: "40h semanais",
+      habilidades: ["React", "Acessibilidade Web"],
+      apoios: ["Software leitor de tela", "Teclado adaptado"],
       empresaId: empresa1.id
     }
   });
 
-  const vaga2 = await prisma.jobPosition.create({
+  const vaga2 = await prisma.vagas.create({
     data: {
       titulo: "Analista de RH",
-      descricao: "Responsável por processos seletivos inclusivos.",
-      requisitos: ["Gestão de Pessoas", "Diversidade e Inclusão"],
-      salario: 4000,
+      descricao: "Vaga para analista de recursos humanos",
+      requisitos: ["Graduação em RH", "Experiência em recrutamento"],
+      salario: 4000.00,
       modalidade: "Presencial",
-      cargaHoraria: "44h semanais",
+      cargaHoraria: "40h semanais",
+      habilidades: ["Recrutamento", "Seleção"],
+      apoios: ["Intérprete de Libras"],
       empresaId: empresa2.id
     }
   });
 
-  // 🔹 Candidaturas
-  await prisma.application.createMany({
+  // Criar candidaturas
+  await prisma.candidaturas.createMany({
     data: [
       { candidatoId: candidato1.id, vagaId: vaga1.id, status: "PENDENTE" },
-      { candidatoId: candidato2.id, vagaId: vaga2.id, status: "ACEITO" }
+      { candidatoId: candidato2.id, vagaId: vaga2.id, status: "APROVADO" },
     ]
   });
 
-  console.log("🌱 Seed finalizado com sucesso!");
+  console.log("Seed executado com sucesso!");
 }
 
 main()
