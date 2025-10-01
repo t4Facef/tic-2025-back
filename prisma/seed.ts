@@ -133,10 +133,10 @@ async function main() {
   // Criar acessibilidades para as empresas
   await prisma.acessibilidade.createMany({
     data: [
-      { nome: "Rampa de acesso", empresaId: empresa1.id },
-      { nome: "Intérprete de Libras", empresaId: empresa1.id },
+      { nome: "Rampa de acesso - Tech Solutions", empresaId: empresa1.id },
+      { nome: "Intérprete de Libras - Tech Solutions", empresaId: empresa1.id },
       { nome: "Software leitor de tela", empresaId: empresa1.id },
-      { nome: "Rampa de acesso", empresaId: empresa2.id },
+      { nome: "Rampa de acesso - Inova RH", empresaId: empresa2.id },
       { nome: "Banheiro adaptado", empresaId: empresa2.id },
     ]
   });
@@ -186,10 +186,9 @@ async function main() {
       {
         candidatoId: candidato1.id,
         nomeCurso: "Ciência da Computação",
+        tipoFormacao: "Superior",
         instituicao: "USP",
-        nivel: "Superior",
         situacao: "Concluído",
-        area: "Tecnologia",
         dataInicio: new Date("2008-02-01"),
         dataFim: new Date("2012-12-01"),
         descricao: "Graduação completa."
@@ -197,10 +196,9 @@ async function main() {
       {
         candidatoId: candidato2.id,
         nomeCurso: "Administração",
+        tipoFormacao: "Superior",
         instituicao: "FGV",
-        nivel: "Superior",
         situacao: "Concluído",
-        area: "Administração",
         dataInicio: new Date("2005-02-01"),
         dataFim: new Date("2009-12-01"),
         descricao: "Bacharelado em Administração."
@@ -213,19 +211,21 @@ async function main() {
     data: [
       {
         candidatoId: candidato1.id,
+        titulo: "Desenvolvedor Full Stack",
         instituicao: "Empresa ABC",
         dataInicio: new Date("2013-01-01"),
         dataFim: new Date("2020-12-31"),
-        descricao: "Desenvolvedor Full Stack",
-        tipo: "CLT"
+        descricao: "Desenvolvimento de aplicações web",
+        tipoContrato: "CLT"
       },
       {
         candidatoId: candidato2.id,
+        titulo: "Analista de RH",
         instituicao: "Consultoria XYZ",
         dataInicio: new Date("2010-03-01"),
         dataFim: new Date("2022-06-30"),
-        descricao: "Analista de RH",
-        tipo: "CLT"
+        descricao: "Gestão de recursos humanos",
+        tipoContrato: "CLT"
       }
     ]
   });

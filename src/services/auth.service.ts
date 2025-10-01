@@ -32,11 +32,16 @@ export const AuthService = {
 
     const hash = await bcrypt.hash(senha, 10);
     
+    const dataNasc = new Date(dataNascimento);
+    if (isNaN(dataNasc.getTime())) {
+      throw new Error(`Data de nascimento inválida: ${dataNascimento}`);
+    }
+    
     return prisma.candidato.create({
       data: { 
         nome, 
         cpf, 
-        dataNascimento: new Date(dataNascimento), 
+        dataNascimento: dataNasc, 
         sexo: sexo || null,
         genero: genero || null,
         email, 
@@ -72,7 +77,7 @@ export const AuthService = {
         } : undefined,
         
         // Criar experiência junto (nested create)
-        experiencia: experiencia ? {
+        experiencia: experiencia && experiencia.empresa ? {
           create: {
             titulo: experiencia.titulo,
             instituicao: experiencia.empresa,
@@ -85,9 +90,11 @@ export const AuthService = {
         
         // Conectar subtipos de deficiência (apenas IDs)
         subtipos: subtiposDeficiencia && subtiposDeficiencia.length > 0 ? {
-          create: subtiposDeficiencia.map((subtipoId: number) => ({
-            subtipoId: subtipoId
-          }))
+          create: subtiposDeficiencia
+            .filter((id: any) => !isNaN(Number(id)))
+            .map((subtipoId: any) => ({
+              subtipoId: Number(subtipoId)
+            }))
         } : undefined,
       },
     });
