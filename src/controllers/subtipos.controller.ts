@@ -24,4 +24,14 @@ export const SubtiposController = {
       res.status(error.status || 400).json({ error: error.message });
     }
   },
+
+  async getByTipoId(req: Request, res: Response) {
+    try {
+      const tipoId = Number(req.params.id);
+      const data = await SubtiposService.getByTipoId(tipoId);
+      res.json(data);
+    } catch (error: any) {
+      res.status(error.status || 400).json({ error: error.message });
+    }
+  }
 };
