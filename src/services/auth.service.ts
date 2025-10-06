@@ -24,7 +24,7 @@ export const AuthService = {
   },
 
   async registrarCandidato(dadosCandidato: any) {
-    const { nome, email, senha, cpf, dataNascimento, sexo, genero, telefones, endereco } = dadosCandidato;
+    const { nome, email, senha, cpf, dataNascimento, sexo, genero, telefones, endereco, areaInteresse, formacao, experiencia, subtiposDeficiencia } = dadosCandidato;
     
     const existeEmail = await prisma.candidato.findUnique({ where: { email } }) || 
                        await prisma.empresa.findUnique({ where: { email } });
@@ -32,35 +32,70 @@ export const AuthService = {
 
     const hash = await bcrypt.hash(senha, 10);
     
-    // Criar endereço se fornecido
-    let enderecoId = null;
-    if (endereco && endereco.cep) {
-      const novoEndereco = await prisma.endereco.create({
-        data: {
-          cep: endereco.cep,
-          estado: endereco.estado,
-          cidade: endereco.cidade,
-          bairro: endereco.bairro,
-          rua: endereco.rua,
-          numero: endereco.numero,
-          complemento: endereco.complemento || null
-        }
-      });
-      enderecoId = novoEndereco.id;
+    const dataNasc = new Date(dataNascimento);
+    if (isNaN(dataNasc.getTime())) {
+      throw new Error(`Data de nascimento inválida: ${dataNascimento}`);
     }
     
     return prisma.candidato.create({
       data: { 
         nome, 
-        email, 
-        senha: hash, 
         cpf, 
-        dataNascimento: new Date(dataNascimento), 
+        dataNascimento: dataNasc, 
         sexo: sexo || null,
         genero: genero || null,
+        email, 
         telefones: telefones || [],
-        enderecoId,
-        laudo: Buffer.from('') // Campo obrigatório no schema
+        areaInteresse,
+        laudo: Buffer.from(''),
+        senha: hash,
+        
+        // Criar endereço junto (nested create)
+        endereco: endereco && endereco.cep ? {
+          create: {
+            cep: endereco.cep,
+            estado: endereco.estado,
+            cidade: endereco.cidade,
+            bairro: endereco.bairro,
+            rua: endereco.rua,
+            numero: endereco.numero,
+            complemento: endereco.complemento || null
+          }
+        } : undefined,
+        
+        // Criar formação junto (nested create)
+        formacoes: formacao ? {
+          create: {
+            nomeCurso: formacao.nomeCurso,
+            tipoFormacao: formacao.tipo,
+            instituicao: formacao.instituicao,
+            situacao: formacao.situacao,
+            dataInicio: new Date(formacao.dataInicio),
+            dataFim: new Date(formacao.dataFim),
+            descricao: formacao.descricao,
+          }
+        } : undefined,
+        
+        // Criar experiência junto (nested create)
+        experiencia: experiencia && experiencia.empresa ? {
+          create: {
+            titulo: experiencia.titulo,
+            instituicao: experiencia.empresa,
+            dataInicio: new Date(experiencia.dataInicio),
+            dataFim: new Date(experiencia.dataFim),
+            descricao: experiencia.descricao,
+            tipoContrato: experiencia.tipo
+          }
+        } : undefined,
+        
+        // Conectar subtipos de deficiência (apenas IDs)
+        subtipos: subtiposDeficiencia && subtiposDeficiencia.length > 0 ? {
+          create: subtiposDeficiencia
+            .filter((id: any) => !isNaN(Number(id)))
+            .map((subtipoId: any) => ({
+              subtipoId: Number(subtipoId)
+            }))
+        } : undefined,
       },
     });
   },

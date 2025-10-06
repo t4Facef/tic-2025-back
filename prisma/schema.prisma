@@ -64,6 +64,7 @@ model Candidato {
   telefones      String[]
   foto           Bytes?
   laudo          Bytes
+  areaInteresse  String
   
 
   enderecoId Int?      @unique
@@ -205,13 +206,13 @@ model FormacaoOuCurso {
   candidatoId Int
   candidato   Candidato @relation(fields: [candidatoId], references: [id], onDelete: Cascade)
 
-  instituicao String
-  nivel       String
-  situacao    String
-  area        String
-  dataInicio  DateTime
-  dataFim     DateTime
-  descricao   String?
+  nomeCurso    String
+  tipoFormacao String
+  instituicao  String
+  situacao     String
+  dataInicio   DateTime
+  dataFim      DateTime
+  descricao    String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -235,12 +236,12 @@ model Experiencias {
   candidatoId Int
   candidato   Candidato  @relation(fields: [candidatoId], references: [id], onDelete: Cascade)
 
+  titulo        String
   instituicao   String
   dataInicio    DateTime
   dataFim       DateTime
-  cargaHoraria  String?
   descricao     String?
-  tipo          String
+  tipoContrato          String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

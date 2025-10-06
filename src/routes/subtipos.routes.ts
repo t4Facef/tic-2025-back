@@ -4,7 +4,8 @@ import { SubtiposController } from "../controllers/subtipos.controller";
 const router = Router();
 
 // Define endpoints da entidade Subtipos
-router.get("/:id", SubtiposController.getOne); // GET /subtipos/:id
-router.post("/", SubtiposController.create);   // POST /subtipos
+router.get("/tipoId/:id", SubtiposController.getByTipoId); // GET /subtipos/tipoId/:id - DEVE vir ANTES
+router.get("/:id", SubtiposController.getOne);             // GET /subtipos/:id
+router.post("/", SubtiposController.create);               // POST /subtipos
 
 export default router;
