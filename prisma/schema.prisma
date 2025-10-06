@@ -26,13 +26,13 @@ model Endereco {
 model Empresa {
   id                  Int      @id @default(autoincrement())
   razaoSocial         String
-  nomeFantasia        String
+  nomeFantasia        String?
   email               String   @unique
   senha               String
   cnpj                String  @unique
   telefoneComercial   String
-  numFunc             Int
-  numFuncPcd          Int
+  numFunc             Int?
+  numFuncPcd          Int?
   area                String
   site                String?
   descricao           String?

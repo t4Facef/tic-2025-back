@@ -1,0 +1,4 @@
+-- AlterTable
+ALTER TABLE "Empresa" ALTER COLUMN "nomeFantasia" DROP NOT NULL,
+ALTER COLUMN "numFunc" DROP NOT NULL,
+ALTER COLUMN "numFuncPcd" DROP NOT NULL;

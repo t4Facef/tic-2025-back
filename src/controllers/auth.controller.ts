@@ -52,8 +52,7 @@ export const AuthController = {
 
   async registrarEmpresa(req: Request, res: Response) {
     try {
-      const { razaoSocial, nomeFantasia, email, senha, cnpj, telefoneComercial, numFunc, numFuncPcd, site, area } = req.body;
-      const user = await AuthService.registrarEmpresa(razaoSocial, nomeFantasia, email, senha, cnpj, telefoneComercial, numFunc, numFuncPcd, site, area);
+      const user = await AuthService.registrarEmpresa(req.body);
       res.status(201).json({ message: "Empresa registrada com sucesso", id: user.id });
     } catch (error: any) {
       res.status(400).json({ error: error.message });

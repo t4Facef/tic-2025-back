@@ -100,7 +100,9 @@ export const AuthService = {
     });
   },
 
-  async registrarEmpresa(razaoSocial: string, nomeFantasia: string, email: string, senha: string, cnpj: string, telefoneComercial: string, numFunc: number, numFuncPcd: number, site: string, area: string) {
+  async registrarEmpresa(dadosEmpresa: any) {
+    const {razaoSocial, nomeFantasia, cnpj, numFunc, area, email, telefoneComercial, site, cep, estado, cidade, rua, complemento, bairro, numero, capacidadesDeApoio, senha} = dadosEmpresa;
+    
     const existeEmail = await prisma.candidato.findUnique({ where: { email } }) || 
                        await prisma.empresa.findUnique({ where: { email } });
     if (existeEmail) throw new Error("Email já cadastrado");
@@ -116,7 +118,6 @@ export const AuthService = {
         cnpj, 
         telefoneComercial, 
         numFunc,
-        numFuncPcd,
         area
       },
     });
