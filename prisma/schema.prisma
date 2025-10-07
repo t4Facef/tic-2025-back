@@ -45,12 +45,11 @@ model Empresa {
   enderecoId Int?      @unique
   endereco   Endereco? @relation(fields: [enderecoId], references: [id], onDelete: SetNull)
 
-  vagas          Vagas[]
-  acessiblidades Acessibilidade[]
+  empresaAcessibilidade EmpresaAcessibilidade[]
+  vagas                 Vagas[]
 
   createdAt             DateTime                @default(now())
   updatedAt             DateTime                @updatedAt
-  EmpresaAcessibilidade EmpresaAcessibilidade[]
 }
 
 model Candidato {
@@ -139,9 +138,6 @@ model Acessibilidade {
   nome      String                   @unique
   barreiras BarreiraAcessibilidade[]
   EmpresaAcessibilidade EmpresaAcessibilidade[]
-
-  empresaId Int
-  empresa   Empresa @relation(fields: [empresaId], references: [id], onDelete: Cascade)
 
   createdAt             DateTime                @default(now())
   updatedAt             DateTime                @updatedAt

@@ -130,6 +130,9 @@ export const AuthService = {
             complemento: endereco.complemento || null
           }
         } : undefined,
+        empresaAcessibilidade: capacidadesDeApoio && capacidadesDeApoio.length > 0 ? {
+          create: capacidadesDeApoio.map((id: number) => ({acessibilidadeId: id}))
+        } : undefined
       },
     });
   },
