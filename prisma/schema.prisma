@@ -24,23 +24,23 @@ model Endereco {
 
 // Models dos Usuarios (Empresa e Candidato)
 model Empresa {
-  id                  Int      @id @default(autoincrement())
-  razaoSocial         String
-  nomeFantasia        String?
-  email               String   @unique
-  senha               String
-  cnpj                String  @unique
-  telefoneComercial   String
-  numFunc             Int?
-  numFuncPcd          Int?
-  area                String
-  site                String?
-  descricao           String?
-  historia            String?
-  missao              String?
-  valores             String?
-  foto                Bytes?
-  certificacoes       String[]
+  id                Int      @id @default(autoincrement())
+  razaoSocial       String
+  nomeFantasia      String?
+  email             String   @unique
+  senha             String
+  cnpj              String   @unique
+  telefoneComercial String
+  numFunc           Int?
+  numFuncPcd        Int?
+  area              String
+  site              String?
+  descricao         String?
+  historia          String?
+  missao            String?
+  valores           String?
+  foto              Bytes?
+  certificacoes     String[]
 
   enderecoId Int?      @unique
   endereco   Endereco? @relation(fields: [enderecoId], references: [id], onDelete: SetNull)
@@ -48,8 +48,9 @@ model Empresa {
   vagas          Vagas[]
   acessiblidades Acessibilidade[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
+  EmpresaAcessibilidade EmpresaAcessibilidade[]
 }
 
 model Candidato {
@@ -65,7 +66,6 @@ model Candidato {
   foto           Bytes?
   laudo          Bytes
   areaInteresse  String
-  
 
   enderecoId Int?      @unique
   endereco   Endereco? @relation(fields: [enderecoId], references: [id], onDelete: SetNull)
@@ -82,12 +82,12 @@ model Candidato {
 
 // Models dos Tipos Deficiencia
 model TipoDeficiencia {
-  id        Int                  @id @default(autoincrement())
-  nome      String               @unique
-  subtipos  SubtipoDeficiencia[]
+  id       Int                  @id @default(autoincrement())
+  nome     String               @unique
+  subtipos SubtipoDeficiencia[]
 
-  createdAt DateTime             @default(now())
-  updatedAt DateTime             @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model SubtipoDeficiencia {
@@ -98,8 +98,8 @@ model SubtipoDeficiencia {
   barreiras  SubtipoBarreira[]
   candidatos CandidatoSubtipo[]
 
-  createdAt  DateTime           @default(now())
-  updatedAt  DateTime           @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@unique([tipoId, nome])
 }
@@ -120,8 +120,8 @@ model Barreira {
   subtipos        SubtipoBarreira[]
   acessibilidades BarreiraAcessibilidade[]
 
-  createdAt       DateTime                 @default(now())
-  updatedAt       DateTime                 @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model SubtipoBarreira {
@@ -138,12 +138,13 @@ model Acessibilidade {
   id        Int                      @id @default(autoincrement())
   nome      String                   @unique
   barreiras BarreiraAcessibilidade[]
-  
+  EmpresaAcessibilidade EmpresaAcessibilidade[]
+
   empresaId Int
   empresa   Empresa @relation(fields: [empresaId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime                 @default(now())
-  updatedAt DateTime                 @updatedAt
+  createdAt             DateTime                @default(now())
+  updatedAt             DateTime                @updatedAt
 }
 
 model BarreiraAcessibilidade {
@@ -222,7 +223,7 @@ model FormacaoOuCurso {
 model Habilidades {
   id          Int       @id @default(autoincrement())
   candidatoId Int
-  candidato   Candidato  @relation(fields: [candidatoId], references: [id], onDelete: Cascade)
+  candidato   Candidato @relation(fields: [candidatoId], references: [id], onDelete: Cascade)
 
   nome String
 
@@ -234,15 +235,26 @@ model Habilidades {
 model Experiencias {
   id          Int       @id @default(autoincrement())
   candidatoId Int
-  candidato   Candidato  @relation(fields: [candidatoId], references: [id], onDelete: Cascade)
+  candidato   Candidato @relation(fields: [candidatoId], references: [id], onDelete: Cascade)
 
-  titulo        String
-  instituicao   String
-  dataInicio    DateTime
-  dataFim       DateTime
-  descricao     String?
-  tipoContrato          String
+  titulo       String
+  instituicao  String
+  dataInicio   DateTime
+  dataFim      DateTime
+  descricao    String?
+  tipoContrato String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model EmpresaAcessibilidade {
+  empresaId        Int
+  acessibilidadeId Int
+
+  empresa        Empresa        @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  acessibilidade Acessibilidade @relation(fields: [acessibilidadeId], references: [id], onDelete: Cascade)
+
+  @@id([empresaId, acessibilidadeId])
+  @@index([empresaId])
 }
