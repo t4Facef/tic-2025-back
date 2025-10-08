@@ -5,6 +5,7 @@ const router = Router();
 
 // Endpoints de Acessibilidades
 router.get("/", AcessibilidadesController.list);  // GET /acessibilidades
+router.get("/nomes", AcessibilidadesController.listNames);
 router.get("/empresa/:empresaId", AcessibilidadesController.listByEmpresa); // GET /acessibilidades/empresa/:empresaId
 router.get("/:id", AcessibilidadesController.getById); // GET /acessibilidades/:id
 router.post("/", AcessibilidadesController.create); // POST /acessibilidades

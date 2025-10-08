@@ -12,6 +12,7 @@ async function main() {
   await prisma.habilidades.deleteMany();
   await prisma.candidatoSubtipo.deleteMany();
   await prisma.barreiraAcessibilidade.deleteMany();
+  await prisma.empresaAcessibilidade.deleteMany();
   await prisma.acessibilidade.deleteMany();
   await prisma.subtipoBarreira.deleteMany();
   await prisma.candidato.deleteMany();
@@ -130,14 +131,36 @@ async function main() {
     }
   });
 
-  // Criar acessibilidades para as empresas
-  await prisma.acessibilidade.createMany({
+  // Criar acessibilidades padrão
+  const acessibilidades = await prisma.acessibilidade.createMany({
     data: [
-      { nome: "Rampa de acesso - Tech Solutions", empresaId: empresa1.id },
-      { nome: "Intérprete de Libras - Tech Solutions", empresaId: empresa1.id },
-      { nome: "Software leitor de tela", empresaId: empresa1.id },
-      { nome: "Rampa de acesso - Inova RH", empresaId: empresa2.id },
-      { nome: "Banheiro adaptado", empresaId: empresa2.id },
+      { nome: "Rampa de acesso" },
+      { nome: "Intérprete de Libras" },
+      { nome: "Software leitor de tela" },
+      { nome: "Banheiro adaptado" },
+      { nome: "Elevador" },
+      { nome: "Piso tátil" },
+      { nome: "Sinalização em Braille" },
+      { nome: "Audiodescrição" },
+    ]
+  });
+
+  // Buscar IDs das acessibilidades criadas
+  const acessRampa = await prisma.acessibilidade.findUnique({ where: { nome: "Rampa de acesso" } });
+  const acessLibras = await prisma.acessibilidade.findUnique({ where: { nome: "Intérprete de Libras" } });
+  const acessLeitor = await prisma.acessibilidade.findUnique({ where: { nome: "Software leitor de tela" } });
+  const acessBanheiro = await prisma.acessibilidade.findUnique({ where: { nome: "Banheiro adaptado" } });
+  const acessElevador = await prisma.acessibilidade.findUnique({ where: { nome: "Elevador" } });
+
+  // Associar acessibilidades com empresas
+  await prisma.empresaAcessibilidade.createMany({
+    data: [
+      { empresaId: empresa1.id, acessibilidadeId: acessRampa!.id },
+      { empresaId: empresa1.id, acessibilidadeId: acessLibras!.id },
+      { empresaId: empresa1.id, acessibilidadeId: acessLeitor!.id },
+      { empresaId: empresa2.id, acessibilidadeId: acessRampa!.id },
+      { empresaId: empresa2.id, acessibilidadeId: acessBanheiro!.id },
+      { empresaId: empresa2.id, acessibilidadeId: acessElevador!.id },
     ]
   });
 

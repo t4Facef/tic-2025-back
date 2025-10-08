@@ -13,6 +13,16 @@ export const AcessibilidadesController = {
     }
   },
 
+  // GET /acessibilidades/
+  async listNames(req: Request, res: Response){
+    try{
+      const data = await AcessService.listNames()
+      res.json(data)
+    }catch(error: any){
+      res.status(400).json({ error: error.message });
+    }
+  },
+
   // GET /acessibilidades/empresa/:empresaId
   async listByEmpresa(req: Request, res: Response) {
     try {
@@ -38,8 +48,8 @@ export const AcessibilidadesController = {
   // POST /acessibilidades
   async create(req: Request, res: Response) {
     try {
-      const { nome, empresaId } = req.body ?? {};
-      const created = await AcessService.create(nome, empresaId);
+      const { nome } = req.body ?? {};
+      const created = await AcessService.create(nome);
       res.status(201).json(created);
     } catch (error: any) {
       res.status(error.status || 400).json({ error: error.message });

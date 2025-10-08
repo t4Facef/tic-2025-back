@@ -6,15 +6,28 @@ export const AcessRepo = {
   list() {
     return prisma.acessibilidade.findMany({ 
       orderBy: { id: "asc" },
-      include: { empresa: true }
+      include: { 
+        EmpresaAcessibilidade: {
+          include: { empresa: true }
+        }
+      }
     });
   },
 
-  // Cria uma nova acessibilidade
-  create(nome: string, empresaId: number) {
+  listNames(){
+    return prisma.acessibilidade.findMany({
+      select: {
+        id: true,
+        nome: true
+      },
+      orderBy: { nome: "asc" }
+    })
+  },
+
+  // Cria uma nova acessibilidade padrão
+  create(nome: string) {
     return prisma.acessibilidade.create({ 
-      data: { nome, empresaId },
-      include: { empresa: true }
+      data: { nome }
     });
   },
 
@@ -22,14 +35,22 @@ export const AcessRepo = {
   findById(id: number) {
     return prisma.acessibilidade.findUnique({ 
       where: { id },
-      include: { empresa: true }
+      include: { 
+        EmpresaAcessibilidade: {
+          include: { empresa: true }
+        }
+      }
     });
   },
 
   // Busca acessibilidades por empresa
   findByEmpresa(empresaId: number) {
     return prisma.acessibilidade.findMany({
-      where: { empresaId },
+      where: { 
+        EmpresaAcessibilidade: {
+          some: { empresaId }
+        }
+      },
       orderBy: { id: "asc" }
     });
   },

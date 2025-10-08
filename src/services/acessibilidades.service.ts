@@ -7,6 +7,10 @@ export const AcessService = {
     return AcessRepo.list();
   },
 
+  listNames(){
+    return AcessRepo.listNames();
+  },
+
   // Lista acessibilidades por empresa
   listByEmpresa(empresaId: number) {
     return AcessRepo.findByEmpresa(empresaId);
@@ -17,8 +21,8 @@ export const AcessService = {
     return AcessRepo.findById(id);
   },
 
-  // Cria acessibilidade com validação
-  async create(nome: string, empresaId: number) {
+  // Cria acessibilidade padrão com validação
+  async create(nome: string) {
     const final = (nome ?? "").trim();
 
     if (!final)
@@ -26,11 +30,6 @@ export const AcessService = {
         status: 400,
       });
 
-    if (!empresaId)
-      throw Object.assign(new Error("O campo 'empresaId' é obrigatório"), {
-        status: 400,
-      });
-
-    return AcessRepo.create(final, empresaId);
+    return AcessRepo.create(final);
   },
 };
