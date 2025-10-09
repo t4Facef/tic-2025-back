@@ -101,7 +101,7 @@ export const AuthService = {
   },
 
   async registrarEmpresa(dadosEmpresa: any) {
-    const {razaoSocial, nomeFantasia, cnpj, numFunc, area, email, telefoneComercial, site, endereco, capacidadesDeApoio, senha} = dadosEmpresa;
+    const {razaoSocial, nomeFantasia, cnpj, numFunc, area, email, telefoneComercial, site, endereco, acessibilidades, senha} = dadosEmpresa;
     
     const existeEmail = await prisma.candidato.findUnique({ where: { email } }) || 
                        await prisma.empresa.findUnique({ where: { email } });
@@ -130,8 +130,8 @@ export const AuthService = {
             complemento: endereco.complemento || null
           }
         } : undefined,
-        empresaAcessibilidade: capacidadesDeApoio && capacidadesDeApoio.length > 0 ? {
-          create: capacidadesDeApoio.map((id: number) => ({acessibilidadeId: id}))
+        empresaAcessibilidade: acessibilidades && acessibilidades.length > 0 ? {
+          create: acessibilidades.map((id: number) => ({acessibilidadeId: id}))
         } : undefined
       },
     });
