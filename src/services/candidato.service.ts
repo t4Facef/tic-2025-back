@@ -15,7 +15,20 @@ export const CandidatoService = {
           include: {
             subtipo: {
               include: {
-                tipo: true
+                tipo: true,
+                barreiras: {
+                  include: {
+                    barreira: {
+                      include: {
+                        acessibilidades: {
+                          include: {
+                            acessibilidade: true
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
               }
             }
           }

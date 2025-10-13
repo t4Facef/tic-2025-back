@@ -12,6 +12,25 @@ export const BarreirasRepo = {
     return prisma.barreira.create({ data: { descricao } });
   },
 
+  // Busca barreiras por subtipo
+  findBySubtipo(subtipoId: number) {
+    return prisma.barreira.findMany({
+      where: {
+        subtipos: {
+          some: { subtipoId }
+        }
+      },
+      include: {
+        acessibilidades: {
+          include: {
+            acessibilidade: true
+          }
+        }
+      },
+      orderBy: { id: "asc" }
+    });
+  },
+
   // Busca barreira por ID
   findById(id: number) {
     return prisma.barreira.findUnique({ where: { id } });

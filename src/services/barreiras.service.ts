@@ -18,4 +18,9 @@ export const BarreirasService = {
 
     return BarreirasRepo.create(final);
   },
+
+  // Busca barreiras por subtipo
+  getBySubtipo(subtipoId: number) {
+    return BarreirasRepo.findBySubtipo(subtipoId);
+  },
 };

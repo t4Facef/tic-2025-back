@@ -13,6 +13,17 @@ export const BarreirasController = {
     }
   },
 
+  // GET /barreiras/subtipo/:subtipoId
+  async getBySubtipo(req: Request, res: Response) {
+    try {
+      const subtipoId = Number(req.params.subtipoId);
+      const data = await BarreirasService.getBySubtipo(subtipoId);
+      res.json(data);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  },
+
   // POST /barreiras
   async create(req: Request, res: Response) {
     try {

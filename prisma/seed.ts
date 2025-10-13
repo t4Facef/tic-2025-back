@@ -35,6 +35,14 @@ async function main() {
     data: { nome: "Deficiência Física" }
   });
 
+  const tipoIntelectual = await prisma.tipoDeficiencia.create({
+    data: { nome: "Deficiência Intelectual" }
+  });
+
+  const tipoMultipla = await prisma.tipoDeficiencia.create({
+    data: { nome: "Deficiência Múltipla" }
+  });
+
   // Criar subtipos de deficiência
   const cegueira = await prisma.subtipoDeficiencia.create({
     data: { nome: "Cegueira", tipoId: tipoVisual.id }
@@ -44,34 +52,118 @@ async function main() {
     data: { nome: "Baixa Visão", tipoId: tipoVisual.id }
   });
 
+  const daltonismo = await prisma.subtipoDeficiencia.create({
+    data: { nome: "Daltonismo", tipoId: tipoVisual.id }
+  });
+
   const surdez = await prisma.subtipoDeficiencia.create({
     data: { nome: "Surdez", tipoId: tipoAuditiva.id }
+  });
+
+  const deficienciaAuditiva = await prisma.subtipoDeficiencia.create({
+    data: { nome: "Deficiência Auditiva Leve", tipoId: tipoAuditiva.id }
   });
 
   const cadeirante = await prisma.subtipoDeficiencia.create({
     data: { nome: "Cadeirante", tipoId: tipoFisica.id }
   });
 
+  const amputacao = await prisma.subtipoDeficiencia.create({
+    data: { nome: "Amputação", tipoId: tipoFisica.id }
+  });
+
+  const paralisiaCerebral = await prisma.subtipoDeficiencia.create({
+    data: { nome: "Paralisia Cerebral", tipoId: tipoFisica.id }
+  });
+
+  const sindromeDow = await prisma.subtipoDeficiencia.create({
+    data: { nome: "Síndrome de Down", tipoId: tipoIntelectual.id }
+  });
+
+  const autismo = await prisma.subtipoDeficiencia.create({
+    data: { nome: "Autismo", tipoId: tipoIntelectual.id }
+  });
+
+  const surdocegueira = await prisma.subtipoDeficiencia.create({
+    data: { nome: "Surdocegueira", tipoId: tipoMultipla.id }
+  });
+
   // Criar barreiras
-  const barreiraVisual = await prisma.barreira.create({
-    data: { descricao: "Barreira Visual" }
+  const barreiraLeitura = await prisma.barreira.create({
+    data: { descricao: "Dificuldade de leitura de textos" }
   });
 
-  const barreiraAuditiva = await prisma.barreira.create({
-    data: { descricao: "Barreira Auditiva" }
+  const barreiraNavegacao = await prisma.barreira.create({
+    data: { descricao: "Dificuldade de navegação visual" }
   });
 
-  const barreiraMobilidade = await prisma.barreira.create({
-    data: { descricao: "Barreira de Mobilidade" }
+  const barreiraCores = await prisma.barreira.create({
+    data: { descricao: "Dificuldade de distinção de cores" }
+  });
+
+  const barreiraComunicacao = await prisma.barreira.create({
+    data: { descricao: "Dificuldade de comunicação oral" }
+  });
+
+  const barreiraAudio = await prisma.barreira.create({
+    data: { descricao: "Dificuldade de percepção de áudio" }
+  });
+
+  const barreiraAcesso = await prisma.barreira.create({
+    data: { descricao: "Dificuldade de acesso físico" }
+  });
+
+  const barreiraLocomocao = await prisma.barreira.create({
+    data: { descricao: "Dificuldade de locomoção" }
+  });
+
+  const barreiraManipulacao = await prisma.barreira.create({
+    data: { descricao: "Dificuldade de manipulação de objetos" }
+  });
+
+  const barreiraCompreensao = await prisma.barreira.create({
+    data: { descricao: "Dificuldade de compreensão" }
+  });
+
+  const barreiraConcentracao = await prisma.barreira.create({
+    data: { descricao: "Dificuldade de concentração" }
   });
 
   // Conectar subtipos com barreiras
   await prisma.subtipoBarreira.createMany({
     data: [
-      { subtipoId: cegueira.id, barreiraId: barreiraVisual.id },
-      { subtipoId: baixaVisao.id, barreiraId: barreiraVisual.id },
-      { subtipoId: surdez.id, barreiraId: barreiraAuditiva.id },
-      { subtipoId: cadeirante.id, barreiraId: barreiraMobilidade.id },
+      // Cegueira
+      { subtipoId: cegueira.id, barreiraId: barreiraLeitura.id },
+      { subtipoId: cegueira.id, barreiraId: barreiraNavegacao.id },
+      // Baixa Visão
+      { subtipoId: baixaVisao.id, barreiraId: barreiraLeitura.id },
+      { subtipoId: baixaVisao.id, barreiraId: barreiraNavegacao.id },
+      // Daltonismo
+      { subtipoId: daltonismo.id, barreiraId: barreiraCores.id },
+      // Surdez
+      { subtipoId: surdez.id, barreiraId: barreiraComunicacao.id },
+      { subtipoId: surdez.id, barreiraId: barreiraAudio.id },
+      // Deficiência Auditiva Leve
+      { subtipoId: deficienciaAuditiva.id, barreiraId: barreiraAudio.id },
+      // Cadeirante
+      { subtipoId: cadeirante.id, barreiraId: barreiraAcesso.id },
+      { subtipoId: cadeirante.id, barreiraId: barreiraLocomocao.id },
+      // Amputação
+      { subtipoId: amputacao.id, barreiraId: barreiraManipulacao.id },
+      { subtipoId: amputacao.id, barreiraId: barreiraAcesso.id },
+      // Paralisia Cerebral
+      { subtipoId: paralisiaCerebral.id, barreiraId: barreiraLocomocao.id },
+      { subtipoId: paralisiaCerebral.id, barreiraId: barreiraManipulacao.id },
+      // Síndrome de Down
+      { subtipoId: sindromeDow.id, barreiraId: barreiraCompreensao.id },
+      { subtipoId: sindromeDow.id, barreiraId: barreiraConcentracao.id },
+      // Autismo
+      { subtipoId: autismo.id, barreiraId: barreiraConcentracao.id },
+      { subtipoId: autismo.id, barreiraId: barreiraComunicacao.id },
+      // Surdocegueira
+      { subtipoId: surdocegueira.id, barreiraId: barreiraLeitura.id },
+      { subtipoId: surdocegueira.id, barreiraId: barreiraComunicacao.id },
+      { subtipoId: surdocegueira.id, barreiraId: barreiraNavegacao.id },
     ]
   });
 
@@ -132,25 +224,88 @@ async function main() {
   });
 
   // Criar acessibilidades padrão
-  const acessibilidades = await prisma.acessibilidade.createMany({
+  await prisma.acessibilidade.createMany({
     data: [
-      { nome: "Rampa de acesso" },
-      { nome: "Intérprete de Libras" },
       { nome: "Software leitor de tela" },
-      { nome: "Banheiro adaptado" },
-      { nome: "Elevador" },
-      { nome: "Piso tátil" },
       { nome: "Sinalização em Braille" },
       { nome: "Audiodescrição" },
+      { nome: "Piso tátil" },
+      { nome: "Contraste de cores" },
+      { nome: "Intérprete de Libras" },
+      { nome: "Legendas" },
+      { nome: "Amplificação sonora" },
+      { nome: "Rampa de acesso" },
+      { nome: "Elevador" },
+      { nome: "Banheiro adaptado" },
+      { nome: "Mesa ajustável" },
+      { nome: "Teclado adaptado" },
+      { nome: "Linguagem simples" },
+      { nome: "Instruções claras" },
+      { nome: "Ambiente silencioso" },
+      { nome: "Comunicação visual" },
+      { nome: "Tadoma" },
     ]
   });
 
   // Buscar IDs das acessibilidades criadas
-  const acessRampa = await prisma.acessibilidade.findUnique({ where: { nome: "Rampa de acesso" } });
-  const acessLibras = await prisma.acessibilidade.findUnique({ where: { nome: "Intérprete de Libras" } });
   const acessLeitor = await prisma.acessibilidade.findUnique({ where: { nome: "Software leitor de tela" } });
-  const acessBanheiro = await prisma.acessibilidade.findUnique({ where: { nome: "Banheiro adaptado" } });
+  const acessBraille = await prisma.acessibilidade.findUnique({ where: { nome: "Sinalização em Braille" } });
+  const acessAudio = await prisma.acessibilidade.findUnique({ where: { nome: "Audiodescrição" } });
+  const acessPiso = await prisma.acessibilidade.findUnique({ where: { nome: "Piso tátil" } });
+  const acessCores = await prisma.acessibilidade.findUnique({ where: { nome: "Contraste de cores" } });
+  const acessLibras = await prisma.acessibilidade.findUnique({ where: { nome: "Intérprete de Libras" } });
+  const acessLegendas = await prisma.acessibilidade.findUnique({ where: { nome: "Legendas" } });
+  const acessAmplificacao = await prisma.acessibilidade.findUnique({ where: { nome: "Amplificação sonora" } });
+  const acessRampa = await prisma.acessibilidade.findUnique({ where: { nome: "Rampa de acesso" } });
   const acessElevador = await prisma.acessibilidade.findUnique({ where: { nome: "Elevador" } });
+  const acessBanheiro = await prisma.acessibilidade.findUnique({ where: { nome: "Banheiro adaptado" } });
+  const acessMesa = await prisma.acessibilidade.findUnique({ where: { nome: "Mesa ajustável" } });
+  const acessTeclado = await prisma.acessibilidade.findUnique({ where: { nome: "Teclado adaptado" } });
+  const acessLinguagem = await prisma.acessibilidade.findUnique({ where: { nome: "Linguagem simples" } });
+  const acessInstrucoes = await prisma.acessibilidade.findUnique({ where: { nome: "Instruções claras" } });
+  const acessSilencio = await prisma.acessibilidade.findUnique({ where: { nome: "Ambiente silencioso" } });
+  const acessVisual = await prisma.acessibilidade.findUnique({ where: { nome: "Comunicação visual" } });
+  const acessTadoma = await prisma.acessibilidade.findUnique({ where: { nome: "Tadoma" } });
+
+  // Conectar barreiras com acessibilidades
+  await prisma.barreiraAcessibilidade.createMany({
+    data: [
+      // Barreira de leitura
+      { barreiraId: barreiraLeitura.id, acessibilidadeId: acessLeitor!.id },
+      { barreiraId: barreiraLeitura.id, acessibilidadeId: acessBraille!.id },
+      { barreiraId: barreiraLeitura.id, acessibilidadeId: acessAudio!.id },
+      // Barreira de navegação
+      { barreiraId: barreiraNavegacao.id, acessibilidadeId: acessPiso!.id },
+      { barreiraId: barreiraNavegacao.id, acessibilidadeId: acessLeitor!.id },
+      { barreiraId: barreiraNavegacao.id, acessibilidadeId: acessAudio!.id },
+      // Barreira de cores
+      { barreiraId: barreiraCores.id, acessibilidadeId: acessCores!.id },
+      // Barreira de comunicação
+      { barreiraId: barreiraComunicacao.id, acessibilidadeId: acessLibras!.id },
+      { barreiraId: barreiraComunicacao.id, acessibilidadeId: acessVisual!.id },
+      { barreiraId: barreiraComunicacao.id, acessibilidadeId: acessTadoma!.id },
+      // Barreira de áudio
+      { barreiraId: barreiraAudio.id, acessibilidadeId: acessLegendas!.id },
+      { barreiraId: barreiraAudio.id, acessibilidadeId: acessAmplificacao!.id },
+      { barreiraId: barreiraAudio.id, acessibilidadeId: acessLibras!.id },
+      // Barreira de acesso
+      { barreiraId: barreiraAcesso.id, acessibilidadeId: acessRampa!.id },
+      { barreiraId: barreiraAcesso.id, acessibilidadeId: acessElevador!.id },
+      { barreiraId: barreiraAcesso.id, acessibilidadeId: acessBanheiro!.id },
+      // Barreira de locomoção
+      { barreiraId: barreiraLocomocao.id, acessibilidadeId: acessRampa!.id },
+      { barreiraId: barreiraLocomocao.id, acessibilidadeId: acessElevador!.id },
+      // Barreira de manipulação
+      { barreiraId: barreiraManipulacao.id, acessibilidadeId: acessMesa!.id },
+      { barreiraId: barreiraManipulacao.id, acessibilidadeId: acessTeclado!.id },
+      // Barreira de compreensão
+      { barreiraId: barreiraCompreensao.id, acessibilidadeId: acessLinguagem!.id },
+      { barreiraId: barreiraCompreensao.id, acessibilidadeId: acessInstrucoes!.id },
+      // Barreira de concentração
+      { barreiraId: barreiraConcentracao.id, acessibilidadeId: acessSilencio!.id },
+      { barreiraId: barreiraConcentracao.id, acessibilidadeId: acessInstrucoes!.id },
+    ]
+  });
 
   // Associar acessibilidades com empresas
   await prisma.empresaAcessibilidade.createMany({
@@ -158,9 +313,11 @@ async function main() {
       { empresaId: empresa1.id, acessibilidadeId: acessRampa!.id },
       { empresaId: empresa1.id, acessibilidadeId: acessLibras!.id },
       { empresaId: empresa1.id, acessibilidadeId: acessLeitor!.id },
+      { empresaId: empresa1.id, acessibilidadeId: acessBraille!.id },
       { empresaId: empresa2.id, acessibilidadeId: acessRampa!.id },
       { empresaId: empresa2.id, acessibilidadeId: acessBanheiro!.id },
       { empresaId: empresa2.id, acessibilidadeId: acessElevador!.id },
+      { empresaId: empresa2.id, acessibilidadeId: acessLinguagem!.id },
     ]
   });
 
