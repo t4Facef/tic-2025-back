@@ -414,13 +414,18 @@ async function main() {
   const vaga1 = await prisma.vagas.create({
     data: {
       titulo: "Desenvolvedor Frontend",
+      localizacao: "São Paulo, SP - Remoto",
       descricao: "Vaga para desenvolvedor frontend com foco em acessibilidade",
-      requisitos: ["React", "JavaScript", "HTML", "CSS"],
-      salario: 5000.00,
-      modalidade: "Remoto",
-      cargaHoraria: "40h semanais",
-      habilidades: ["React", "Acessibilidade Web"],
+      habilidades: ["React", "JavaScript", "HTML", "CSS"],
       apoios: ["Software leitor de tela", "Teclado adaptado"],
+      compatibilidade: 85.5,
+      dataInicio: new Date("2024-01-15"),
+      dataFim: new Date("2024-12-31"),
+      tipoContrato: "CLT",
+      tipoTrabalho: "Remoto",
+      pagamento: "R$ 5.000,00",
+      nivelTrabalho: "Pleno",
+      turno: "Comercial",
       empresaId: empresa1.id
     }
   });
@@ -428,13 +433,18 @@ async function main() {
   const vaga2 = await prisma.vagas.create({
     data: {
       titulo: "Analista de RH",
+      localizacao: "Rio de Janeiro, RJ - Presencial",
       descricao: "Vaga para analista de recursos humanos",
-      requisitos: ["Graduação em RH", "Experiência em recrutamento"],
-      salario: 4000.00,
-      modalidade: "Presencial",
-      cargaHoraria: "40h semanais",
-      habilidades: ["Recrutamento", "Seleção"],
-      apoios: ["Intérprete de Libras"],
+      habilidades: ["Recrutamento", "Seleção", "Gestão de Pessoas"],
+      apoios: ["Intérprete de Libras", "Ambiente Acessível"],
+      compatibilidade: 90.0,
+      dataInicio: new Date("2024-02-01"),
+      dataFim: new Date("2024-12-31"),
+      tipoContrato: "CLT",
+      tipoTrabalho: "Presencial",
+      pagamento: "R$ 4.000,00",
+      nivelTrabalho: "Pleno",
+      turno: "Comercial",
       empresaId: empresa2.id
     }
   });

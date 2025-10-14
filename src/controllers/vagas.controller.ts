@@ -15,6 +15,9 @@ export const VagasController = {
     try {
       const id = Number(req.params.id);
       const data = await VagasService.findById(id);
+      if (!data) {
+        return res.status(404).json({ error: "Vaga não encontrada" });
+      }
       res.json(data);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
@@ -33,19 +36,57 @@ export const VagasController = {
 
   async create(req: Request, res: Response) {
     try {
-      const vaga = req.body;
-      const created = await VagasService.create(vaga);
+      const {
+        idEmpresa,
+        title,
+        location,
+        description,
+        skillsTags,
+        supportTags,
+        compatibility,
+        startDate,
+        endDate,
+        typeContract,
+        typeWork,
+        payment,
+        workLevel,
+        timeShift
+      } = req.body;
+
+      const jobData = {
+        idEmpresa,
+        title,
+        location,
+        description,
+        skillsTags,
+        supportTags,
+        compatibility,
+        startDate: new Date(startDate),
+        endDate: new Date(endDate),
+        typeContract,
+        typeWork,
+        payment,
+        workLevel,
+        timeShift
+      };
+
+      const created = await VagasService.create(jobData);
       res.status(201).json(created);
     } catch (error: any) {
-      res.status(400).json({ error: error.message });
+      console.error('Erro ao criar vaga:', error);
+      res.status(400).json({ error: error.message || 'Erro ao criar vaga' });
     }
   },
 
   async update(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
-      const vaga = req.body;
-      const updated = await VagasService.update(id, vaga);
+      const jobData = req.body;
+      
+      if (jobData.startDate) jobData.startDate = new Date(jobData.startDate);
+      if (jobData.endDate) jobData.endDate = new Date(jobData.endDate);
+
+      const updated = await VagasService.update(id, jobData);
       res.json(updated);
     } catch (error: any) {
       res.status(400).json({ error: error.message });

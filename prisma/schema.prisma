@@ -157,14 +157,19 @@ model BarreiraAcessibilidade {
 model Vagas {
   id           Int      @id @default(autoincrement())
   titulo       String
+  localizacao  String
   descricao    String
-  requisitos   String[]
-  salario      Float?
-  modalidade   String?
-  cargaHoraria String?
-  status       String   @default("DISPONIVEL")
   habilidades  String[]
   apoios       String[]
+  compatibilidade Float?
+  dataInicio   DateTime
+  dataFim      DateTime
+  tipoContrato String
+  tipoTrabalho String
+  pagamento    String
+  nivelTrabalho String
+  turno        String
+  status       String   @default("DISPONIVEL")
 
   empresaId Int
   empresa   Empresa @relation(fields: [empresaId], references: [id], onDelete: Cascade)
