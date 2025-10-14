@@ -5,6 +5,7 @@ const router = Router();
 
 router.get("/", VagasController.list);
 router.post("/search", VagasController.search);
+router.get("/candidato/:candidatoId", VagasController.getVagasComCompatibilidade);
 router.get("/empresa/:empresaId", VagasController.getByEmpresa);
 router.get("/:id", VagasController.getById);
 router.post("/", VagasController.create);

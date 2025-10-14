@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { VagasService } from "../services/vagas.service";
+import { CompatibilidadeService } from "../services/compatibilidade.service";
 
 export const VagasController = {
   async list(req: Request, res: Response) {
@@ -109,6 +110,39 @@ export const VagasController = {
       const filters = req.body;
       const data = await VagasService.search(filters);
       res.json(data);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  },
+
+  // GET /vagas/candidato/:candidatoId - Listar vagas com compatibilidade para candidato
+  async getVagasComCompatibilidade(req: Request, res: Response) {
+    try {
+      const candidatoId = Number(req.params.candidatoId);
+      const vagas = await VagasService.list({});
+      
+      const vagasComCompatibilidade = [];
+      
+      for (const vaga of vagas) {
+        try {
+          const compatibilidade = await CompatibilidadeService.calcularCompatibilidade(candidatoId, vaga.id);
+          vagasComCompatibilidade.push({
+            ...vaga,
+            compatibilidade: compatibilidade,
+            compatibilidadeFormatada: `${(compatibilidade * 100).toFixed(1)}%`
+          });
+        } catch (error) {
+          vagasComCompatibilidade.push({
+            ...vaga,
+            compatibilidade: 0,
+            compatibilidadeFormatada: "0.0%"
+          });
+        }
+      }
+      
+      vagasComCompatibilidade.sort((a, b) => b.compatibilidade - a.compatibilidade);
+      
+      res.json(vagasComCompatibilidade);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
