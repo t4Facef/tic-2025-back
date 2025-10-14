@@ -2,9 +2,10 @@ import { Request, Response } from "express";
 import { VagasService } from "../services/vagas.service";
 
 export const VagasController = {
-  async list(_req: Request, res: Response) {
+  async list(req: Request, res: Response) {
     try {
-      const data = await VagasService.list();
+      const filters = req.query;
+      const data = await VagasService.list(filters);
       res.json(data);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
@@ -98,6 +99,16 @@ export const VagasController = {
       const id = Number(req.params.id);
       await VagasService.delete(id);
       res.status(204).send();
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  },
+
+  async search(req: Request, res: Response) {
+    try {
+      const filters = req.body;
+      const data = await VagasService.search(filters);
+      res.json(data);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }

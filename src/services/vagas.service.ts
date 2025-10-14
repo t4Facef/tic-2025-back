@@ -17,9 +17,32 @@ interface JobData {
   timeShift: string;
 }
 
+interface VagasFilters {
+  titulo?: string;
+  localizacao?: string;
+  tipoContrato?: string | string[];
+  tipoTrabalho?: string | string[];
+  nivelTrabalho?: string;
+  turno?: string;
+  empresaId?: string;
+  habilidades?: string;
+  apoios?: string;
+  setor?: string;
+  recomendadas?: boolean;
+}
+
+interface VagasSearchFilters extends VagasFilters {
+  habilidadesList?: string[];
+  apoiosList?: string[];
+  salarioMin?: number;
+  salarioMax?: number;
+  dataInicioMin?: string;
+  dataInicioMax?: string;
+}
+
 export const VagasService = {
-  async list() {
-    return await VagasRepository.findAll();
+  async list(filters?: VagasFilters) {
+    return await VagasRepository.findAll(filters);
   },
 
   async findById(id: number) {
@@ -72,5 +95,9 @@ export const VagasService = {
 
   async delete(id: number) {
     return await VagasRepository.delete(id);
+  },
+
+  async search(filters: VagasSearchFilters) {
+    return await VagasRepository.search(filters);
   },
 };
