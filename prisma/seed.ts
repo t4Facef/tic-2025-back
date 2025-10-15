@@ -414,16 +414,16 @@ async function main() {
   const vaga1 = await prisma.vagas.create({
     data: {
       titulo: "Desenvolvedor Frontend",
-      localizacao: "São Paulo, SP - Remoto",
-      descricao: "Vaga para desenvolvedor frontend com foco em acessibilidade",
-      habilidades: ["React", "JavaScript", "HTML", "CSS"],
+      localizacao: "São Paulo, SP",
+      descricao: "Vaga para desenvolvedor frontend com foco em acessibilidade web",
+      habilidades: ["React", "JavaScript", "HTML", "CSS", "Acessibilidade Web"],
       apoios: ["Software leitor de tela", "Teclado adaptado"],
       compatibilidade: 85.5,
       dataInicio: new Date("2024-01-15"),
       dataFim: new Date("2024-12-31"),
       tipoContrato: "CLT",
       tipoTrabalho: "Remoto",
-      pagamento: "R$ 5.000,00",
+      pagamento: "R$ 5.000 - R$ 7.000",
       nivelTrabalho: "Pleno",
       turno: "Comercial",
       empresaId: empresa1.id
@@ -433,18 +433,132 @@ async function main() {
   const vaga2 = await prisma.vagas.create({
     data: {
       titulo: "Analista de RH",
-      localizacao: "Rio de Janeiro, RJ - Presencial",
-      descricao: "Vaga para analista de recursos humanos",
-      habilidades: ["Recrutamento", "Seleção", "Gestão de Pessoas"],
-      apoios: ["Intérprete de Libras", "Ambiente Acessível"],
-      compatibilidade: 90.0,
+      localizacao: "Rio de Janeiro, RJ",
+      descricao: "Vaga para analista de recursos humanos especializado em inclusão",
+      habilidades: ["Recrutamento", "Seleção", "Gestão de Pessoas", "Diversidade e Inclusão"],
+      apoios: ["Intérprete de Libras", "Comunicação visual"],
+      compatibilidade: 92.0,
       dataInicio: new Date("2024-02-01"),
-      dataFim: new Date("2024-12-31"),
+      dataFim: new Date("2024-11-30"),
       tipoContrato: "CLT",
       tipoTrabalho: "Presencial",
-      pagamento: "R$ 4.000,00",
+      pagamento: "R$ 4.000 - R$ 5.500",
       nivelTrabalho: "Pleno",
       turno: "Comercial",
+      empresaId: empresa2.id
+    }
+  });
+
+  const vaga3 = await prisma.vagas.create({
+    data: {
+      titulo: "Desenvolvedor Backend",
+      localizacao: "Belo Horizonte, MG",
+      descricao: "Desenvolvedor Node.js para APIs REST e microserviços",
+      habilidades: ["Node.js", "PostgreSQL", "Express", "Docker", "AWS"],
+      apoios: ["Software leitor de tela", "Mesa ajustável", "Ambiente silencioso"],
+      compatibilidade: 78.3,
+      dataInicio: new Date("2024-03-01"),
+      dataFim: new Date("2025-02-28"),
+      tipoContrato: "PJ",
+      tipoTrabalho: "Híbrido",
+      pagamento: "R$ 6.000 - R$ 9.000",
+      nivelTrabalho: "Sênior",
+      turno: "Flexível",
+      empresaId: empresa1.id
+    }
+  });
+
+  const vaga4 = await prisma.vagas.create({
+    data: {
+      titulo: "Designer UX/UI",
+      localizacao: "Porto Alegre, RS",
+      descricao: "Designer focado em experiência do usuário inclusiva e acessível",
+      habilidades: ["Figma", "Adobe XD", "Prototipagem", "Design System", "Acessibilidade"],
+      apoios: ["Contraste de cores", "Software leitor de tela", "Linguagem simples"],
+      compatibilidade: 88.7,
+      dataInicio: new Date("2024-01-20"),
+      dataFim: new Date("2024-10-20"),
+      tipoContrato: "CLT",
+      tipoTrabalho: "Remoto",
+      pagamento: "R$ 4.500 - R$ 6.500",
+      nivelTrabalho: "Pleno",
+      turno: "Comercial",
+      empresaId: empresa2.id
+    }
+  });
+
+  const vaga5 = await prisma.vagas.create({
+    data: {
+      titulo: "Analista de Dados",
+      localizacao: "Brasília, DF",
+      descricao: "Análise de dados e business intelligence para tomada de decisões",
+      habilidades: ["Python", "SQL", "Power BI", "Estatística", "Machine Learning"],
+      apoios: ["Rampa de acesso", "Banheiro adaptado", "Elevador"],
+      compatibilidade: 91.2,
+      dataInicio: new Date("2024-04-01"),
+      dataFim: new Date("2025-03-31"),
+      tipoContrato: "CLT",
+      tipoTrabalho: "Presencial",
+      pagamento: "R$ 5.500 - R$ 8.000",
+      nivelTrabalho: "Sênior",
+      turno: "Comercial",
+      empresaId: empresa1.id
+    }
+  });
+
+  const vaga6 = await prisma.vagas.create({
+    data: {
+      titulo: "Estagiário de TI",
+      localizacao: "Recife, PE",
+      descricao: "Estágio em desenvolvimento de software com mentoria especializada",
+      habilidades: ["JavaScript", "HTML", "CSS", "Git", "Lógica de Programação"],
+      apoios: ["Instruções claras", "Ambiente silencioso", "Software leitor de tela"],
+      compatibilidade: 95.0,
+      dataInicio: new Date("2024-02-15"),
+      dataFim: new Date("2024-08-15"),
+      tipoContrato: "Estágio",
+      tipoTrabalho: "Híbrido",
+      pagamento: "R$ 1.200 - R$ 1.500",
+      nivelTrabalho: "Júnior",
+      turno: "Matutino",
+      empresaId: empresa2.id
+    }
+  });
+
+  const vaga7 = await prisma.vagas.create({
+    data: {
+      titulo: "Gerente de Projetos",
+      localizacao: "Curitiba, PR",
+      descricao: "Gestão de projetos de tecnologia com foco em metodologias ágeis",
+      habilidades: ["Scrum", "Kanban", "Jira", "Gestão de Equipes", "Comunicação"],
+      apoios: ["Intérprete de Libras", "Comunicação visual", "Legendas"],
+      compatibilidade: 82.4,
+      dataInicio: new Date("2024-05-01"),
+      dataFim: new Date("2025-04-30"),
+      tipoContrato: "CLT",
+      tipoTrabalho: "Presencial",
+      pagamento: "R$ 8.000 - R$ 12.000",
+      nivelTrabalho: "Sênior",
+      turno: "Comercial",
+      empresaId: empresa1.id
+    }
+  });
+
+  const vaga8 = await prisma.vagas.create({
+    data: {
+      titulo: "Desenvolvedor Mobile",
+      localizacao: "Fortaleza, CE",
+      descricao: "Desenvolvimento de aplicativos móveis acessíveis para Android e iOS",
+      habilidades: ["React Native", "Flutter", "JavaScript", "TypeScript", "Acessibilidade Mobile"],
+      apoios: ["Teclado adaptado", "Software leitor de tela", "Mesa ajustável"],
+      compatibilidade: 87.1,
+      dataInicio: new Date("2024-03-15"),
+      dataFim: new Date("2024-12-15"),
+      tipoContrato: "PJ",
+      tipoTrabalho: "Remoto",
+      pagamento: "R$ 7.000 - R$ 10.000",
+      nivelTrabalho: "Pleno",
+      turno: "Flexível",
       empresaId: empresa2.id
     }
   });
@@ -454,6 +568,9 @@ async function main() {
     data: [
       { candidatoId: candidato1.id, vagaId: vaga1.id, status: "PENDENTE" },
       { candidatoId: candidato2.id, vagaId: vaga2.id, status: "APROVADO" },
+      { candidatoId: candidato1.id, vagaId: vaga3.id, status: "PENDENTE" },
+      { candidatoId: candidato2.id, vagaId: vaga4.id, status: "PENDENTE" },
+      { candidatoId: candidato1.id, vagaId: vaga6.id, status: "RECUSADO" },
     ]
   });
 
