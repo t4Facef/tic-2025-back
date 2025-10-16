@@ -563,14 +563,33 @@ async function main() {
     }
   });
 
-  // Criar candidaturas
+  // Criar candidaturas com datas variadas para testar estatísticas
+  const hoje = new Date();
+  const ontem = new Date(hoje);
+  ontem.setDate(hoje.getDate() - 1);
+  const semanaPassada = new Date(hoje);
+  semanaPassada.setDate(hoje.getDate() - 7);
+  const mesPassado = new Date(hoje);
+  mesPassado.setMonth(hoje.getMonth() - 1);
+
   await prisma.candidaturas.createMany({
     data: [
-      { candidatoId: candidato1.id, vagaId: vaga1.id, status: "PENDENTE" },
-      { candidatoId: candidato2.id, vagaId: vaga2.id, status: "APROVADO" },
-      { candidatoId: candidato1.id, vagaId: vaga3.id, status: "PENDENTE" },
-      { candidatoId: candidato2.id, vagaId: vaga4.id, status: "PENDENTE" },
-      { candidatoId: candidato1.id, vagaId: vaga6.id, status: "RECUSADO" },
+      // Candidaturas de hoje
+      { candidatoId: candidato1.id, vagaId: vaga1.id, status: "PENDENTE", dataCandidatura: hoje },
+      { candidatoId: candidato2.id, vagaId: vaga2.id, status: "PENDENTE", dataCandidatura: hoje },
+      { candidatoId: candidato1.id, vagaId: vaga4.id, status: "PENDENTE", dataCandidatura: hoje },
+      
+      // Candidaturas de ontem
+      { candidatoId: candidato2.id, vagaId: vaga3.id, status: "APROVADO", dataCandidatura: ontem },
+      { candidatoId: candidato1.id, vagaId: vaga5.id, status: "PENDENTE", dataCandidatura: ontem },
+      
+      // Candidaturas da semana passada
+      { candidatoId: candidato2.id, vagaId: vaga6.id, status: "RECUSADO", dataCandidatura: semanaPassada },
+      { candidatoId: candidato1.id, vagaId: vaga7.id, status: "PENDENTE", dataCandidatura: semanaPassada },
+      
+      // Candidaturas do mês passado
+      { candidatoId: candidato2.id, vagaId: vaga8.id, status: "APROVADO", dataCandidatura: mesPassado },
+      { candidatoId: candidato1.id, vagaId: vaga2.id, status: "RECUSADO", dataCandidatura: mesPassado },
     ]
   });
 
