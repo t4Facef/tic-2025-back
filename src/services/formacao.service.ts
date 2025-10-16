@@ -14,11 +14,21 @@ export const FormacaoService = {
   },
 
   async create(formacao: any) {
-    return await FormacaoRepository.create(formacao);
+    const formacaoData = {
+      ...formacao,
+      dataInicio: new Date(formacao.dataInicio),
+      dataFim: new Date(formacao.dataFim)
+    };
+    return await FormacaoRepository.create(formacaoData);
   },
 
   async update(id: number, formacao: any) {
-    return await FormacaoRepository.update(id, formacao);
+    const formacaoData = {
+      ...formacao,
+      dataInicio: formacao.dataInicio ? new Date(formacao.dataInicio) : undefined,
+      dataFim: formacao.dataFim ? new Date(formacao.dataFim) : undefined
+    };
+    return await FormacaoRepository.update(id, formacaoData);
   },
 
   async delete(id: number) {
