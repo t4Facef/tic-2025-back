@@ -5,6 +5,7 @@ import { authMiddleware } from "../middleware/auth.middleware";
 const router = Router();
 
 router.get("/profile", authMiddleware, CandidatoController.getProfile);
+router.get("/:id/profile", CandidatoController.getProfileById);
 router.put("/:id", CandidatoController.update);
 
 export default router;

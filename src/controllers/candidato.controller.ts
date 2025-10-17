@@ -12,6 +12,16 @@ export const CandidatoController = {
     }
   },
 
+  async getProfileById(req: Request, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      const candidato = await CandidatoService.getProfile(id);
+      res.json(candidato);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  },
+
   async update(req: Request, res: Response) {
     try {
       const id = Number(req.params.id);
