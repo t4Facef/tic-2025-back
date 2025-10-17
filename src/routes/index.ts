@@ -10,7 +10,7 @@ import candidaturasRoutes from "./candidaturas.routes";
 import enderecoRoutes from "./endereco.routes";
 import experienciasRoutes from "./experiencias.routes";
 import formacaoRoutes from "./formacao.routes";
-import habilidadesRoutes from "./habilidades.routes";
+
 import vagasRoutes from "./vagas.routes";
 import candidatoRoutes from "./candidato.routes";
 import compatibilidadeRoutes from "./compatibilidade.routes";
@@ -30,7 +30,7 @@ router.use("/candidaturas", candidaturasRoutes);
 router.use("/endereco", enderecoRoutes);
 router.use("/experiencias", experienciasRoutes);
 router.use("/formacao", formacaoRoutes);
-router.use("/habilidades", habilidadesRoutes);
+
 router.use("/vagas", vagasRoutes);
 router.use("/candidato", candidatoRoutes);
 router.use("/compatibilidade", compatibilidadeRoutes);

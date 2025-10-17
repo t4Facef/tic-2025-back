@@ -72,7 +72,7 @@ model Candidato {
   formacoes    FormacaoOuCurso[]
   candidaturas Candidaturas[]
   subtipos     CandidatoSubtipo[]
-  habilidades  Habilidades[]
+  habilidades  String[]
   experiencia  Experiencias[]
 
   createdAt DateTime @default(now())
@@ -220,17 +220,7 @@ model FormacaoOuCurso {
   updatedAt DateTime @updatedAt
 }
 
-// Model de Habilidades
-model Habilidades {
-  id          Int       @id @default(autoincrement())
-  candidatoId Int
-  candidato   Candidato @relation(fields: [candidatoId], references: [id], onDelete: Cascade)
 
-  nome String
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
 
 // Model de Experiencias
 model Experiencias {

@@ -10,7 +10,6 @@ export const CandidatoService = {
         endereco: true,
         formacoes: true,
         experiencia: true,
-        habilidades: true,
         subtipos: {
           include: {
             subtipo: {
@@ -41,5 +40,26 @@ export const CandidatoService = {
     }
 
     return candidato;
+  },
+
+  async update(candidatoId: number, data: any) {
+    return await prisma.candidato.update({
+      where: { id: candidatoId },
+      data,
+      include: {
+        endereco: true,
+        formacoes: true,
+        experiencia: true,
+        subtipos: {
+          include: {
+            subtipo: {
+              include: {
+                tipo: true
+              }
+            }
+          }
+        }
+      }
+    });
   }
 };

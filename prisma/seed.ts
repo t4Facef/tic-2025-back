@@ -9,7 +9,7 @@ async function main() {
   await prisma.vagas.deleteMany();
   await prisma.formacaoOuCurso.deleteMany();
   await prisma.experiencias.deleteMany();
-  await prisma.habilidades.deleteMany();
+
   await prisma.candidatoSubtipo.deleteMany();
   await prisma.barreiraAcessibilidade.deleteMany();
   await prisma.empresaAcessibilidade.deleteMany();
@@ -333,6 +333,7 @@ async function main() {
       genero: "Masculino",
       telefones: ["11999991111"],
       areaInteresse: "Tecnologia",
+      habilidades: ["JavaScript", "React", "Node.js", "PostgreSQL"],
       laudo: Buffer.from("laudo-medico-joao")
     }
   });
@@ -348,6 +349,7 @@ async function main() {
       genero: "Feminino",
       telefones: ["21888882222"],
       areaInteresse: "Administração",
+      habilidades: ["Recrutamento", "Gestão de Pessoas", "Excel", "PowerBI"],
       laudo: Buffer.from("laudo-medico-maria")
     }
   });
