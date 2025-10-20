@@ -30,5 +30,27 @@ export const CandidatoController = {
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
+  },
+
+  async updateFormacoesBatch(req: Request, res: Response) {
+    try {
+      const candidatoId = (req as any).user.id;
+      const { formacoes } = req.body;
+      await CandidatoService.updateFormacoesBatch(candidatoId, formacoes);
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  },
+
+  async updateExperienciasBatch(req: Request, res: Response) {
+    try {
+      const candidatoId = (req as any).user.id;
+      const { experiencias } = req.body;
+      await CandidatoService.updateExperienciasBatch(candidatoId, experiencias);
+      res.json({ success: true });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
   }
 };
