@@ -170,7 +170,7 @@ model Vagas {
   nivelTrabalho String
   turno        String
   status       String   @default("DISPONIVEL")
-  setor        String
+  setor        String?
 
   empresaId Int
   empresa   Empresa @relation(fields: [empresaId], references: [id], onDelete: Cascade)
