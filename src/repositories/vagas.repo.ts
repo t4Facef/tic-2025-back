@@ -63,6 +63,9 @@ export const VagasRepository = {
       if (filters.apoios) {
         where.apoios = { has: filters.apoios };
       }
+      if (filters.setor) {
+        where.setor = { contains: filters.setor, mode: 'insensitive' };
+      }
     }
 
     return await prisma.vagas.findMany({
@@ -142,6 +145,9 @@ export const VagasRepository = {
     }
     if (filters.apoiosList && filters.apoiosList.length > 0) {
       where.apoios = { hasSome: filters.apoiosList };
+    }
+    if (filters.setor) {
+      where.setor = { contains: filters.setor, mode: 'insensitive' };
     }
     if (filters.dataInicioMin) {
       where.dataInicio = { ...where.dataInicio, gte: new Date(filters.dataInicioMin) };
