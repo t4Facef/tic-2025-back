@@ -12,6 +12,7 @@ interface VagasFilters {
   apoios?: string;
   setor?: string;
   recomendadas?: boolean;
+  candidatoId?: string;
 }
 
 interface VagasSearchFilters extends VagasFilters {
@@ -21,6 +22,7 @@ interface VagasSearchFilters extends VagasFilters {
   salarioMax?: number;
   dataInicioMin?: string;
   dataInicioMax?: string;
+  candidatoId?: string;
 }
 
 export const VagasRepository = {
@@ -68,11 +70,32 @@ export const VagasRepository = {
       }
     }
 
-    return await prisma.vagas.findMany({
+    let vagas = await prisma.vagas.findMany({
       where,
       include: { empresa: true },
       orderBy: { createdAt: 'desc' }
     });
+
+    // Filtro de recomendação
+    if (filters?.recomendadas && filters?.candidatoId) {
+      const { CompatibilidadeService } = require('../services/compatibilidade.service');
+      const candidatoId = parseInt(filters.candidatoId);
+      
+      const vagasRecomendadas = [];
+      for (const vaga of vagas) {
+        try {
+          const compatibilidade = await CompatibilidadeService.calcularCompatibilidade(candidatoId, vaga.id);
+          if (compatibilidade >= 0.7) { // 70% ou mais
+            vagasRecomendadas.push(vaga);
+          }
+        } catch (error) {
+          // Ignora vagas com erro de compatibilidade
+        }
+      }
+      vagas = vagasRecomendadas;
+    }
+
+    return vagas;
   },
 
   async findById(id: number) {
@@ -156,7 +179,7 @@ export const VagasRepository = {
       where.dataInicio = { ...where.dataInicio, lte: new Date(filters.dataInicioMax) };
     }
 
-    return await prisma.vagas.findMany({
+    let vagas = await prisma.vagas.findMany({
       where,
       include: { 
         empresa: true,
@@ -166,5 +189,26 @@ export const VagasRepository = {
       },
       orderBy: { createdAt: 'desc' }
     });
+
+    // Filtro de recomendação
+    if (filters.recomendadas && filters.candidatoId) {
+      const { CompatibilidadeService } = require('../services/compatibilidade.service');
+      const candidatoId = parseInt(filters.candidatoId);
+      
+      const vagasRecomendadas = [];
+      for (const vaga of vagas) {
+        try {
+          const compatibilidade = await CompatibilidadeService.calcularCompatibilidade(candidatoId, vaga.id);
+          if (compatibilidade >= 0.7) { // 70% ou mais
+            vagasRecomendadas.push(vaga);
+          }
+        } catch (error) {
+          // Ignora vagas com erro de compatibilidade
+        }
+      }
+      vagas = vagasRecomendadas;
+    }
+
+    return vagas;
   },
 };

@@ -29,6 +29,7 @@ interface VagasFilters {
   apoios?: string;
   setor?: string;
   recomendadas?: boolean;
+  candidatoId?: string;
 }
 
 interface VagasSearchFilters extends VagasFilters {
@@ -38,6 +39,7 @@ interface VagasSearchFilters extends VagasFilters {
   salarioMax?: number;
   dataInicioMin?: string;
   dataInicioMax?: string;
+  candidatoId?: string;
 }
 
 export const VagasService = {
