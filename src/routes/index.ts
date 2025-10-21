@@ -15,6 +15,7 @@ import vagasRoutes from "./vagas.routes";
 import candidatoRoutes from "./candidato.routes";
 import compatibilidadeRoutes from "./compatibilidade.routes";
 import estatisticasRoutes from "./estatisticas.routes";
+import arquivoRoutes from "./arquivo.routes";
 
 const router = Router();
 
@@ -35,5 +36,6 @@ router.use("/vagas", vagasRoutes);
 router.use("/candidato", candidatoRoutes);
 router.use("/compatibilidade", compatibilidadeRoutes);
 router.use("/estatisticas", estatisticasRoutes);
+router.use("/arquivos", arquivoRoutes);
 
 export default router;

@@ -42,6 +42,8 @@ model Empresa {
   foto              Bytes?
   certificacoes     String[]
 
+  arquivos        Arquivo[]
+
   enderecoId Int?      @unique
   endereco   Endereco? @relation(fields: [enderecoId], references: [id], onDelete: SetNull)
 
@@ -74,6 +76,8 @@ model Candidato {
   subtipos     CandidatoSubtipo[]
   habilidades  String[]
   experiencia  Experiencias[]
+
+  arquivos        Arquivo[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -249,4 +253,25 @@ model EmpresaAcessibilidade {
 
   @@id([empresaId, acessibilidadeId])
   @@index([empresaId])
+}
+
+model Arquivo {
+  id        Int      @id @default(autoincrement())
+  tipo      TipoArquivo
+  filename  String
+  mimetype  String
+  data      Bytes
+  createdAt DateTime @default(now())
+
+  candidato    Candidato?    @relation(fields: [candidatoId], references: [id])
+  candidatoId  Int?
+
+  empresa      Empresa?      @relation(fields: [empresaId], references: [id])
+  empresaId    Int?
+}
+
+enum TipoArquivo {
+  LAUDO
+  CURRICULO
+  FOTO
 }
