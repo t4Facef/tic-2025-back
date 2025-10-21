@@ -1,5 +1,6 @@
 import fs from "fs";
 import { ArquivoRepository } from "../repositories/arquivo.repo";
+import { processImage } from "../middleware/upload";
 
 interface SalvarArquivoInput {
   file: Express.Multer.File;
@@ -17,13 +18,14 @@ export const ArquivoService = {
       throw Object.assign(new Error("Informe candidatoId ou empresaId"), { status: 400 });
     }
 
-    const data = fs.readFileSync(file.path);
+    // Processar imagem se for foto, senão ler arquivo normal
+    const data = await processImage(file.path, tipo);
     fs.unlinkSync(file.path);
 
     const arquivoData = {
       tipo,
       filename: file.originalname,
-      mimetype: file.mimetype,
+      mimetype: tipo === 'FOTO' ? 'image/jpeg' : file.mimetype,
       data,
       candidatoId: candidatoId || null,
       empresaId: empresaId || null,
