@@ -4,6 +4,7 @@ import { VagasController } from "../controllers/vagas.controller";
 const router = Router();
 
 router.get("/", VagasController.list);
+router.get("/recomendadas", VagasController.getRecomendadas);
 router.post("/search", VagasController.search);
 router.get("/candidato/:candidatoId", VagasController.getVagasComCompatibilidade);
 router.get("/empresa/:empresaId", VagasController.getByEmpresa);

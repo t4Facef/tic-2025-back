@@ -41,25 +41,90 @@ const client_1 = require("@prisma/client");
 const email_service_1 = require("./email.service");
 const prisma = new client_1.PrismaClient();
 exports.AuthService = {
-    async registrarCandidato(nome, email, senha, cpf, dataNascimento) {
+    async verificarEmailExiste(email) {
+        const candidato = await prisma.candidato.findUnique({ where: { email } });
+        const empresa = await prisma.empresa.findUnique({ where: { email } });
+        return !!(candidato || empresa);
+    },
+    async VerificarCPFExiste(cpf) {
+        const candidato = await prisma.candidato.findUnique({ where: { cpf } });
+        return !!candidato;
+    },
+    async VerificarCNPJExiste(cnpj) {
+        const empresa = await prisma.empresa.findUnique({ where: { cnpj } });
+        return !!empresa;
+    },
+    async registrarCandidato(dadosCandidato) {
+        const { nome, email, senha, cpf, dataNascimento, sexo, genero, telefones, endereco, areaInteresse, formacao, experiencia, subtiposDeficiencia } = dadosCandidato;
         const existeEmail = await prisma.candidato.findUnique({ where: { email } }) ||
             await prisma.empresa.findUnique({ where: { email } });
         if (existeEmail)
             throw new Error("Email já cadastrado");
         const hash = await bcrypt.hash(senha, 10);
+        const dataNasc = new Date(dataNascimento);
+        if (isNaN(dataNasc.getTime())) {
+            throw new Error(`Data de nascimento inválida: ${dataNascimento}`);
+        }
         return prisma.candidato.create({
             data: {
                 nome,
-                email,
-                senha: hash,
                 cpf,
-                dataNascimento,
-                telefones: [],
-                laudo: Buffer.from('') // Campo obrigatório no schema
+                dataNascimento: dataNasc,
+                sexo: sexo || null,
+                genero: genero || null,
+                email,
+                telefones: telefones || [],
+                areaInteresse,
+                laudo: Buffer.from(''),
+                senha: hash,
+                // Criar endereço junto (nested create)
+                endereco: endereco && endereco.cep ? {
+                    create: {
+                        cep: endereco.cep,
+                        estado: endereco.estado,
+                        cidade: endereco.cidade,
+                        bairro: endereco.bairro,
+                        rua: endereco.rua,
+                        numero: endereco.numero,
+                        complemento: endereco.complemento || null
+                    }
+                } : undefined,
+                // Criar formação junto (nested create)
+                formacoes: formacao ? {
+                    create: {
+                        nomeCurso: formacao.nomeCurso,
+                        tipoFormacao: formacao.tipo,
+                        instituicao: formacao.instituicao,
+                        situacao: formacao.situacao,
+                        dataInicio: new Date(formacao.dataInicio),
+                        dataFim: new Date(formacao.dataFim),
+                        descricao: formacao.descricao,
+                    }
+                } : undefined,
+                // Criar experiência junto (nested create)
+                experiencia: experiencia && experiencia.empresa ? {
+                    create: {
+                        titulo: experiencia.titulo,
+                        instituicao: experiencia.empresa,
+                        dataInicio: new Date(experiencia.dataInicio),
+                        dataFim: new Date(experiencia.dataFim),
+                        descricao: experiencia.descricao,
+                        tipoContrato: experiencia.tipo
+                    }
+                } : undefined,
+                // Conectar subtipos de deficiência (apenas IDs)
+                subtipos: subtiposDeficiencia && subtiposDeficiencia.length > 0 ? {
+                    create: subtiposDeficiencia
+                        .filter((id) => !isNaN(Number(id)))
+                        .map((subtipoId) => ({
+                        subtipoId: Number(subtipoId)
+                    }))
+                } : undefined,
             },
         });
     },
-    async registrarEmpresa(razaoSocial, nomeFantasia, email, senha, cnpj, telefoneComercial, numFunc, numFuncPcd, site, area) {
+    async registrarEmpresa(dadosEmpresa) {
+        const { razaoSocial, nomeFantasia, cnpj, numFunc, area, email, telefoneComercial, site, endereco, acessibilidades, senha } = dadosEmpresa;
         const existeEmail = await prisma.candidato.findUnique({ where: { email } }) ||
             await prisma.empresa.findUnique({ where: { email } });
         if (existeEmail)
@@ -75,8 +140,21 @@ exports.AuthService = {
                 cnpj,
                 telefoneComercial,
                 numFunc,
-                numFuncPcd,
-                area
+                area,
+                endereco: endereco && endereco.cep ? {
+                    create: {
+                        cep: endereco.cep,
+                        estado: endereco.estado,
+                        cidade: endereco.cidade,
+                        bairro: endereco.bairro,
+                        rua: endereco.rua,
+                        numero: endereco.numero,
+                        complemento: endereco.complemento || null
+                    }
+                } : undefined,
+                empresaAcessibilidade: acessibilidades && acessibilidades.length > 0 ? {
+                    create: acessibilidades.map((id) => ({ acessibilidadeId: id }))
+                } : undefined
             },
         });
     },

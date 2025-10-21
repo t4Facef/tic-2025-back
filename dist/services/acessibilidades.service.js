@@ -8,11 +8,22 @@ exports.AcessService = {
     list() {
         return acessibilidades_repo_1.AcessRepo.list();
     },
-    // Cria acessibilidade com validação
-    async create(descricao) {
-        const final = (descricao ?? "").trim();
+    listNames() {
+        return acessibilidades_repo_1.AcessRepo.listNames();
+    },
+    // Lista acessibilidades por empresa
+    listByEmpresa(empresaId) {
+        return acessibilidades_repo_1.AcessRepo.findByEmpresa(empresaId);
+    },
+    // Busca acessibilidade por ID
+    findById(id) {
+        return acessibilidades_repo_1.AcessRepo.findById(id);
+    },
+    // Cria acessibilidade padrão com validação
+    async create(nome) {
+        const final = (nome ?? "").trim();
         if (!final)
-            throw Object.assign(new Error("O campo 'descricao' é obrigatório"), {
+            throw Object.assign(new Error("O campo 'nome' é obrigatório"), {
                 status: 400,
             });
         return acessibilidades_repo_1.AcessRepo.create(final);

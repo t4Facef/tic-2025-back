@@ -99,7 +99,10 @@ export const VagasService = {
     return await VagasRepository.delete(id);
   },
 
-  async search(filters: VagasSearchFilters) {
-    return await VagasRepository.search(filters);
+
+
+  async getRecomendadas(candidatoId: number) {
+    const filters = { candidatoId: candidatoId.toString(), recomendadas: true };
+    return await VagasRepository.findAll(filters);
   },
 };

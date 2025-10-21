@@ -17,7 +17,7 @@ export const CandidaturasService = {
     return await CandidaturasRepository.create(candidatoId, vagaId);
   },
 
-  async updateStatus(id: number, status: string) {
+  async updateStatus(id: number, status: "PENDENTE" | "APROVADO" | "RECUSADO") {
     return await CandidaturasRepository.updateStatus(id, status);
   },
 

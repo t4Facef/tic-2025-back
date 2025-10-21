@@ -3,10 +3,48 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.AuthController = void 0;
 const auth_service_1 = require("../services/auth.service");
 exports.AuthController = {
+    async verificarEmail(req, res) {
+        try {
+            const { email } = req.query;
+            if (!email || typeof email !== 'string') {
+                return res.status(400).json({ error: 'Email é obrigatório' });
+            }
+            const exists = await auth_service_1.AuthService.verificarEmailExiste(email);
+            res.json({ exists });
+        }
+        catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
+    async verificarCPF(req, res) {
+        try {
+            const { cpf } = req.query;
+            if (!cpf || typeof cpf !== 'string') {
+                return res.status(400).json({ error: 'CPF é obrigatório' });
+            }
+            const exists = await auth_service_1.AuthService.VerificarCPFExiste(cpf);
+            res.json({ exists });
+        }
+        catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
+    async verificarCNPJ(req, res) {
+        try {
+            const { cnpj } = req.query;
+            if (!cnpj || typeof cnpj !== 'string') {
+                return res.status(400).json({ error: 'CPF é obrigatório' });
+            }
+            const exists = await auth_service_1.AuthService.VerificarCNPJExiste(cnpj);
+            res.json({ exists });
+        }
+        catch (error) {
+            res.status(500).json({ error: error.message });
+        }
+    },
     async registrarCandidato(req, res) {
         try {
-            const { nome, email, senha, cpf, dataNascimento } = req.body;
-            const user = await auth_service_1.AuthService.registrarCandidato(nome, email, senha, cpf, new Date(dataNascimento));
+            const user = await auth_service_1.AuthService.registrarCandidato(req.body);
             res.status(201).json({ message: "Candidato registrado com sucesso", id: user.id });
         }
         catch (error) {
@@ -15,8 +53,7 @@ exports.AuthController = {
     },
     async registrarEmpresa(req, res) {
         try {
-            const { razaoSocial, nomeFantasia, email, senha, cnpj, telefoneComercial, numFunc, numFuncPcd, site, area } = req.body;
-            const user = await auth_service_1.AuthService.registrarEmpresa(razaoSocial, nomeFantasia, email, senha, cnpj, telefoneComercial, numFunc, numFuncPcd, site, area);
+            const user = await auth_service_1.AuthService.registrarEmpresa(req.body);
             res.status(201).json({ message: "Empresa registrada com sucesso", id: user.id });
         }
         catch (error) {

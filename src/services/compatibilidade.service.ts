@@ -20,8 +20,7 @@ export const CompatibilidadeService = {
               }
             }
           }
-        },
-        habilidades: true
+        }
       }
     });
 
@@ -102,19 +101,41 @@ export const CompatibilidadeService = {
   },
 
   calcularCompatibilidadeHabilidades(candidato: any, vaga: any): number {
-    const habilidadesCandidato = candidato.habilidades.map((h: any) => h.nome.toLowerCase().trim());
+    // Candidato tem habilidades como array de strings
+    const habilidadesCandidato = candidato.habilidades.map((h: string) => h.toLowerCase().trim());
     const habilidadesVaga = vaga.habilidades.map((h: string) => h.toLowerCase().trim());
 
     if (habilidadesVaga.length === 0) {
       return 1.0; // Se a vaga não exige habilidades específicas
     }
 
-    // Contar habilidades que coincidem
-    const habilidadesCoincidentes = habilidadesVaga.filter((habilidadeVaga: string) =>
-      habilidadesCandidato.some((habilidadeCandidato: string) =>
-        habilidadeCandidato.includes(habilidadeVaga) || habilidadeVaga.includes(habilidadeCandidato)
-      )
-    );
+    // Contar habilidades que coincidem (com sinônimos)
+    const sinonimos: { [key: string]: string[] } = {
+      'javascript': ['js', 'javascript', 'ecmascript'],
+      'typescript': ['ts', 'typescript'],
+      'python': ['py', 'python'],
+      'react': ['react', 'reactjs', 'react.js'],
+      'node': ['node', 'nodejs', 'node.js'],
+      'sql': ['sql', 'mysql', 'postgresql', 'postgres']
+    };
+    
+    const habilidadesCoincidentes = habilidadesVaga.filter((habilidadeVaga: string) => {
+      return habilidadesCandidato.some((habilidadeCandidato: string) => {
+        // Verificação direta
+        if (habilidadeCandidato.includes(habilidadeVaga) || habilidadeVaga.includes(habilidadeCandidato)) {
+          return true;
+        }
+        
+        // Verificação com sinônimos
+        for (const [chave, valores] of Object.entries(sinonimos)) {
+          if (valores.includes(habilidadeCandidato) && valores.includes(habilidadeVaga)) {
+            return true;
+          }
+        }
+        
+        return false;
+      });
+    });
 
     return habilidadesCoincidentes.length / habilidadesVaga.length;
   },
@@ -136,13 +157,35 @@ export const CompatibilidadeService = {
     let apoiosRelevantes = 0;
     
     for (const barreira of barreiras) {
-      const apoioRelevante = apoiosVaga.some((apoio: string) =>
-        apoio.includes('acessibilidade') ||
-        apoio.includes('adaptação') ||
-        apoio.includes('suporte') ||
-        barreira.includes(apoio) ||
-        apoio.includes(barreira.split(' ')[0]) // Primeira palavra da barreira
-      );
+      const barreirasTexto = barreira.toLowerCase();
+      const apoioRelevante = apoiosVaga.some((apoio: string) => {
+        // Apoios gerais
+        if (apoio.includes('acessibilidade') || apoio.includes('adaptação') || apoio.includes('suporte')) {
+          return true;
+        }
+        
+        // Apoios específicos para barreiras visuais
+        if (barreirasTexto.includes('leitura') || barreirasTexto.includes('navegação visual')) {
+          return apoio.includes('leitor de tela') || apoio.includes('braille') || apoio.includes('audiodescrição');
+        }
+        
+        // Apoios específicos para barreiras auditivas
+        if (barreirasTexto.includes('comunicação') || barreirasTexto.includes('áudio')) {
+          return apoio.includes('libras') || apoio.includes('legendas') || apoio.includes('amplificação');
+        }
+        
+        // Apoios específicos para barreiras físicas
+        if (barreirasTexto.includes('acesso') || barreirasTexto.includes('locomoção')) {
+          return apoio.includes('rampa') || apoio.includes('elevador') || apoio.includes('banheiro adaptado');
+        }
+        
+        // Apoios específicos para barreiras cognitivas
+        if (barreirasTexto.includes('compreensão') || barreirasTexto.includes('concentração')) {
+          return apoio.includes('instruções claras') || apoio.includes('linguagem simples') || apoio.includes('ambiente silencioso');
+        }
+        
+        return false;
+      });
       
       if (apoioRelevante) {
         apoiosRelevantes++;

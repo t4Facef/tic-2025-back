@@ -17,4 +17,8 @@ exports.BarreirasService = {
             });
         return barreiras_repo_1.BarreirasRepo.create(final);
     },
+    // Busca barreiras por subtipo
+    getBySubtipo(subtipoId) {
+        return barreiras_repo_1.BarreirasRepo.findBySubtipo(subtipoId);
+    },
 };

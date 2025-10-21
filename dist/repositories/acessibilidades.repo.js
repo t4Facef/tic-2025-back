@@ -6,14 +6,50 @@ const prisma_1 = require("./prisma");
 exports.AcessRepo = {
     // Lista todas as acessibilidades
     list() {
-        return prisma_1.prisma.acessibilidade.findMany({ orderBy: { id: "asc" } });
+        return prisma_1.prisma.acessibilidade.findMany({
+            orderBy: { id: "asc" },
+            include: {
+                EmpresaAcessibilidade: {
+                    include: { empresa: true }
+                }
+            }
+        });
     },
-    // Cria uma nova acessibilidade
-    create(descricao) {
-        return prisma_1.prisma.acessibilidade.create({ data: { descricao } });
+    listNames() {
+        return prisma_1.prisma.acessibilidade.findMany({
+            select: {
+                id: true,
+                nome: true
+            },
+            orderBy: { nome: "asc" }
+        });
+    },
+    // Cria uma nova acessibilidade padrão
+    create(nome) {
+        return prisma_1.prisma.acessibilidade.create({
+            data: { nome }
+        });
     },
     // Busca acessibilidade por ID
     findById(id) {
-        return prisma_1.prisma.acessibilidade.findUnique({ where: { id } });
+        return prisma_1.prisma.acessibilidade.findUnique({
+            where: { id },
+            include: {
+                EmpresaAcessibilidade: {
+                    include: { empresa: true }
+                }
+            }
+        });
+    },
+    // Busca acessibilidades por empresa
+    findByEmpresa(empresaId) {
+        return prisma_1.prisma.acessibilidade.findMany({
+            where: {
+                EmpresaAcessibilidade: {
+                    some: { empresaId }
+                }
+            },
+            orderBy: { id: "asc" }
+        });
     },
 };

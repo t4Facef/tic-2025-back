@@ -16,7 +16,7 @@ exports.SubtiposService = {
             descricao: sb.barreira.descricao,
             acessibilidades: sb.barreira.acessibilidades.map((ba) => ({
                 id: ba.acessibilidade.id,
-                descricao: ba.acessibilidade.descricao,
+                nome: ba.acessibilidade.nome, // Campo correto é 'nome', não 'descricao'
             })),
         }));
         return {
@@ -39,4 +39,15 @@ exports.SubtiposService = {
             throw Object.assign(new Error("Tipo não encontrado"), { status: 404 });
         return subtipos_repo_1.SubtiposRepo.create(final, tipoId);
     },
+    async getByTipoId(tipoId) {
+        if (!Number.isInteger(tipoId))
+            throw Object.assign(new Error("tipoId inválido"), { status: 400 });
+        // Verifica se o tipo existe
+        const tipo = await tipos_repo_1.TiposRepo.findById(tipoId);
+        if (!tipo)
+            throw Object.assign(new Error("Tipo não encontrado"), { status: 404 });
+        // Busca subtipos do tipo - corrigindo a chamada do método
+        const subtipos = await subtipos_repo_1.SubtiposRepo.findSubtiposByTipo(tipoId);
+        return subtipos;
+    }
 };

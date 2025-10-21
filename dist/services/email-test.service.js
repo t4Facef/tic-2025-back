@@ -8,7 +8,7 @@ const nodemailer_1 = __importDefault(require("nodemailer"));
 // Alternativa para testes - cria conta temporária
 const createTestEmailService = async () => {
     const testAccount = await nodemailer_1.default.createTestAccount();
-    const transporter = nodemailer_1.default.createTransporter({
+    const transporter = nodemailer_1.default.createTransport({
         host: 'smtp.ethereal.email',
         port: 587,
         secure: false,

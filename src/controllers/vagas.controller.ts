@@ -108,7 +108,20 @@ export const VagasController = {
   async search(req: Request, res: Response) {
     try {
       const filters = req.body;
-      const data = await VagasService.search(filters);
+      const data = await VagasService.list(filters);
+      res.json(data);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  },
+
+  async getRecomendadas(req: Request, res: Response) {
+    try {
+      const candidatoId = req.query.candidatoId ? Number(req.query.candidatoId) : null;
+      if (!candidatoId) {
+        return res.status(400).json({ error: "candidatoId é obrigatório para recomendações" });
+      }
+      const data = await VagasService.getRecomendadas(candidatoId);
       res.json(data);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
@@ -119,30 +132,9 @@ export const VagasController = {
   async getVagasComCompatibilidade(req: Request, res: Response) {
     try {
       const candidatoId = Number(req.params.candidatoId);
-      const vagas = await VagasService.list({});
-      
-      const vagasComCompatibilidade = [];
-      
-      for (const vaga of vagas) {
-        try {
-          const compatibilidade = await CompatibilidadeService.calcularCompatibilidade(candidatoId, vaga.id);
-          vagasComCompatibilidade.push({
-            ...vaga,
-            compatibilidade: compatibilidade,
-            compatibilidadeFormatada: `${(compatibilidade * 100).toFixed(1)}%`
-          });
-        } catch (error) {
-          vagasComCompatibilidade.push({
-            ...vaga,
-            compatibilidade: 0,
-            compatibilidadeFormatada: "0.0%"
-          });
-        }
-      }
-      
-      vagasComCompatibilidade.sort((a, b) => b.compatibilidade - a.compatibilidade);
-      
-      res.json(vagasComCompatibilidade);
+      const filters = { ...req.query, candidatoId: candidatoId.toString() };
+      const vagas = await VagasService.list(filters);
+      res.json(vagas);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }

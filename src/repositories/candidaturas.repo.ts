@@ -27,7 +27,7 @@ export const CandidaturasRepository = {
     });
   },
 
-  async updateStatus(id: number, status: string) {
+  async updateStatus(id: number, status: "PENDENTE" | "APROVADO" | "RECUSADO") {
     return await prisma.candidaturas.update({
       where: { id },
       data: { status },

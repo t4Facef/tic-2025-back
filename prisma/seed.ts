@@ -4,23 +4,12 @@ import * as bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 async function main() {
-  // Limpar dados existentes
-  await prisma.candidaturas.deleteMany();
-  await prisma.vagas.deleteMany();
-  await prisma.formacaoOuCurso.deleteMany();
-  await prisma.experiencias.deleteMany();
-
-  await prisma.candidatoSubtipo.deleteMany();
-  await prisma.barreiraAcessibilidade.deleteMany();
-  await prisma.empresaAcessibilidade.deleteMany();
-  await prisma.acessibilidade.deleteMany();
-  await prisma.subtipoBarreira.deleteMany();
-  await prisma.candidato.deleteMany();
-  await prisma.empresa.deleteMany();
-  await prisma.endereco.deleteMany();
-  await prisma.barreira.deleteMany();
-  await prisma.subtipoDeficiencia.deleteMany();
-  await prisma.tipoDeficiencia.deleteMany();
+  // Verificar se já existem dados básicos
+  const tiposExistentes = await prisma.tipoDeficiencia.count();
+  if (tiposExistentes > 0) {
+    console.log('Dados básicos já existem. Pulando seed para preservar dados do usuário.');
+    return;
+  }
 
   // Criar tipos de deficiência
   const tipoVisual = await prisma.tipoDeficiencia.create({

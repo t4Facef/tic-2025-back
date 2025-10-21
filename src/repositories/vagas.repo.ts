@@ -76,23 +76,40 @@ export const VagasRepository = {
       orderBy: { createdAt: 'desc' }
     });
 
-    // Filtro de recomendação
-    if (filters?.recomendadas && filters?.candidatoId) {
+    // Filtro de recomendação com candidatoId
+    if (filters?.candidatoId) {
       const { CompatibilidadeService } = require('../services/compatibilidade.service');
       const candidatoId = parseInt(filters.candidatoId);
       
-      const vagasRecomendadas = [];
+      const vagasComCompatibilidade: any[] = [];
       for (const vaga of vagas) {
         try {
           const compatibilidade = await CompatibilidadeService.calcularCompatibilidade(candidatoId, vaga.id);
-          if (compatibilidade >= 0.7) { // 70% ou mais
-            vagasRecomendadas.push(vaga);
-          }
+          const { compatibilidade: _, ...vagaSemCompatibilidadeFixa } = vaga;
+          vagasComCompatibilidade.push({
+            ...vagaSemCompatibilidadeFixa,
+            compatibilidadeCalculada: compatibilidade,
+            compatibilidadeFormatada: `${(compatibilidade * 100).toFixed(1)}%`
+          });
         } catch (error) {
-          // Ignora vagas com erro de compatibilidade
+          const { compatibilidade: _, ...vagaSemCompatibilidadeFixa } = vaga;
+          vagasComCompatibilidade.push({
+            ...vagaSemCompatibilidadeFixa,
+            compatibilidadeCalculada: 0,
+            compatibilidadeFormatada: "0.0%"
+          });
         }
       }
-      vagas = vagasRecomendadas;
+      
+      // Se for filtro de recomendadas, filtrar apenas >= 70%
+      if (filters.recomendadas) {
+        return vagasComCompatibilidade
+          .filter(vaga => vaga.compatibilidadeCalculada >= 0.7)
+          .sort((a, b) => b.compatibilidadeCalculada - a.compatibilidadeCalculada)
+          .slice(0, 3);
+      } else {
+        return vagasComCompatibilidade.sort((a, b) => b.compatibilidadeCalculada - a.compatibilidadeCalculada);
+      }
     }
 
     return vagas;
@@ -131,84 +148,7 @@ export const VagasRepository = {
     });
   },
 
-  async search(filters: VagasSearchFilters) {
-    const where: any = {};
 
-    if (filters.titulo) {
-      where.titulo = { contains: filters.titulo, mode: 'insensitive' };
-    }
-    if (filters.localizacao) {
-      where.localizacao = { contains: filters.localizacao, mode: 'insensitive' };
-    }
-    if (filters.tipoContrato) {
-      if (Array.isArray(filters.tipoContrato)) {
-        where.tipoContrato = { in: filters.tipoContrato };
-      } else {
-        where.tipoContrato = filters.tipoContrato;
-      }
-    }
-    if (filters.tipoTrabalho) {
-      if (Array.isArray(filters.tipoTrabalho)) {
-        where.tipoTrabalho = { in: filters.tipoTrabalho };
-      } else {
-        where.tipoTrabalho = filters.tipoTrabalho;
-      }
-    }
-    if (filters.nivelTrabalho) {
-      where.nivelTrabalho = filters.nivelTrabalho;
-    }
-    if (filters.turno) {
-      where.turno = filters.turno;
-    }
-    if (filters.empresaId) {
-      where.empresaId = parseInt(filters.empresaId);
-    }
-    if (filters.habilidadesList && filters.habilidadesList.length > 0) {
-      where.habilidades = { hasSome: filters.habilidadesList };
-    }
-    if (filters.apoiosList && filters.apoiosList.length > 0) {
-      where.apoios = { hasSome: filters.apoiosList };
-    }
-    if (filters.setor) {
-      where.setor = { contains: filters.setor, mode: 'insensitive' };
-    }
-    if (filters.dataInicioMin) {
-      where.dataInicio = { ...where.dataInicio, gte: new Date(filters.dataInicioMin) };
-    }
-    if (filters.dataInicioMax) {
-      where.dataInicio = { ...where.dataInicio, lte: new Date(filters.dataInicioMax) };
-    }
 
-    let vagas = await prisma.vagas.findMany({
-      where,
-      include: { 
-        empresa: true,
-        candidaturas: {
-          select: { id: true }
-        }
-      },
-      orderBy: { createdAt: 'desc' }
-    });
 
-    // Filtro de recomendação
-    if (filters.recomendadas && filters.candidatoId) {
-      const { CompatibilidadeService } = require('../services/compatibilidade.service');
-      const candidatoId = parseInt(filters.candidatoId);
-      
-      const vagasRecomendadas = [];
-      for (const vaga of vagas) {
-        try {
-          const compatibilidade = await CompatibilidadeService.calcularCompatibilidade(candidatoId, vaga.id);
-          if (compatibilidade >= 0.7) { // 70% ou mais
-            vagasRecomendadas.push(vaga);
-          }
-        } catch (error) {
-          // Ignora vagas com erro de compatibilidade
-        }
-      }
-      vagas = vagasRecomendadas;
-    }
-
-    return vagas;
-  },
 };

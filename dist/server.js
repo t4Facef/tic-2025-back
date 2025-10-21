@@ -6,13 +6,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
 const client_1 = require("@prisma/client");
-const auth_routes_1 = __importDefault(require("./routes/auth.routes"));
+const index_1 = __importDefault(require("./routes/index"));
 const app = (0, express_1.default)();
 const prisma = new client_1.PrismaClient();
-app.use((0, cors_1.default)());
+app.use((0, cors_1.default)({
+    origin: 'http://localhost:5173',
+    credentials: true
+}));
 app.use(express_1.default.json());
-// Rotas de autenticação
-app.use('/api/auth', auth_routes_1.default);
+// Todas as rotas
+app.use('/api', index_1.default);
 // Rotas de Candidatos
 app.get('/api/candidatos', async (req, res) => {
     try {
@@ -86,7 +89,7 @@ app.get('/api/empresas/:id', async (req, res) => {
 // Rotas de Vagas
 app.get('/api/vagas', async (req, res) => {
     try {
-        const vagas = await prisma.jobPosition.findMany({
+        const vagas = await prisma.vagas.findMany({
             include: { empresa: true, candidaturas: { include: { candidato: true } } }
         });
         res.json(vagas);
@@ -97,7 +100,7 @@ app.get('/api/vagas', async (req, res) => {
 });
 app.post('/api/vagas', async (req, res) => {
     try {
-        const vaga = await prisma.jobPosition.create({
+        const vaga = await prisma.vagas.create({
             data: req.body
         });
         res.json(vaga);
@@ -108,7 +111,7 @@ app.post('/api/vagas', async (req, res) => {
 });
 app.get('/api/vagas/:id', async (req, res) => {
     try {
-        const vaga = await prisma.jobPosition.findUnique({
+        const vaga = await prisma.vagas.findUnique({
             where: { id: parseInt(req.params.id) },
             include: { empresa: true, candidaturas: { include: { candidato: true } } }
         });
@@ -121,7 +124,7 @@ app.get('/api/vagas/:id', async (req, res) => {
 // Rotas de Candidaturas
 app.post('/api/candidaturas', async (req, res) => {
     try {
-        const candidatura = await prisma.application.create({
+        const candidatura = await prisma.candidaturas.create({
             data: req.body
         });
         res.json(candidatura);
@@ -132,7 +135,7 @@ app.post('/api/candidaturas', async (req, res) => {
 });
 app.get('/api/candidaturas', async (req, res) => {
     try {
-        const candidaturas = await prisma.application.findMany({
+        const candidaturas = await prisma.candidaturas.findMany({
             include: { candidato: true, vaga: true }
         });
         res.json(candidaturas);
