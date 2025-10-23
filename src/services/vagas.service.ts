@@ -30,6 +30,7 @@ interface VagasFilters {
   setor?: string;
   recomendadas?: boolean;
   candidatoId?: string;
+  inscrito?: boolean;
 }
 
 interface VagasSearchFilters extends VagasFilters {
@@ -40,6 +41,7 @@ interface VagasSearchFilters extends VagasFilters {
   dataInicioMin?: string;
   dataInicioMax?: string;
   candidatoId?: string;
+  inscrito?: boolean;
 }
 
 export const VagasService = {

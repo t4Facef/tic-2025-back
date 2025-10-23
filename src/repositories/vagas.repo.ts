@@ -13,6 +13,7 @@ interface VagasFilters {
   setor?: string;
   recomendadas?: boolean;
   candidatoId?: string;
+  inscrito?: boolean;
 }
 
 interface VagasSearchFilters extends VagasFilters {
@@ -23,6 +24,7 @@ interface VagasSearchFilters extends VagasFilters {
   dataInicioMin?: string;
   dataInicioMax?: string;
   candidatoId?: string;
+  inscrito?: boolean;
 }
 
 export const VagasRepository = {
@@ -75,6 +77,23 @@ export const VagasRepository = {
       include: { empresa: true },
       orderBy: { createdAt: 'desc' }
     });
+
+    // Filtro de vagas inscritas
+    if (filters?.inscrito && filters?.candidatoId) {
+      const candidatoId = parseInt(filters.candidatoId);
+      return await prisma.vagas.findMany({
+        where: {
+          ...where,
+          candidaturas: {
+            some: {
+              candidatoId: candidatoId
+            }
+          }
+        },
+        include: { empresa: true },
+        orderBy: { createdAt: 'desc' }
+      });
+    }
 
     // Filtro de recomendação com candidatoId
     if (filters?.candidatoId) {
@@ -148,7 +167,85 @@ export const VagasRepository = {
     });
   },
 
+  async search(filters: VagasSearchFilters) {
+    const where: any = {};
 
+    if (filters.titulo) {
+      where.titulo = { contains: filters.titulo, mode: 'insensitive' };
+    }
+    if (filters.localizacao) {
+      where.localizacao = { contains: filters.localizacao, mode: 'insensitive' };
+    }
+    if (filters.tipoContrato) {
+      if (Array.isArray(filters.tipoContrato)) {
+        where.tipoContrato = { in: filters.tipoContrato };
+      } else {
+        where.tipoContrato = filters.tipoContrato;
+      }
+    }
+    if (filters.tipoTrabalho) {
+      if (Array.isArray(filters.tipoTrabalho)) {
+        where.tipoTrabalho = { in: filters.tipoTrabalho };
+      } else {
+        where.tipoTrabalho = filters.tipoTrabalho;
+      }
+    }
+    if (filters.nivelTrabalho) {
+      where.nivelTrabalho = filters.nivelTrabalho;
+    }
+    if (filters.turno) {
+      where.turno = filters.turno;
+    }
+    if (filters.empresaId) {
+      where.empresaId = parseInt(filters.empresaId);
+    }
+    if (filters.habilidadesList && filters.habilidadesList.length > 0) {
+      where.habilidades = { hasSome: filters.habilidadesList };
+    }
+    if (filters.apoiosList && filters.apoiosList.length > 0) {
+      where.apoios = { hasSome: filters.apoiosList };
+    }
+    if (filters.setor) {
+      where.setor = { contains: filters.setor, mode: 'insensitive' };
+    }
+    if (filters.dataInicioMin) {
+      where.dataInicio = { ...where.dataInicio, gte: new Date(filters.dataInicioMin) };
+    }
+    if (filters.dataInicioMax) {
+      where.dataInicio = { ...where.dataInicio, lte: new Date(filters.dataInicioMax) };
+    }
 
+    // Filtro de vagas inscritas
+    if (filters.inscrito && filters.candidatoId) {
+      const candidatoId = parseInt(filters.candidatoId);
+      return await prisma.vagas.findMany({
+        where: {
+          ...where,
+          candidaturas: {
+            some: {
+              candidatoId: candidatoId
+            }
+          }
+        },
+        include: { 
+          empresa: true,
+          candidaturas: {
+            select: { id: true }
+          }
+        },
+        orderBy: { createdAt: 'desc' }
+      });
+    }
 
+    return await prisma.vagas.findMany({
+      where,
+      include: { 
+        empresa: true,
+        candidaturas: {
+          select: { id: true }
+        }
+      },
+      orderBy: { createdAt: 'desc' }
+    });
+  }
 };
