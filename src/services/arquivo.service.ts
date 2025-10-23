@@ -67,4 +67,9 @@ export const ArquivoService = {
     const arquivos = await ArquivoRepository.findByCandidato(candidatoId);
     return arquivos.find(a => a.tipo === tipo) || null;
   },
+
+  async getDocumentoEmpresaByTipo(empresaId: number, tipo: string) {
+    const arquivos = await ArquivoRepository.findByEmpresa(empresaId);
+    return arquivos.find(a => a.tipo === tipo) || null;
+  },
 };

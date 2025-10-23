@@ -29,4 +29,7 @@ router.get("/candidato/:candidatoId/foto/view", ArquivoController.viewFotoCandid
 router.get("/candidato/:candidatoId/curriculo/download", ArquivoController.downloadCurriculoCandidato);
 router.get("/candidato/:candidatoId/laudo/download", ArquivoController.downloadLaudoCandidato);
 
+// Rotas específicas para empresas
+router.get("/empresa/:empresaId/foto/view", ArquivoController.viewFotoEmpresa);
+
 export default router;

@@ -211,4 +211,20 @@ export const ArquivoController = {
       res.status(400).json({ error: error.message });
     }
   },
+
+  async viewFotoEmpresa(req: Request, res: Response) {
+    try {
+      const empresaId = Number(req.params.empresaId);
+      const foto = await ArquivoService.getDocumentoEmpresaByTipo(empresaId, 'FOTO');
+      
+      if (!foto) {
+        return res.status(404).json({ error: 'Foto não encontrada' });
+      }
+      
+      res.setHeader('Content-Type', foto.mimetype);
+      res.send(foto.data);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  },
 };

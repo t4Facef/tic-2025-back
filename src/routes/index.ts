@@ -36,6 +36,6 @@ router.use("/vagas", vagasRoutes);
 router.use("/candidato", candidatoRoutes);
 router.use("/compatibilidade", compatibilidadeRoutes);
 router.use("/estatisticas", estatisticasRoutes);
-router.use("/arquivos", arquivoRoutes);
+router.use("/arquivo", arquivoRoutes);
 
 export default router;
