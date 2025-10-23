@@ -77,7 +77,7 @@ app.get('/api/empresas/:id', async (req, res) => {
   try {
     const empresa = await prisma.empresa.findUnique({
       where: { id: parseInt(req.params.id) },
-      include: { endereco: true, vagas: true }
+      select: { razaoSocial: true }
     });
     res.json(empresa);
   } catch (error) {
