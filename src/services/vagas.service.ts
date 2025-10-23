@@ -53,8 +53,8 @@ export const VagasService = {
     return await VagasRepository.findById(id);
   },
 
-  async findByEmpresa(empresaId: number) {
-    return await VagasRepository.findByEmpresa(empresaId);
+  async findByEmpresa(empresaId: number, status?: string) {
+    return await VagasRepository.findByEmpresa(empresaId, status);
   },
 
   async create(jobData: JobData) {

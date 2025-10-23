@@ -141,10 +141,16 @@ export const VagasRepository = {
     });
   },
 
-  async findByEmpresa(empresaId: number) {
+  async findByEmpresa(empresaId: number, status?: string) {
+    const where: any = { empresaId };
+    if (status) {
+      where.status = status;
+    }
+    
     return await prisma.vagas.findMany({
-      where: { empresaId },
-      include: { candidaturas: true },
+      where,
+      include: { empresa: true },
+      orderBy: { createdAt: 'desc' }
     });
   },
 
