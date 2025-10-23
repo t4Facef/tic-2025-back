@@ -29,7 +29,8 @@ export const VagasController = {
   async getByEmpresa(req: Request, res: Response) {
     try {
       const empresaId = Number(req.params.empresaId);
-      const data = await VagasService.findByEmpresa(empresaId);
+      const status = req.query.status as string;
+      const data = await VagasService.findByEmpresa(empresaId, status);
       res.json(data);
     } catch (error: any) {
       res.status(400).json({ error: error.message });
