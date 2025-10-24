@@ -101,7 +101,7 @@ export const AuthService = {
   },
 
   async registrarEmpresa(dadosEmpresa: any) {
-    const {razaoSocial, nomeFantasia, cnpj, numFunc, area, email, telefoneComercial, site, endereco, acessibilidades, senha} = dadosEmpresa;
+    const {razaoSocial, nomeFantasia, cnpj, numFunc, numFuncPcd, anoFundacao, descricao, historia, missao, area, email, telefoneComercial, site, endereco, acessibilidades, senha} = dadosEmpresa;
     
     const existeEmail = await prisma.candidato.findUnique({ where: { email } }) || 
                        await prisma.empresa.findUnique({ where: { email } });
@@ -118,6 +118,11 @@ export const AuthService = {
         cnpj, 
         telefoneComercial, 
         numFunc,
+        numFuncPcd,
+        anoFundacao,
+        descricao,
+        historia,
+        missao,
         area,
         endereco: endereco && endereco.cep ? {
           create: {
