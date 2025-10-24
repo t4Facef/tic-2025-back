@@ -39,6 +39,7 @@ model Empresa {
   historia          String?
   missao            String?
   valores           String?
+  anoFundacao       Int?
   foto              Bytes?
   certificacoes     String[]
 
