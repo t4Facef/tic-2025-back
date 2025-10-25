@@ -33,8 +33,8 @@ export const CandidaturasController = {
 
   async create(req: Request, res: Response) {
     try {
-      const { candidatoId, vagaId } = req.body;
-      const created = await CandidaturasService.create(candidatoId, vagaId);
+      const { candidatoId, vagaId, mensagem } = req.body;
+      const created = await CandidaturasService.create(candidatoId, vagaId, mensagem);
       res.status(201).json(created);
     } catch (error: any) {
       res.status(400).json({ error: error.message });

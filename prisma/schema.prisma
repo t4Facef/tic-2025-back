@@ -197,6 +197,7 @@ model Candidaturas {
   id          Int       @id @default(autoincrement())
   candidatoId Int
   candidato   Candidato @relation(fields: [candidatoId], references: [id], onDelete: Cascade)
+  mensagem    String?
 
   vagaId Int
   vaga   Vagas @relation(fields: [vagaId], references: [id], onDelete: Cascade)

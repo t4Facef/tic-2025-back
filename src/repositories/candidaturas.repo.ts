@@ -21,9 +21,20 @@ export const CandidaturasRepository = {
     });
   },
 
-  async create(candidatoId: number, vagaId: number) {
+  async findByCandidatoAndVaga(candidatoId: number, vagaId: number) {
+    return await prisma.candidaturas.findUnique({
+      where: {
+        candidatoId_vagaId: {
+          candidatoId,
+          vagaId
+        }
+      }
+    });
+  },
+
+  async create(candidatoId: number, vagaId: number, mensagem?: string) {
     return await prisma.candidaturas.create({
-      data: { candidatoId, vagaId },
+      data: { candidatoId, vagaId, mensagem },
     });
   },
 

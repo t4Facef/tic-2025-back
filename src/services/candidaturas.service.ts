@@ -13,8 +13,13 @@ export const CandidaturasService = {
     return await CandidaturasRepository.findByVaga(vagaId);
   },
 
-  async create(candidatoId: number, vagaId: number) {
-    return await CandidaturasRepository.create(candidatoId, vagaId);
+  async create(candidatoId: number, vagaId: number, mensagem?: string) {
+    // Verifica se já existe candidatura
+    const existente = await CandidaturasRepository.findByCandidatoAndVaga(candidatoId, vagaId);
+    if (existente) {
+      throw new Error('Você já se candidatou para esta vaga');
+    }
+    return await CandidaturasRepository.create(candidatoId, vagaId, mensagem);
   },
 
   async updateStatus(id: number, status: "PENDENTE" | "APROVADO" | "RECUSADO") {
