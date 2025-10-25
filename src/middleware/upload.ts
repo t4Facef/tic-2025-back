@@ -20,19 +20,11 @@ const storage = multer.diskStorage({
 export const upload = multer({ 
   storage,
   limits: {
-    fileSize: 5 * 1024 * 1024 // 5MB
+    fileSize: 10 * 1024 * 1024 // 10MB
   },
   fileFilter: (req, file, cb) => {
-    if (file.fieldname === 'file' && req.body.tipo === 'FOTO') {
-      // Aceitar apenas imagens para fotos
-      if (file.mimetype.startsWith('image/')) {
-        cb(null, true);
-      } else {
-        cb(new Error('Apenas imagens são permitidas para fotos'));
-      }
-    } else {
-      cb(null, true);
-    }
+    // Aceitar todos os tipos de arquivo por enquanto
+    cb(null, true);
   }
 });
 

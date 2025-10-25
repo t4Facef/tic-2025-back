@@ -322,8 +322,7 @@ async function main() {
       genero: "Masculino",
       telefones: ["11999991111"],
       areaInteresse: "Tecnologia",
-      habilidades: ["JavaScript", "React", "Node.js", "PostgreSQL"],
-      laudo: Buffer.from("laudo-medico-joao")
+      habilidades: ["JavaScript", "React", "Node.js", "PostgreSQL"]
     }
   });
 
@@ -338,8 +337,7 @@ async function main() {
       genero: "Feminino",
       telefones: ["21888882222"],
       areaInteresse: "Administração",
-      habilidades: ["Recrutamento", "Gestão de Pessoas", "Excel", "PowerBI"],
-      laudo: Buffer.from("laudo-medico-maria")
+      habilidades: ["Recrutamento", "Gestão de Pessoas", "Excel", "PowerBI"]
     }
   });
 

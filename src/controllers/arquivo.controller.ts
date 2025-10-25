@@ -1,4 +1,6 @@
 import { Request, Response } from "express";
+import fs from "fs";
+import path from "path";
 import { ArquivoService } from "../services/arquivo.service";
 
 export const ArquivoController = {
@@ -109,9 +111,13 @@ export const ArquivoController = {
       const id = Number(req.params.id);
       const arquivo = await ArquivoService.findById(id);
       
+      if (!fs.existsSync(arquivo.filePath)) {
+        return res.status(404).json({ error: 'Arquivo não encontrado no sistema' });
+      }
+      
       res.setHeader('Content-Type', arquivo.mimetype);
       res.setHeader('Content-Disposition', `attachment; filename="${arquivo.filename}"`);
-      res.send(arquivo.data);
+      res.sendFile(path.resolve(arquivo.filePath));
     } catch (error: any) {
       res.status(error.status || 400).json({ error: error.message });
     }
@@ -123,7 +129,12 @@ export const ArquivoController = {
       const arquivo = await ArquivoService.findById(id);
       
       res.setHeader('Content-Type', arquivo.mimetype);
-      res.send(arquivo.data);
+      
+      if (!fs.existsSync(arquivo.filePath)) {
+        return res.status(404).json({ error: 'Arquivo não encontrado no sistema' });
+      }
+      
+      res.sendFile(path.resolve(arquivo.filePath));
     } catch (error: any) {
       res.status(error.status || 400).json({ error: error.message });
     }
@@ -135,12 +146,12 @@ export const ArquivoController = {
       const candidatoId = Number(req.params.candidatoId);
       const curriculo = await ArquivoService.getDocumentoByTipo(candidatoId, 'CURRICULO');
       
-      if (!curriculo) {
+      if (!curriculo || !fs.existsSync(curriculo.filePath)) {
         return res.status(404).json({ error: 'Currículo não encontrado' });
       }
       
       res.setHeader('Content-Type', curriculo.mimetype);
-      res.send(curriculo.data);
+      res.sendFile(path.resolve(curriculo.filePath));
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
@@ -151,12 +162,12 @@ export const ArquivoController = {
       const candidatoId = Number(req.params.candidatoId);
       const laudo = await ArquivoService.getDocumentoByTipo(candidatoId, 'LAUDO');
       
-      if (!laudo) {
+      if (!laudo || !fs.existsSync(laudo.filePath)) {
         return res.status(404).json({ error: 'Laudo não encontrado' });
       }
       
       res.setHeader('Content-Type', laudo.mimetype);
-      res.send(laudo.data);
+      res.sendFile(path.resolve(laudo.filePath));
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
@@ -167,12 +178,12 @@ export const ArquivoController = {
       const candidatoId = Number(req.params.candidatoId);
       const foto = await ArquivoService.getDocumentoByTipo(candidatoId, 'FOTO');
       
-      if (!foto) {
+      if (!foto || !fs.existsSync(foto.filePath)) {
         return res.status(404).json({ error: 'Foto não encontrada' });
       }
       
       res.setHeader('Content-Type', foto.mimetype);
-      res.send(foto.data);
+      res.sendFile(path.resolve(foto.filePath));
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
@@ -183,13 +194,13 @@ export const ArquivoController = {
       const candidatoId = Number(req.params.candidatoId);
       const curriculo = await ArquivoService.getDocumentoByTipo(candidatoId, 'CURRICULO');
       
-      if (!curriculo) {
+      if (!curriculo || !fs.existsSync(curriculo.filePath)) {
         return res.status(404).json({ error: 'Currículo não encontrado' });
       }
       
       res.setHeader('Content-Type', curriculo.mimetype);
       res.setHeader('Content-Disposition', `attachment; filename="${curriculo.filename}"`);
-      res.send(curriculo.data);
+      res.sendFile(path.resolve(curriculo.filePath));
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
@@ -200,13 +211,13 @@ export const ArquivoController = {
       const candidatoId = Number(req.params.candidatoId);
       const laudo = await ArquivoService.getDocumentoByTipo(candidatoId, 'LAUDO');
       
-      if (!laudo) {
+      if (!laudo || !fs.existsSync(laudo.filePath)) {
         return res.status(404).json({ error: 'Laudo não encontrado' });
       }
       
       res.setHeader('Content-Type', laudo.mimetype);
       res.setHeader('Content-Disposition', `attachment; filename="${laudo.filename}"`);
-      res.send(laudo.data);
+      res.sendFile(path.resolve(laudo.filePath));
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
@@ -217,12 +228,12 @@ export const ArquivoController = {
       const empresaId = Number(req.params.empresaId);
       const foto = await ArquivoService.getDocumentoEmpresaByTipo(empresaId, 'FOTO');
       
-      if (!foto) {
+      if (!foto || !fs.existsSync(foto.filePath)) {
         return res.status(404).json({ error: 'Foto não encontrada' });
       }
       
       res.setHeader('Content-Type', foto.mimetype);
-      res.send(foto.data);
+      res.sendFile(path.resolve(foto.filePath));
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }

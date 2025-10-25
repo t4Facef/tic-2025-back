@@ -47,7 +47,6 @@ export const AuthService = {
         email, 
         telefones: telefones || [],
         areaInteresse,
-        laudo: Buffer.from(''),
         senha: hash,
         
         // Criar endereço junto (nested create)

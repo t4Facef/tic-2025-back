@@ -1,4 +1,5 @@
 import fs from "fs";
+import path from "path";
 import { ArquivoRepository } from "../repositories/arquivo.repo";
 import { processImage } from "../middleware/upload";
 
@@ -18,15 +19,59 @@ export const ArquivoService = {
       throw Object.assign(new Error("Informe candidatoId ou empresaId"), { status: 400 });
     }
 
-    // Processar imagem se for foto, senão ler arquivo normal
-    const data = await processImage(file.path, tipo);
-    fs.unlinkSync(file.path);
+    // Criar estrutura de pastas organizada
+    const baseDir = path.join(process.cwd(), 'uploads');
+    const userType = candidatoId ? 'candidatos' : 'empresas';
+    const userId = candidatoId || empresaId;
+    const tipoFolder = tipo.toLowerCase();
+    const userDir = path.join(baseDir, userType, userId.toString(), tipoFolder);
+    
+    if (!fs.existsSync(userDir)) {
+      fs.mkdirSync(userDir, { recursive: true });
+    }
+
+    // Gerar nome limpo do arquivo
+    const timestamp = Date.now();
+    const ext = path.extname(file.originalname);
+    const cleanName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
+    const filename = `${timestamp}_${cleanName}`;
+    const filePath = path.join(userDir, filename);
+
+    // Mover arquivo para destino final
+    fs.renameSync(file.path, filePath);
+    
+    // Se for foto, processar depois
+    if (tipo === 'FOTO' && file.mimetype.startsWith('image/')) {
+      try {
+        const processedData = await processImage(filePath, tipo);
+        const finalPath = path.join(userDir, `${timestamp}_foto.jpg`);
+        fs.writeFileSync(finalPath, processedData);
+        
+        // Remover arquivo original se processamento deu certo
+        if (fs.existsSync(filePath) && finalPath !== filePath) {
+          fs.unlinkSync(filePath);
+        }
+        
+        const arquivoData = {
+          tipo,
+          filename: file.originalname,
+          mimetype: 'image/jpeg',
+          filePath: finalPath,
+          candidatoId: candidatoId || null,
+          empresaId: empresaId || null,
+        };
+        return await ArquivoRepository.create(arquivoData);
+      } catch (error) {
+        console.log('Erro ao processar imagem, mantendo original:', error.message);
+        // Se der erro no processamento, manter arquivo original
+      }
+    }
 
     const arquivoData = {
       tipo,
       filename: file.originalname,
-      mimetype: tipo === 'FOTO' ? 'image/jpeg' : file.mimetype,
-      data,
+      mimetype: file.mimetype,
+      filePath,
       candidatoId: candidatoId || null,
       empresaId: empresaId || null,
     };

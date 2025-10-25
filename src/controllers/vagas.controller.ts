@@ -140,4 +140,16 @@ export const VagasController = {
       res.status(400).json({ error: error.message });
     }
   },
+
+  // GET /vagas/candidato/:candidatoId/inscritas - Listar vagas que o candidato se inscreveu
+  async getVagasInscritas(req: Request, res: Response) {
+    try {
+      const candidatoId = Number(req.params.candidatoId);
+      const filters = { candidatoId: candidatoId.toString(), inscrito: true };
+      const vagas = await VagasService.list(filters);
+      res.json(vagas);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  },
 };

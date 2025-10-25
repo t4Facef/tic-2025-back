@@ -40,7 +40,6 @@ model Empresa {
   missao            String?
   valores           String?
   anoFundacao       Int?
-  foto              Bytes?
   certificacoes     String[]
 
   arquivos        Arquivo[]
@@ -65,8 +64,6 @@ model Candidato {
   sexo           String?
   genero         String?
   telefones      String[]
-  foto           Bytes?
-  laudo          Bytes
   areaInteresse  String
 
   enderecoId Int?      @unique
@@ -262,7 +259,7 @@ model Arquivo {
   tipo      TipoArquivo
   filename  String
   mimetype  String
-  data      Bytes
+  filePath  String
   createdAt DateTime @default(now())
 
   candidato    Candidato?    @relation(fields: [candidatoId], references: [id])

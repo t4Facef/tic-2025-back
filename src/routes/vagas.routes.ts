@@ -7,6 +7,7 @@ router.get("/", VagasController.list);
 router.get("/recomendadas", VagasController.getRecomendadas);
 router.post("/search", VagasController.search);
 router.get("/candidato/:candidatoId", VagasController.getVagasComCompatibilidade);
+router.get("/candidato/:candidatoId/inscritas", VagasController.getVagasInscritas);
 router.get("/empresa/:empresaId", VagasController.getByEmpresa);
 router.get("/:id", VagasController.getById);
 router.post("/", VagasController.create);
