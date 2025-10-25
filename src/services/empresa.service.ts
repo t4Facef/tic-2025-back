@@ -6,6 +6,7 @@ export const EmpresaService = {
   },
 
   async update(id: number, data: any) {
-    return await EmpresaRepository.update(id, data);
+    const { acessibilidades, ...empresaData } = data;
+    return await EmpresaRepository.update(id, empresaData, acessibilidades);
   }
 };
