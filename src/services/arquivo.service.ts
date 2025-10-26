@@ -1,6 +1,5 @@
 import fs from "fs";
 import path from "path";
-import { ArquivoRepository } from "../repositories/arquivo.repo";
 import { processImage } from "../middleware/upload";
 
 interface SalvarArquivoInput {
@@ -23,98 +22,101 @@ export const ArquivoService = {
     const baseDir = path.join(process.cwd(), 'uploads');
     const userType = candidatoId ? 'candidatos' : 'empresas';
     const userId = candidatoId || empresaId;
-    const tipoFolder = tipo.toLowerCase();
-    const userDir = path.join(baseDir, userType, userId.toString(), tipoFolder);
+    const userDir = path.join(baseDir, userType, userId!.toString());
     
     if (!fs.existsSync(userDir)) {
       fs.mkdirSync(userDir, { recursive: true });
     }
 
-    // Gerar nome limpo do arquivo
-    const timestamp = Date.now();
+    // Nome do arquivo baseado no tipo
     const ext = path.extname(file.originalname);
-    const cleanName = file.originalname.replace(/[^a-zA-Z0-9.-]/g, '_');
-    const filename = `${timestamp}_${cleanName}`;
+    const filename = `${tipo.toLowerCase()}${ext}`;
     const filePath = path.join(userDir, filename);
+
+    // Se arquivo já existe, remover
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
+    }
 
     // Mover arquivo para destino final
     fs.renameSync(file.path, filePath);
     
-    // Se for foto, processar depois
+    // Se for foto, processar
     if (tipo === 'FOTO' && file.mimetype.startsWith('image/')) {
       try {
         const processedData = await processImage(filePath, tipo);
-        const finalPath = path.join(userDir, `${timestamp}_foto.jpg`);
+        const finalPath = path.join(userDir, 'foto.jpg');
         fs.writeFileSync(finalPath, processedData);
         
-        // Remover arquivo original se processamento deu certo
-        if (fs.existsSync(filePath) && finalPath !== filePath) {
+        if (finalPath !== filePath) {
           fs.unlinkSync(filePath);
         }
-        
-        const arquivoData = {
-          tipo,
-          filename: file.originalname,
-          mimetype: 'image/jpeg',
-          filePath: finalPath,
-          candidatoId: candidatoId || null,
-          empresaId: empresaId || null,
-        };
-        return await ArquivoRepository.create(arquivoData);
       } catch (error) {
-        console.log('Erro ao processar imagem, mantendo original:', error.message);
-        // Se der erro no processamento, manter arquivo original
+        console.log('Erro ao processar imagem, mantendo original:', (error as Error).message);
       }
     }
 
-    const arquivoData = {
-      tipo,
-      filename: file.originalname,
-      mimetype: file.mimetype,
-      filePath,
-      candidatoId: candidatoId || null,
-      empresaId: empresaId || null,
-    };
-
-    return await ArquivoRepository.create(arquivoData);
+    return { success: true, filePath };
   },
 
-  async findById(id: number) {
-    const arquivo = await ArquivoRepository.findById(id);
-    if (!arquivo) {
-      throw Object.assign(new Error("Arquivo não encontrado"), { status: 404 });
+  getFilePath(userId: number, userType: 'candidatos' | 'empresas', tipo: string): string {
+    const baseDir = path.join(process.cwd(), 'uploads');
+    const filename = tipo === 'FOTO' ? 'foto.jpg' : `${tipo.toLowerCase()}.pdf`;
+    return path.join(baseDir, userType, userId.toString(), filename);
+  },
+
+  fileExists(userId: number, userType: 'candidatos' | 'empresas', tipo: string): boolean {
+    const filePath = this.getFilePath(userId, userType, tipo);
+    return fs.existsSync(filePath);
+  },
+
+  getDocumentoByTipo(candidatoId: number, tipo: string) {
+    const filePath = this.getFilePath(candidatoId, 'candidatos', tipo);
+    
+    if (!fs.existsSync(filePath)) {
+      if (tipo === 'FOTO') {
+        // Retorna foto padrão para fotos
+        const defaultPath = path.join(process.cwd(), 'uploads', 'profile-default.jpg');
+        return {
+          tipo,
+          filePath: defaultPath,
+          mimetype: 'image/jpeg',
+          filename: 'profile-default.jpg'
+        };
+      }
+      return null;
     }
-    return arquivo;
-  },
-
-  async findByCandidato(candidatoId: number) {
-    return await ArquivoRepository.findByCandidato(candidatoId);
-  },
-
-  async findByEmpresa(empresaId: number) {
-    return await ArquivoRepository.findByEmpresa(empresaId);
-  },
-
-  async delete(id: number) {
-    return await ArquivoRepository.delete(id);
-  },
-
-  async getDocumentosByUsuario(candidatoId: number) {
-    const arquivos = await ArquivoRepository.findByCandidato(candidatoId);
+    
     return {
-      curriculo: arquivos.find(a => a.tipo === 'CURRICULO') || null,
-      laudo: arquivos.find(a => a.tipo === 'LAUDO') || null,
-      foto: arquivos.find(a => a.tipo === 'FOTO') || null
+      tipo,
+      filePath,
+      mimetype: tipo === 'FOTO' ? 'image/jpeg' : 'application/pdf',
+      filename: path.basename(filePath)
     };
   },
 
-  async getDocumentoByTipo(candidatoId: number, tipo: string) {
-    const arquivos = await ArquivoRepository.findByCandidato(candidatoId);
-    return arquivos.find(a => a.tipo === tipo) || null;
-  },
-
-  async getDocumentoEmpresaByTipo(empresaId: number, tipo: string) {
-    const arquivos = await ArquivoRepository.findByEmpresa(empresaId);
-    return arquivos.find(a => a.tipo === tipo) || null;
+  getDocumentoEmpresaByTipo(empresaId: number, tipo: string) {
+    const filePath = this.getFilePath(empresaId, 'empresas', tipo);
+    
+    if (!fs.existsSync(filePath)) {
+      if (tipo === 'FOTO') {
+        // Retorna foto padrão para fotos
+        const defaultPath = path.join(process.cwd(), 'uploads', 'profile-default.jpg');
+        return {
+          tipo,
+          filePath: defaultPath,
+          mimetype: 'image/jpeg',
+          filename: 'profile-default.jpg'
+        };
+      }
+      return null;
+    }
+    
+    return {
+      tipo,
+      filePath,
+      mimetype: tipo === 'FOTO' ? 'image/jpeg' : 'application/pdf',
+      filename: path.basename(filePath)
+    };
   },
 };

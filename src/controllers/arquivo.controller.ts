@@ -26,51 +26,14 @@ export const ArquivoController = {
     }
   },
 
-  async getById(req: Request, res: Response) {
+  async checkFileExists(req: Request, res: Response) {
     try {
-      const id = Number(req.params.id);
-      const arquivo = await ArquivoService.findById(id);
-      res.json(arquivo);
-    } catch (error: any) {
-      res.status(error.status || 400).json({ error: error.message });
-    }
-  },
-
-  async getByCandidato(req: Request, res: Response) {
-    try {
-      const candidatoId = Number(req.params.candidatoId);
-      const arquivos = await ArquivoService.findByCandidato(candidatoId);
-      res.json(arquivos);
-    } catch (error: any) {
-      res.status(400).json({ error: error.message });
-    }
-  },
-
-  async getByEmpresa(req: Request, res: Response) {
-    try {
-      const empresaId = Number(req.params.empresaId);
-      const arquivos = await ArquivoService.findByEmpresa(empresaId);
-      res.json(arquivos);
-    } catch (error: any) {
-      res.status(400).json({ error: error.message });
-    }
-  },
-
-  async delete(req: Request, res: Response) {
-    try {
-      const id = Number(req.params.id);
-      await ArquivoService.delete(id);
-      res.status(204).send();
-    } catch (error: any) {
-      res.status(error.status || 400).json({ error: error.message });
-    }
-  },
-
-  async getDocumentosCandidato(req: Request, res: Response) {
-    try {
-      const candidatoId = Number(req.params.candidatoId);
-      const documentos = await ArquivoService.getDocumentosByUsuario(candidatoId);
-      res.json(documentos);
+      const { candidatoId, empresaId, tipo } = req.params;
+      const userId = candidatoId ? Number(candidatoId) : Number(empresaId);
+      const userType = candidatoId ? 'candidatos' : 'empresas';
+      
+      const exists = ArquivoService.fileExists(userId, userType, tipo.toUpperCase());
+      res.json({ exists });
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
@@ -106,39 +69,7 @@ export const ArquivoController = {
     }
   },
 
-  async downloadArquivo(req: Request, res: Response) {
-    try {
-      const id = Number(req.params.id);
-      const arquivo = await ArquivoService.findById(id);
-      
-      if (!fs.existsSync(arquivo.filePath)) {
-        return res.status(404).json({ error: 'Arquivo não encontrado no sistema' });
-      }
-      
-      res.setHeader('Content-Type', arquivo.mimetype);
-      res.setHeader('Content-Disposition', `attachment; filename="${arquivo.filename}"`);
-      res.sendFile(path.resolve(arquivo.filePath));
-    } catch (error: any) {
-      res.status(error.status || 400).json({ error: error.message });
-    }
-  },
 
-  async viewArquivo(req: Request, res: Response) {
-    try {
-      const id = Number(req.params.id);
-      const arquivo = await ArquivoService.findById(id);
-      
-      res.setHeader('Content-Type', arquivo.mimetype);
-      
-      if (!fs.existsSync(arquivo.filePath)) {
-        return res.status(404).json({ error: 'Arquivo não encontrado no sistema' });
-      }
-      
-      res.sendFile(path.resolve(arquivo.filePath));
-    } catch (error: any) {
-      res.status(error.status || 400).json({ error: error.message });
-    }
-  },
 
   // Servir arquivos diretamente por tipo
   async viewCurriculoCandidato(req: Request, res: Response) {
@@ -179,7 +110,10 @@ export const ArquivoController = {
       const foto = await ArquivoService.getDocumentoByTipo(candidatoId, 'FOTO');
       
       if (!foto || !fs.existsSync(foto.filePath)) {
-        return res.status(404).json({ error: 'Foto não encontrada' });
+        // Retorna foto padrão se não existir
+        const defaultPhoto = path.join(process.cwd(), 'uploads', 'profile-default.jpg');
+        res.setHeader('Content-Type', 'image/jpeg');
+        return res.sendFile(path.resolve(defaultPhoto));
       }
       
       res.setHeader('Content-Type', foto.mimetype);
@@ -229,7 +163,10 @@ export const ArquivoController = {
       const foto = await ArquivoService.getDocumentoEmpresaByTipo(empresaId, 'FOTO');
       
       if (!foto || !fs.existsSync(foto.filePath)) {
-        return res.status(404).json({ error: 'Foto não encontrada' });
+        // Retorna foto padrão se não existir
+        const defaultPhoto = path.join(process.cwd(), 'uploads', 'profile-default.jpg');
+        res.setHeader('Content-Type', 'image/jpeg');
+        return res.sendFile(path.resolve(defaultPhoto));
       }
       
       res.setHeader('Content-Type', foto.mimetype);
