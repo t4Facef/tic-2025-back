@@ -69,6 +69,16 @@ export const ArquivoController = {
     }
   },
 
+  async getFotoEmpresa(req: Request, res: Response) {
+    try {
+      const empresaId = Number(req.params.empresaId);
+      const foto = await ArquivoService.getDocumentoEmpresaByTipo(empresaId, 'FOTO');
+      res.json(foto);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  },
+
 
 
   // Servir arquivos diretamente por tipo

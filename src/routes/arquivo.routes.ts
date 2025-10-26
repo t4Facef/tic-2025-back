@@ -14,6 +14,7 @@ router.get("/empresa/:empresaId/:tipo/exists", ArquivoController.checkFileExists
 router.get("/candidato/:candidatoId/curriculo", ArquivoController.getCurriculo);
 router.get("/candidato/:candidatoId/laudo", ArquivoController.getLaudo);
 router.get("/candidato/:candidatoId/foto", ArquivoController.getFoto);
+router.get("/empresa/:empresaId/foto", ArquivoController.getFotoEmpresa);
 
 // Rotas diretas para visualização por tipo (candidatos)
 router.get("/candidato/:candidatoId/curriculo/view", ArquivoController.viewCurriculoCandidato);

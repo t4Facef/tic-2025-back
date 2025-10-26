@@ -1,5 +1,7 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
+import fs from 'fs';
 import { PrismaClient } from '@prisma/client';
 import routes from './routes/index';
 
@@ -11,6 +13,49 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+
+// Rotas públicas para fotos (sem autenticação) - ANTES das rotas protegidas
+app.get('/api/arquivos/candidato/:candidatoId/foto/view', async (req, res) => {
+  try {
+    const candidatoId = Number(req.params.candidatoId);
+    const fotoPath = path.join(process.cwd(), 'uploads', 'candidatos', candidatoId.toString(), 'foto.jpg');
+    const defaultPath = path.join(process.cwd(), 'uploads', 'profile-default.jpg');
+    
+    if (fs.existsSync(fotoPath)) {
+      res.setHeader('Content-Type', 'image/jpeg');
+      res.sendFile(path.resolve(fotoPath));
+    } else {
+      res.setHeader('Content-Type', 'image/jpeg');
+      res.sendFile(path.resolve(defaultPath));
+    }
+  } catch (error) {
+    res.status(400).json({ error: 'Erro ao buscar foto' });
+  }
+});
+
+app.get('/api/arquivos/empresa/:empresaId/foto/view', async (req, res) => {
+  try {
+    const empresaId = Number(req.params.empresaId);
+    const fotoPath = path.join(process.cwd(), 'uploads', 'empresas', empresaId.toString(), 'foto.jpg');
+    const defaultPath = path.join(process.cwd(), 'uploads', 'profile-default.jpg');
+    
+    console.log('Empresa ID:', empresaId);
+    console.log('Foto Path:', fotoPath);
+    console.log('Foto existe:', fs.existsSync(fotoPath));
+    console.log('Default existe:', fs.existsSync(defaultPath));
+    
+    if (fs.existsSync(fotoPath)) {
+      res.setHeader('Content-Type', 'image/jpeg');
+      res.sendFile(path.resolve(fotoPath));
+    } else {
+      res.setHeader('Content-Type', 'image/jpeg');
+      res.sendFile(path.resolve(defaultPath));
+    }
+  } catch (error) {
+    console.log('Erro na rota empresa foto:', error);
+    res.status(400).json({ error: 'Erro ao buscar foto' });
+  }
+});
 
 // Todas as rotas
 app.use('/api', routes);
