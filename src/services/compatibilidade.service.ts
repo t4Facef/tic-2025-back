@@ -24,24 +24,11 @@ export const CompatibilidadeService = {
       }
     });
 
-    // Buscar dados da vaga com acessibilidades
+    // Buscar dados da vaga
     const vaga = await prisma.vagas.findUnique({
       where: { id: vagaId },
       include: {
-        empresa: true,
-        vagaAcessibilidades: {
-          include: {
-            acessibilidade: {
-              include: {
-                barreiras: {
-                  include: {
-                    barreira: true
-                  }
-                }
-              }
-            }
-          }
-        }
+        empresa: true
       }
     });
 
@@ -69,32 +56,8 @@ export const CompatibilidadeService = {
   },
 
   async calcularCompatibilidadeAcessibilidade(candidato: any, vaga: any): Promise<number> {
-    // Obter todas as barreiras do candidato
-    const barreiras = candidato.subtipos.flatMap((cs: any) => 
-      cs.subtipo.barreiras.map((sb: any) => sb.barreira)
-    );
-
-    if (barreiras.length === 0) {
-      return 1.0; // Se não há barreiras, compatibilidade máxima
-    }
-
-    // Obter todas as acessibilidades da vaga
-    const acessibilidades = vaga.vagaAcessibilidades.map((va: any) => va.acessibilidade);
-
-    // Verificar quantas barreiras são resolvidas pelas acessibilidades
-    let barreirasResolvidas = 0;
-
-    for (const barreira of barreiras) {
-      const barreiraResolvida = acessibilidades.some((acessibilidade: any) =>
-        acessibilidade.barreiras.some((ba: any) => ba.barreira.id === barreira.id)
-      );
-      
-      if (barreiraResolvida) {
-        barreirasResolvidas++;
-      }
-    }
-
-    return barreiras.length > 0 ? barreirasResolvidas / barreiras.length : 1.0;
+    // Usar apoios da vaga para calcular compatibilidade
+    return this.calcularCompatibilidadeApoios(candidato, vaga);
   },
 
   calcularCompatibilidadeHabilidades(candidato: any, vaga: any): number {
@@ -138,10 +101,58 @@ export const CompatibilidadeService = {
   },
 
   calcularCompatibilidadeApoios(candidato: any, vaga: any): number {
-    // Agora usa as acessibilidades da vaga diretamente
-    // Este método agora é redundante com calcularCompatibilidadeAcessibilidade
-    // Mas mantemos para não quebrar a estrutura
-    return 1.0; // Peso reduzido já que acessibilidade é o foco principal
+    // Verificar se os apoios da vaga atendem às necessidades do candidato
+    const apoiosVaga = vaga.apoios.map((a: string) => a.toLowerCase().trim());
+    
+    // Obter barreiras do candidato para verificar se os apoios são relevantes
+    const barreiras = candidato.subtipos.flatMap((cs: any) => 
+      cs.subtipo.barreiras.map((sb: any) => sb.barreira.descricao.toLowerCase())
+    );
+
+    if (barreiras.length === 0) {
+      return 1.0; // Se não há barreiras, apoios não são críticos
+    }
+
+    // Verificar se os apoios da vaga são relevantes para as barreiras do candidato
+    let apoiosRelevantes = 0;
+    
+    for (const barreira of barreiras) {
+      const barreirasTexto = barreira.toLowerCase();
+      const apoioRelevante = apoiosVaga.some((apoio: string) => {
+        // Apoios gerais
+        if (apoio.includes('acessibilidade') || apoio.includes('adaptação') || apoio.includes('suporte')) {
+          return true;
+        }
+        
+        // Apoios específicos para barreiras visuais
+        if (barreirasTexto.includes('leitura') || barreirasTexto.includes('navegação visual')) {
+          return apoio.includes('leitor de tela') || apoio.includes('braille') || apoio.includes('audiodescrição');
+        }
+        
+        // Apoios específicos para barreiras auditivas
+        if (barreirasTexto.includes('comunicação') || barreirasTexto.includes('áudio')) {
+          return apoio.includes('libras') || apoio.includes('legendas') || apoio.includes('amplificação');
+        }
+        
+        // Apoios específicos para barreiras físicas
+        if (barreirasTexto.includes('acesso') || barreirasTexto.includes('locomoção')) {
+          return apoio.includes('rampa') || apoio.includes('elevador') || apoio.includes('banheiro adaptado');
+        }
+        
+        // Apoios específicos para barreiras cognitivas
+        if (barreirasTexto.includes('compreensão') || barreirasTexto.includes('concentração')) {
+          return apoio.includes('instruções claras') || apoio.includes('linguagem simples') || apoio.includes('ambiente silencioso');
+        }
+        
+        return false;
+      });
+      
+      if (apoioRelevante) {
+        apoiosRelevantes++;
+      }
+    }
+
+    return barreiras.length > 0 ? Math.min(apoiosRelevantes / barreiras.length, 1.0) : 1.0;
   },
 
   async calcularCompatibilidadeParaTodasVagas(candidatoId: number) {

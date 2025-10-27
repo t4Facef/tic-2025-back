@@ -6,7 +6,7 @@ interface JobData {
   location: string;
   description: string;
   skillsTags: string[];
-  supportTags: number[]; // Agora são IDs das acessibilidades
+  supportTags: string[]; // Volta a ser strings (nomes das acessibilidades)
   startDate: Date;
   endDate: Date;
   typeContract: string;
@@ -63,7 +63,7 @@ export const VagasService = {
       localizacao: jobData.location,
       descricao: jobData.description,
       habilidades: jobData.skillsTags,
-      apoios: [], // Manter vazio, usar relação
+      apoios: jobData.supportTags, // Volta a salvar strings diretamente
       dataInicio: jobData.startDate,
       dataFim: jobData.endDate,
       tipoContrato: jobData.typeContract,
@@ -73,7 +73,7 @@ export const VagasService = {
       turno: jobData.timeShift,
       setor: jobData.setor,
       empresaId: jobData.idEmpresa,
-      acessibilidadeIds: jobData.supportTags, // IDs das acessibilidades
+
     };
     return await VagasRepository.create(vagaData);
   },
@@ -85,7 +85,7 @@ export const VagasService = {
     if (jobData.location) updateData.localizacao = jobData.location;
     if (jobData.description) updateData.descricao = jobData.description;
     if (jobData.skillsTags) updateData.habilidades = jobData.skillsTags;
-    if (jobData.supportTags) updateData.acessibilidadeIds = jobData.supportTags;
+    if (jobData.supportTags) updateData.apoios = jobData.supportTags;
 
     if (jobData.startDate) updateData.dataInicio = jobData.startDate;
     if (jobData.endDate) updateData.dataFim = jobData.endDate;

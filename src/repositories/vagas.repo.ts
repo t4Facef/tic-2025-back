@@ -75,12 +75,7 @@ export const VagasRepository = {
     let vagas = await prisma.vagas.findMany({
       where,
       include: { 
-        empresa: true,
-        vagaAcessibilidades: {
-          include: {
-            acessibilidade: true
-          }
-        }
+        empresa: true
       },
       orderBy: { createdAt: 'desc' }
     });
@@ -146,12 +141,7 @@ export const VagasRepository = {
       where: { id },
       include: { 
         empresa: true, 
-        candidaturas: true,
-        vagaAcessibilidades: {
-          include: {
-            acessibilidade: true
-          }
-        }
+        candidaturas: true
       },
     });
   },
@@ -170,52 +160,16 @@ export const VagasRepository = {
   },
 
   async create(vaga: any) {
-    const { acessibilidadeIds, ...vagaData } = vaga;
-    
-    const createdVaga = await prisma.vagas.create({
-      data: vagaData,
+    return await prisma.vagas.create({
+      data: vaga,
     });
-    
-    // Criar relações com acessibilidades
-    if (acessibilidadeIds && acessibilidadeIds.length > 0) {
-      await prisma.vagaAcessibilidade.createMany({
-        data: acessibilidadeIds.map((id: number) => ({
-          vagaId: createdVaga.id,
-          acessibilidadeId: id
-        }))
-      });
-    }
-    
-    return createdVaga;
   },
 
   async update(id: number, vaga: any) {
-    const { acessibilidadeIds, ...vagaData } = vaga;
-    
-    const updatedVaga = await prisma.vagas.update({
+    return await prisma.vagas.update({
       where: { id },
-      data: vagaData,
+      data: vaga,
     });
-    
-    // Atualizar relações com acessibilidades
-    if (acessibilidadeIds !== undefined) {
-      // Remover relações existentes
-      await prisma.vagaAcessibilidade.deleteMany({
-        where: { vagaId: id }
-      });
-      
-      // Criar novas relações
-      if (acessibilidadeIds.length > 0) {
-        await prisma.vagaAcessibilidade.createMany({
-          data: acessibilidadeIds.map((acessId: number) => ({
-            vagaId: id,
-            acessibilidadeId: acessId
-          }))
-        });
-      }
-    }
-    
-    return updatedVaga;
   },
 
   async delete(id: number) {
