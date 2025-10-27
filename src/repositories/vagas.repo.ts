@@ -74,7 +74,14 @@ export const VagasRepository = {
 
     let vagas = await prisma.vagas.findMany({
       where,
-      include: { empresa: true },
+      include: { 
+        empresa: true,
+        vagaAcessibilidades: {
+          include: {
+            acessibilidade: true
+          }
+        }
+      },
       orderBy: { createdAt: 'desc' }
     });
 
@@ -137,7 +144,15 @@ export const VagasRepository = {
   async findById(id: number) {
     return await prisma.vagas.findUnique({
       where: { id },
-      include: { empresa: true, candidaturas: true },
+      include: { 
+        empresa: true, 
+        candidaturas: true,
+        vagaAcessibilidades: {
+          include: {
+            acessibilidade: true
+          }
+        }
+      },
     });
   },
 
@@ -155,16 +170,52 @@ export const VagasRepository = {
   },
 
   async create(vaga: any) {
-    return await prisma.vagas.create({
-      data: vaga,
+    const { acessibilidadeIds, ...vagaData } = vaga;
+    
+    const createdVaga = await prisma.vagas.create({
+      data: vagaData,
     });
+    
+    // Criar relações com acessibilidades
+    if (acessibilidadeIds && acessibilidadeIds.length > 0) {
+      await prisma.vagaAcessibilidade.createMany({
+        data: acessibilidadeIds.map((id: number) => ({
+          vagaId: createdVaga.id,
+          acessibilidadeId: id
+        }))
+      });
+    }
+    
+    return createdVaga;
   },
 
   async update(id: number, vaga: any) {
-    return await prisma.vagas.update({
+    const { acessibilidadeIds, ...vagaData } = vaga;
+    
+    const updatedVaga = await prisma.vagas.update({
       where: { id },
-      data: vaga,
+      data: vagaData,
     });
+    
+    // Atualizar relações com acessibilidades
+    if (acessibilidadeIds !== undefined) {
+      // Remover relações existentes
+      await prisma.vagaAcessibilidade.deleteMany({
+        where: { vagaId: id }
+      });
+      
+      // Criar novas relações
+      if (acessibilidadeIds.length > 0) {
+        await prisma.vagaAcessibilidade.createMany({
+          data: acessibilidadeIds.map((acessId: number) => ({
+            vagaId: id,
+            acessibilidadeId: acessId
+          }))
+        });
+      }
+    }
+    
+    return updatedVaga;
   },
 
   async delete(id: number) {

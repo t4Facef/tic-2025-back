@@ -46,14 +46,14 @@ export const VagasController = {
         description,
         skillsTags,
         supportTags,
-        compatibility,
         startDate,
         endDate,
         typeContract,
         typeWork,
         payment,
         workLevel,
-        timeShift
+        timeShift,
+        setor
       } = req.body;
 
       const jobData = {
@@ -63,14 +63,14 @@ export const VagasController = {
         description,
         skillsTags,
         supportTags,
-        compatibility,
         startDate: new Date(startDate),
         endDate: new Date(endDate),
         typeContract,
         typeWork,
         payment,
         workLevel,
-        timeShift
+        timeShift,
+        setor
       };
 
       const created = await VagasService.create(jobData);

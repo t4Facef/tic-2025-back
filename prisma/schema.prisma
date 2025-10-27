@@ -140,6 +140,7 @@ model Acessibilidade {
   nome      String                   @unique
   barreiras BarreiraAcessibilidade[]
   EmpresaAcessibilidade EmpresaAcessibilidade[]
+  VagaAcessibilidade VagaAcessibilidade[]
 
   createdAt             DateTime                @default(now())
   updatedAt             DateTime                @updatedAt
@@ -178,6 +179,7 @@ model Vagas {
   empresa   Empresa @relation(fields: [empresaId], references: [id], onDelete: Cascade)
 
   candidaturas Candidaturas[]
+  vagaAcessibilidades VagaAcessibilidade[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -252,6 +254,17 @@ model EmpresaAcessibilidade {
 
   @@id([empresaId, acessibilidadeId])
   @@index([empresaId])
+}
+
+model VagaAcessibilidade {
+  vagaId           Int
+  acessibilidadeId Int
+
+  vaga           Vagas          @relation(fields: [vagaId], references: [id], onDelete: Cascade)
+  acessibilidade Acessibilidade @relation(fields: [acessibilidadeId], references: [id], onDelete: Cascade)
+
+  @@id([vagaId, acessibilidadeId])
+  @@index([vagaId])
 }
 
 model Arquivo {

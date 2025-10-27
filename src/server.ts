@@ -39,11 +39,6 @@ app.get('/api/arquivos/empresa/:empresaId/foto/view', async (req, res) => {
     const fotoPath = path.join(process.cwd(), 'uploads', 'empresas', empresaId.toString(), 'foto.jpg');
     const defaultPath = path.join(process.cwd(), 'uploads', 'profile-default.jpg');
     
-    console.log('Empresa ID:', empresaId);
-    console.log('Foto Path:', fotoPath);
-    console.log('Foto existe:', fs.existsSync(fotoPath));
-    console.log('Default existe:', fs.existsSync(defaultPath));
-    
     if (fs.existsSync(fotoPath)) {
       res.setHeader('Content-Type', 'image/jpeg');
       res.sendFile(path.resolve(fotoPath));
@@ -52,7 +47,6 @@ app.get('/api/arquivos/empresa/:empresaId/foto/view', async (req, res) => {
       res.sendFile(path.resolve(defaultPath));
     }
   } catch (error) {
-    console.log('Erro na rota empresa foto:', error);
     res.status(400).json({ error: 'Erro ao buscar foto' });
   }
 });

@@ -6,8 +6,7 @@ interface JobData {
   location: string;
   description: string;
   skillsTags: string[];
-  supportTags: string[];
-  compatibility?: number;
+  supportTags: number[]; // Agora são IDs das acessibilidades
   startDate: Date;
   endDate: Date;
   typeContract: string;
@@ -15,6 +14,7 @@ interface JobData {
   payment: string;
   workLevel: string;
   timeShift: string;
+  setor?: string;
 }
 
 interface VagasFilters {
@@ -63,8 +63,7 @@ export const VagasService = {
       localizacao: jobData.location,
       descricao: jobData.description,
       habilidades: jobData.skillsTags,
-      apoios: jobData.supportTags,
-      compatibilidade: jobData.compatibility,
+      apoios: [], // Manter vazio, usar relação
       dataInicio: jobData.startDate,
       dataFim: jobData.endDate,
       tipoContrato: jobData.typeContract,
@@ -72,7 +71,9 @@ export const VagasService = {
       pagamento: jobData.payment,
       nivelTrabalho: jobData.workLevel,
       turno: jobData.timeShift,
+      setor: jobData.setor,
       empresaId: jobData.idEmpresa,
+      acessibilidadeIds: jobData.supportTags, // IDs das acessibilidades
     };
     return await VagasRepository.create(vagaData);
   },
@@ -84,8 +85,8 @@ export const VagasService = {
     if (jobData.location) updateData.localizacao = jobData.location;
     if (jobData.description) updateData.descricao = jobData.description;
     if (jobData.skillsTags) updateData.habilidades = jobData.skillsTags;
-    if (jobData.supportTags) updateData.apoios = jobData.supportTags;
-    if (jobData.compatibility) updateData.compatibilidade = jobData.compatibility;
+    if (jobData.supportTags) updateData.acessibilidadeIds = jobData.supportTags;
+
     if (jobData.startDate) updateData.dataInicio = jobData.startDate;
     if (jobData.endDate) updateData.dataFim = jobData.endDate;
     if (jobData.typeContract) updateData.tipoContrato = jobData.typeContract;
@@ -93,6 +94,7 @@ export const VagasService = {
     if (jobData.payment) updateData.pagamento = jobData.payment;
     if (jobData.workLevel) updateData.nivelTrabalho = jobData.workLevel;
     if (jobData.timeShift) updateData.turno = jobData.timeShift;
+    if (jobData.setor) updateData.setor = jobData.setor;
 
     return await VagasRepository.update(id, updateData);
   },
