@@ -141,7 +141,15 @@ export const VagasRepository = {
       where: { id },
       include: { 
         empresa: true, 
-        candidaturas: true
+        candidaturas: {
+          include: {
+            candidato: {
+              select: {
+                nome: true
+              }
+            }
+          }
+        }
       },
     });
   },
