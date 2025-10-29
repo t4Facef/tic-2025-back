@@ -152,4 +152,24 @@ export const VagasController = {
       res.status(400).json({ error: error.message });
     }
   },
+
+  // GET /vagas/top-empresas - Retorna IDs das 7 empresas com mais vagas abertas
+  async getTopEmpresasByVagas(req: Request, res: Response) {
+    try {
+      const empresaIds = await VagasService.getTopEmpresasByVagas();
+      res.json(empresaIds);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  },
+
+  // GET /vagas/populares - Retorna 3 vagas mais populares (mais candidaturas hoje)
+  async getVagasPopulares(req: Request, res: Response) {
+    try {
+      const vagas = await VagasService.getVagasPopulares();
+      res.json(vagas);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  },
 };

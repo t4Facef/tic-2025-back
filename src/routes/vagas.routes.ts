@@ -5,6 +5,8 @@ const router = Router();
 
 router.get("/", VagasController.list);
 router.get("/recomendadas", VagasController.getRecomendadas);
+router.get("/top-empresas", VagasController.getTopEmpresasByVagas);
+router.get("/populares", VagasController.getVagasPopulares);
 router.post("/search", VagasController.search);
 router.get("/candidato/:candidatoId", VagasController.getVagasComCompatibilidade);
 router.get("/candidato/:candidatoId/inscritas", VagasController.getVagasInscritas);

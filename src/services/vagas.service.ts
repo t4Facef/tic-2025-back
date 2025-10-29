@@ -112,4 +112,12 @@ export const VagasService = {
     const filters = { candidatoId: candidatoId.toString(), recomendadas: true };
     return await VagasRepository.findAll(filters);
   },
+
+  async getTopEmpresasByVagas() {
+    return await VagasRepository.getTopEmpresasByVagas();
+  },
+
+  async getVagasPopulares() {
+    return await VagasRepository.getVagasPopulares();
+  },
 };

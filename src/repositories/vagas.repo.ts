@@ -76,7 +76,10 @@ export const VagasRepository = {
     let vagas = await prisma.vagas.findMany({
       where,
       include: { 
-        empresa: true
+        empresa: true,
+        candidaturas: {
+          select: { id: true }
+        }
       },
       orderBy: { createdAt: 'desc' }
     });
@@ -89,7 +92,12 @@ export const VagasRepository = {
         where: { candidatoId },
         include: {
           vaga: {
-            include: { empresa: true }
+            include: { 
+              empresa: true,
+              candidaturas: {
+                select: { id: true }
+              }
+            }
           }
         },
         orderBy: { dataCandidatura: 'desc' },
@@ -317,5 +325,77 @@ export const VagasRepository = {
     }
 
     return vagas;
+  },
+
+  async getTopEmpresasByVagas() {
+    const empresasComVagas = await prisma.empresa.findMany({
+      select: {
+        id: true,
+        _count: {
+          select: {
+            vagas: {
+              where: {
+                status: 'DISPONIVEL'
+              }
+            }
+          }
+        }
+      },
+      orderBy: {
+        vagas: {
+          _count: 'desc'
+        }
+      }
+    });
+
+    // Se tiver menos de 7 empresas, repete as que têm mais vagas
+    const result = [];
+    let index = 0;
+    
+    for (let i = 0; i < 7; i++) {
+      if (empresasComVagas.length === 0) break;
+      
+      result.push(empresasComVagas[index].id);
+      index = (index + 1) % empresasComVagas.length;
+    }
+    
+    return result;
+  },
+
+  async getVagasPopulares() {
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    const amanha = new Date(hoje);
+    amanha.setDate(amanha.getDate() + 1);
+
+    return await prisma.vagas.findMany({
+      where: {
+        status: 'DISPONIVEL'
+      },
+      include: {
+        empresa: true,
+        candidaturas: {
+          select: { id: true }
+        },
+        _count: {
+          select: {
+            candidaturas: {
+              where: {
+                dataCandidatura: {
+                  gte: hoje,
+                  lt: amanha
+                }
+              }
+            }
+          }
+        }
+      },
+      orderBy: {
+        candidaturas: {
+          _count: 'desc'
+        }
+      },
+      take: 3
+    });
   }
 };
