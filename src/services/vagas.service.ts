@@ -42,6 +42,7 @@ interface VagasSearchFilters extends VagasFilters {
   dataInicioMax?: string;
   candidatoId?: string;
   inscrito?: boolean;
+  page?: number;
 }
 
 export const VagasService = {
@@ -103,7 +104,9 @@ export const VagasService = {
     return await VagasRepository.delete(id);
   },
 
-
+  async search(filters?: VagasSearchFilters) {
+    return await VagasRepository.search(filters);
+  },
 
   async getRecomendadas(candidatoId: number) {
     const filters = { candidatoId: candidatoId.toString(), recomendadas: true };

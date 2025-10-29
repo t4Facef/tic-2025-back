@@ -109,7 +109,7 @@ export const VagasController = {
   async search(req: Request, res: Response) {
     try {
       const filters = req.body;
-      const data = await VagasService.list(filters);
+      const data = await VagasService.search(filters);
       res.json(data);
     } catch (error: any) {
       res.status(400).json({ error: error.message });

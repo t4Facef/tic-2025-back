@@ -25,6 +25,7 @@ interface VagasSearchFilters extends VagasFilters {
   dataInicioMax?: string;
   candidatoId?: string;
   inscrito?: boolean;
+  page?: number;
 }
 
 export const VagasRepository = {
@@ -80,21 +81,22 @@ export const VagasRepository = {
       orderBy: { createdAt: 'desc' }
     });
 
-    // Filtro de vagas inscritas
+    // Filtro de vagas inscritas - ordenadas pela data de candidatura mais recente
     if (filters?.inscrito && filters?.candidatoId) {
       const candidatoId = parseInt(filters.candidatoId);
-      return await prisma.vagas.findMany({
-        where: {
-          ...where,
-          candidaturas: {
-            some: {
-              candidatoId: candidatoId
-            }
+      
+      const candidaturas = await prisma.candidaturas.findMany({
+        where: { candidatoId },
+        include: {
+          vaga: {
+            include: { empresa: true }
           }
         },
-        include: { empresa: true },
-        orderBy: { createdAt: 'desc' }
+        orderBy: { dataCandidatura: 'desc' },
+        take: 3
       });
+      
+      return candidaturas.map(c => c.vaga);
     }
 
     // Filtro de recomendação com candidatoId
@@ -167,7 +169,8 @@ export const VagasRepository = {
     return await prisma.vagas.findMany({
       where,
       include: { empresa: true },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
+      take: 3
     });
   },
 
@@ -238,10 +241,21 @@ export const VagasRepository = {
       where.dataInicio = { ...where.dataInicio, lte: new Date(filters.dataInicioMax) };
     }
 
+
+    // Configuração de paginação
+    const page = filters.page;
+    const limit = 8;
+    const skip = page ? (page - 1) * limit : undefined;
+    const take = page ? limit : undefined;
+    
+    // Contar total se tem paginação
+    const total = page ? await prisma.vagas.count({ where }) : undefined;
+    const totalPages = page && total ? Math.ceil(total / limit) : undefined;
+
     // Filtro de vagas inscritas
     if (filters.inscrito && filters.candidatoId) {
       const candidatoId = parseInt(filters.candidatoId);
-      return await prisma.vagas.findMany({
+      const vagas = await prisma.vagas.findMany({
         where: {
           ...where,
           candidaturas: {
@@ -256,11 +270,28 @@ export const VagasRepository = {
             select: { id: true }
           }
         },
-        orderBy: { createdAt: 'desc' }
+        orderBy: { createdAt: 'desc' },
+        skip,
+        take
       });
+      
+      if (page) {
+        return {
+          vagas,
+          pagination: {
+            currentPage: page,
+            totalPages: totalPages!,
+            totalItems: total!,
+            itemsPerPage: limit
+          }
+        };
+      }
+      
+      return vagas;
     }
 
-    return await prisma.vagas.findMany({
+    // Busca normal
+    const vagas = await prisma.vagas.findMany({
       where,
       include: { 
         empresa: true,
@@ -268,7 +299,23 @@ export const VagasRepository = {
           select: { id: true }
         }
       },
-      orderBy: { createdAt: 'desc' }
+      orderBy: { createdAt: 'desc' },
+      skip,
+      take
     });
+
+    if (page) {
+      return {
+        vagas,
+        pagination: {
+          currentPage: page,
+          totalPages: totalPages!,
+          totalItems: total!,
+          itemsPerPage: limit
+        }
+      };
+    }
+
+    return vagas;
   }
 };
