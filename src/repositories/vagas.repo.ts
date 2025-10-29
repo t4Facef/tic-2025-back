@@ -145,7 +145,11 @@ export const VagasRepository = {
           include: {
             candidato: {
               select: {
-                nome: true
+                nome: true,
+                email: true,
+                telefones: true,
+                endereco: true,
+                subtipos: true               
               }
             }
           }
