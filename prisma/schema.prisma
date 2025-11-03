@@ -229,8 +229,6 @@ model FormacaoOuCurso {
   updatedAt DateTime @updatedAt
 }
 
-
-
 // Model de Experiencias
 model Experiencias {
   id          Int       @id @default(autoincrement())

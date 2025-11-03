@@ -162,51 +162,56 @@ export const AuthService = {
   },
 
   async solicitarRedefinicaoSenha(email: string) {
+    // Verificar se existe usuário com este email
     const candidato = await prisma.candidato.findUnique({ where: { email } });
     const empresa = !candidato ? await prisma.empresa.findUnique({ where: { email } }) : null;
     
     const user = candidato || empresa;
-    if (!user) throw new Error("Email não encontrado");
+    if (!user) {
+      throw new Error("Não existe nenhum usuário cadastrado com esse email");
+    }
 
-    const resetToken = randomBytes(32).toString('hex');
-    const resetTokenExpiry = new Date(Date.now() + 3600000); // 1 hora
-
-    // Salva o token no banco (você pode criar uma tabela específica para isso)
-    const tokenData = {
-      email,
-      token: resetToken,
-      expiresAt: resetTokenExpiry,
-      used: false
-    };
-
-    // Por simplicidade, vou usar uma abordagem com JWT temporário
-    const tempToken = jwt.sign(
-      { email, type: 'password-reset' },
+    // Gerar token JWT temporário para redefinição
+    const resetToken = jwt.sign(
+      { 
+        email, 
+        type: 'password-reset',
+        userId: user.id,
+        userType: candidato ? 'candidato' : 'empresa'
+      },
       process.env.JWT_SECRET || "fallback-secret",
       { expiresIn: '1h' }
     );
 
-    const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/reset-password?token=${tempToken}`;
+    // Criar link de redefinição
+    const resetLink = `${process.env.FRONTEND_URL || 'http://localhost:5173'}/reset-password?token=${resetToken}`;
     
+    // Enviar email
     await EmailService.enviarEmailRedefinicaoSenha(email, resetLink);
 
-    return { message: "Email de redefinição enviado" };
+    return { message: "Email de redefinição enviado com sucesso" };
   },
 
   async redefinirSenha(token: string, novaSenha: string) {
     try {
+      // Verificar e decodificar o token
       const decoded = jwt.verify(token, process.env.JWT_SECRET || "fallback-secret") as any;
       
       if (decoded.type !== 'password-reset') {
         throw new Error("Token inválido");
       }
 
-      const { email } = decoded;
+      const { email, userType } = decoded;
+      
+      // Validar nova senha
+      if (!novaSenha || novaSenha.length < 6) {
+        throw new Error("A nova senha deve ter pelo menos 6 caracteres");
+      }
+
       const hash = await bcrypt.hash(novaSenha, 10);
 
-      // Atualiza a senha do candidato ou empresa
-      const candidato = await prisma.candidato.findUnique({ where: { email } });
-      if (candidato) {
+      // Atualizar senha baseado no tipo de usuário
+      if (userType === 'candidato') {
         await prisma.candidato.update({
           where: { email },
           data: { senha: hash }
@@ -219,8 +224,11 @@ export const AuthService = {
       }
 
       return { message: "Senha redefinida com sucesso" };
-    } catch (error) {
-      throw new Error("Token inválido ou expirado");
+    } catch (error: any) {
+      if (error.name === 'JsonWebTokenError' || error.name === 'TokenExpiredError') {
+        throw new Error("Token inválido ou expirado");
+      }
+      throw error;
     }
   },
 };

@@ -108,7 +108,7 @@ export const VagasService = {
   },
 
   async search(filters?: VagasSearchFilters) {
-    return await VagasRepository.search(filters);
+    return await VagasRepository.search(filters || {});
   },
 
   async getRecomendadas(candidatoId: number) {
