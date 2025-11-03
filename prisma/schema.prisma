@@ -49,6 +49,8 @@ model Empresa {
 
   empresaAcessibilidade EmpresaAcessibilidade[]
   vagas                 Vagas[]
+  notificacoesRecebidas NotificacaoEmpresa[]
+  notificacoesEnviadas  Notificacao[]
 
   createdAt             DateTime                @default(now())
   updatedAt             DateTime                @updatedAt
@@ -76,6 +78,7 @@ model Candidato {
   experiencia  Experiencias[]
 
   arquivos        Arquivo[]
+  notificacoesRecebidas NotificacaoCandidato[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -286,4 +289,49 @@ enum TipoArquivo {
   LAUDO
   CURRICULO
   FOTO
+}
+
+model Notificacao {
+  id       Int     @id @default(autoincrement())
+  titulo   String
+  conteudo String
+  
+  // Remetente (sempre empresa)
+  remetenteEmpresaId Int?
+  remetenteEmpresa   Empresa? @relation(fields: [remetenteEmpresaId], references: [id])
+  
+  // Relações N:N através de tabelas intermediárias
+  candidatos NotificacaoCandidato[]
+  empresas   NotificacaoEmpresa[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Tabela intermediária para Notificacao <-> Candidato
+model NotificacaoCandidato {
+  notificacaoId Int
+  candidatoId   Int
+  lida          Boolean @default(false)
+  
+  notificacao Notificacao @relation(fields: [notificacaoId], references: [id], onDelete: Cascade)
+  candidato   Candidato   @relation(fields: [candidatoId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  
+  @@id([notificacaoId, candidatoId])
+}
+
+// Tabela intermediária para Notificacao <-> Empresa
+model NotificacaoEmpresa {
+  notificacaoId Int
+  empresaId     Int
+  lida          Boolean @default(false)
+  
+  notificacao Notificacao @relation(fields: [notificacaoId], references: [id], onDelete: Cascade)
+  empresa     Empresa     @relation(fields: [empresaId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+  
+  @@id([notificacaoId, empresaId])
 }

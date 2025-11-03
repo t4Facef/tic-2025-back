@@ -17,6 +17,7 @@ import compatibilidadeRoutes from "./compatibilidade.routes";
 import estatisticasRoutes from "./estatisticas.routes";
 import arquivoRoutes from "./arquivo.routes";
 import empresaRoutes from "./empresa.routes";
+import notificacoesRoutes from "./notificacoes.routes";
 
 const router = Router();
 
@@ -39,5 +40,6 @@ router.use("/compatibilidade", compatibilidadeRoutes);
 router.use("/estatisticas", estatisticasRoutes);
 router.use("/arquivos", arquivoRoutes);
 router.use("/empresa", empresaRoutes);
+router.use("/notificacoes", notificacoesRoutes);
 
 export default router;

@@ -11,6 +11,7 @@ interface VagasFilters {
   habilidades?: string;
   apoios?: string;
   setor?: string;
+  status?: boolean;
   recomendadas?: boolean;
   candidatoId?: string;
   inscrito?: boolean;
@@ -23,6 +24,7 @@ interface VagasSearchFilters extends VagasFilters {
   salarioMax?: number;
   dataInicioMin?: string;
   dataInicioMax?: string;
+  status?: boolean;
   candidatoId?: string;
   inscrito?: boolean;
   page?: number;
@@ -70,6 +72,9 @@ export const VagasRepository = {
       }
       if (filters.setor) {
         where.setor = { contains: filters.setor, mode: 'insensitive' };
+      }
+      if (filters.status) {
+        where.status = 'DISPONIVEL';
       }
     }
 
@@ -247,6 +252,9 @@ export const VagasRepository = {
     }
     if (filters.dataInicioMax) {
       where.dataInicio = { ...where.dataInicio, lte: new Date(filters.dataInicioMax) };
+    }
+    if (filters.status) {
+      where.status = 'DISPONIVEL';
     }
 
 

@@ -79,7 +79,7 @@ export const VagasService = {
     return await VagasRepository.create(vagaData);
   },
 
-  async update(id: number, jobData: Partial<JobData>) {
+  async update(id: number, jobData: any) {
     const updateData: any = {};
     
     if (jobData.title) updateData.titulo = jobData.title;
@@ -96,6 +96,9 @@ export const VagasService = {
     if (jobData.workLevel) updateData.nivelTrabalho = jobData.workLevel;
     if (jobData.timeShift) updateData.turno = jobData.timeShift;
     if (jobData.setor) updateData.setor = jobData.setor;
+    
+    // Permitir atualização direta do status
+    if (jobData.status) updateData.status = jobData.status;
 
     return await VagasRepository.update(id, updateData);
   },
