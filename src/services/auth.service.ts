@@ -141,7 +141,37 @@ export const AuthService = {
     });
   },
 
+  async registrarAdmin(dadosAdmin: any) {
+    const { nome, senha } = dadosAdmin;
+    
+    const existeAdmin = await prisma.administrador.findUnique({ where: { nome } });
+    if (existeAdmin) throw new Error("Nome de administrador já existe");
+
+    const hash = await bcrypt.hash(senha, 10);
+    
+    return prisma.administrador.create({
+      data: { nome, senha: hash }
+    });
+  },
+
   async login(email: string, senha: string) {
+    // Verificar se é login de admin (por nome ao invés de email)
+    const admin = await prisma.administrador.findUnique({ where: { nome: email } });
+    
+    if (admin) {
+      const valido = await bcrypt.compare(senha, admin.senha);
+      if (!valido) throw Object.assign(new Error("Senha inválida"), { status: 401 });
+      
+      const token = jwt.sign(
+        { id: admin.id, nome: admin.nome, role: "ADMIN" },
+        process.env.JWT_SECRET || "fallback-secret",
+        { expiresIn: "24h" }
+      );
+      
+      return { token, role: "ADMIN", user: { id: admin.id, nome: admin.nome } };
+    }
+
+    // Login normal (candidato/empresa)
     const candidato = await prisma.candidato.findUnique({ where: { email } });
     const empresa = !candidato ? await prisma.empresa.findUnique({ where: { email } }) : null;
 

@@ -88,4 +88,13 @@ export const AuthController = {
       res.status(400).json({ error: error.message });
     }
   },
+
+  async registrarAdmin(req: Request, res: Response) {
+    try {
+      const admin = await AuthService.registrarAdmin(req.body);
+      res.status(201).json({ message: "Administrador registrado com sucesso", id: admin.id });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  },
 };

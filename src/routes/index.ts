@@ -18,6 +18,7 @@ import estatisticasRoutes from "./estatisticas.routes";
 import arquivoRoutes from "./arquivo.routes";
 import empresaRoutes from "./empresa.routes";
 import notificacoesRoutes from "./notificacoes.routes";
+import { AuthController } from "../controllers/auth.controller";
 
 const router = Router();
 
@@ -41,5 +42,8 @@ router.use("/estatisticas", estatisticasRoutes);
 router.use("/arquivos", arquivoRoutes);
 router.use("/empresa", empresaRoutes);
 router.use("/notificacoes", notificacoesRoutes);
+
+// Rota adicional para admin (compatibilidade)
+router.post("/admin/create", AuthController.registrarAdmin);
 
 export default router;

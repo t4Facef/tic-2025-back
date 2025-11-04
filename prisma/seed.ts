@@ -582,6 +582,18 @@ async function main() {
     ]
   });
 
+  // Criar administrador padrão
+  const adminExistente = await prisma.administrador.count();
+  if (adminExistente === 0) {
+    await prisma.administrador.create({
+      data: {
+        nome: "administrador",
+        senha: await bcrypt.hash("administrador", 10)
+      }
+    });
+    console.log("Administrador padrão criado: login=administrador, senha=administrador");
+  }
+
   console.log("Seed executado com sucesso!");
 }
 

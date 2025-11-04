@@ -9,6 +9,7 @@ router.get("/check-cpf", AuthController.verificarCPF);
 router.get("/check-cnpj", AuthController.verificarCNPJ);
 router.post("/candidato/register", AuthController.registrarCandidato);
 router.post("/empresa/register", AuthController.registrarEmpresa);
+router.post("/admin/register", AuthController.registrarAdmin);
 router.post("/login", AuthController.login);
 router.post("/forgot-password", AuthController.solicitarRedefinicaoSenha);
 router.post("/reset-password", AuthController.redefinirSenha);
