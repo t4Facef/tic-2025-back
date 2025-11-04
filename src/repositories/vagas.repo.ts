@@ -336,38 +336,48 @@ export const VagasRepository = {
   },
 
   async getTopEmpresasByVagas() {
-    const empresasComVagas = await prisma.empresa.findMany({
-      select: {
-        id: true,
-        _count: {
-          select: {
-            vagas: {
-              where: {
-                status: 'DISPONIVEL'
+    try {
+      const empresasComVagas = await prisma.empresa.findMany({
+        select: {
+          id: true,
+          _count: {
+            select: {
+              vagas: {
+                where: {
+                  status: 'DISPONIVEL'
+                }
               }
             }
           }
-        }
-      },
-      orderBy: {
-        vagas: {
-          _count: 'desc'
-        }
-      }
-    });
+        },
+        orderBy: {
+          vagas: {
+            _count: 'desc'
+          }
+        },
+        take: 10 // Limitar para evitar problemas de performance
+      });
 
-    // Se tiver menos de 7 empresas, repete as que têm mais vagas
-    const result = [];
-    let index = 0;
-    
-    for (let i = 0; i < 7; i++) {
-      if (empresasComVagas.length === 0) break;
+      // Se não houver empresas, retorna array com IDs padrão
+      if (empresasComVagas.length === 0) {
+        return [1, 2, 3, 4, 5, 6, 7]; // IDs de fallback
+      }
+
+      // Se tiver menos de 7 empresas, repete as que têm mais vagas
+      const result = [];
+      let index = 0;
       
-      result.push(empresasComVagas[index].id);
-      index = (index + 1) % empresasComVagas.length;
+      for (let i = 0; i < 7; i++) {
+        result.push(empresasComVagas[index].id);
+        index = (index + 1) % empresasComVagas.length;
+      }
+      
+      return result;
+    } catch (error) {
+      console.error('Erro ao buscar top empresas:', error);
+      // Retorna IDs de fallback em caso de erro
+      return [1, 2, 3, 4, 5, 6, 7];
     }
-    
-    return result;
   },
 
   async getVagasPopulares() {

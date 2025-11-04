@@ -82,23 +82,24 @@ export const VagasService = {
   async update(id: number, jobData: any) {
     const updateData: any = {};
     
-    if (jobData.title) updateData.titulo = jobData.title;
-    if (jobData.location) updateData.localizacao = jobData.location;
-    if (jobData.description) updateData.descricao = jobData.description;
-    if (jobData.skillsTags) updateData.habilidades = jobData.skillsTags;
-    if (jobData.supportTags) updateData.apoios = jobData.supportTags;
+    // Atualizar campos mesmo se forem strings vazias (exceto para campos opcionais)
+    if (jobData.title !== undefined) updateData.titulo = jobData.title;
+    if (jobData.location !== undefined) updateData.localizacao = jobData.location;
+    if (jobData.description !== undefined) updateData.descricao = jobData.description;
+    if (jobData.skillsTags !== undefined) updateData.habilidades = jobData.skillsTags;
+    if (jobData.supportTags !== undefined) updateData.apoios = jobData.supportTags;
 
-    if (jobData.startDate) updateData.dataInicio = jobData.startDate;
-    if (jobData.endDate) updateData.dataFim = jobData.endDate;
-    if (jobData.typeContract) updateData.tipoContrato = jobData.typeContract;
-    if (jobData.typeWork) updateData.tipoTrabalho = jobData.typeWork;
-    if (jobData.payment) updateData.pagamento = jobData.payment;
-    if (jobData.workLevel) updateData.nivelTrabalho = jobData.workLevel;
-    if (jobData.timeShift) updateData.turno = jobData.timeShift;
-    if (jobData.setor) updateData.setor = jobData.setor;
+    if (jobData.startDate !== undefined) updateData.dataInicio = jobData.startDate;
+    if (jobData.endDate !== undefined) updateData.dataFim = jobData.endDate;
+    if (jobData.typeContract !== undefined) updateData.tipoContrato = jobData.typeContract;
+    if (jobData.typeWork !== undefined) updateData.tipoTrabalho = jobData.typeWork;
+    if (jobData.payment !== undefined) updateData.pagamento = jobData.payment;
+    if (jobData.workLevel !== undefined) updateData.nivelTrabalho = jobData.workLevel;
+    if (jobData.timeShift !== undefined) updateData.turno = jobData.timeShift;
+    if (jobData.setor !== undefined) updateData.setor = jobData.setor;
     
     // Permitir atualização direta do status
-    if (jobData.status) updateData.status = jobData.status;
+    if (jobData.status !== undefined) updateData.status = jobData.status;
 
     return await VagasRepository.update(id, updateData);
   },

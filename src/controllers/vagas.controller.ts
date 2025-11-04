@@ -85,6 +85,17 @@ export const VagasController = {
     try {
       const id = Number(req.params.id);
       const jobData = req.body;
+      const user = (req as any).user;
+      
+      // Verificar se a vaga existe e se pertence à empresa logada
+      const existingVaga = await VagasService.findById(id);
+      if (!existingVaga) {
+        return res.status(404).json({ error: "Vaga não encontrada" });
+      }
+      
+      if (user.role === 'EMPRESA' && existingVaga.empresaId !== user.id) {
+        return res.status(403).json({ error: "Você não tem permissão para editar esta vaga" });
+      }
       
       if (jobData.startDate) jobData.startDate = new Date(jobData.startDate);
       if (jobData.endDate) jobData.endDate = new Date(jobData.endDate);
