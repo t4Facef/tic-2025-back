@@ -48,4 +48,26 @@ export const BarreirasRepo = {
       },
     });
   },
+
+  // Cria barreira e vincula a subtipo
+  async createAndVincular(descricao: string, subtipoId: number) {
+    return prisma.barreira.create({
+      data: {
+        descricao,
+        subtipos: {
+          create: { subtipoId }
+        }
+      },
+      include: {
+        subtipos: {
+          include: { subtipo: true }
+        }
+      }
+    });
+  },
+
+  // Deleta uma barreira
+  delete(id: number) {
+    return prisma.barreira.delete({ where: { id } });
+  },
 };

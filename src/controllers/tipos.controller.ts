@@ -33,4 +33,15 @@ export const TiposController = {
       res.status(error.status || 400).json({ error: error.message });
     }
   },
+
+  // DELETE /tipos/:id
+  async delete(req: Request, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      await TiposService.delete(id);
+      res.json({ message: "Tipo deletado com sucesso" });
+    } catch (error: any) {
+      res.status(error.status || 400).json({ error: error.message });
+    }
+  },
 };

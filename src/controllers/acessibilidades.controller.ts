@@ -55,4 +55,37 @@ export const AcessibilidadesController = {
       res.status(error.status || 400).json({ error: error.message });
     }
   },
+
+  // GET /acessibilidades/barreira/:barreiraId
+  async getByBarreira(req: Request, res: Response) {
+    try {
+      const barreiraId = Number(req.params.barreiraId);
+      const data = await AcessService.getByBarreira(barreiraId);
+      res.json(data);
+    } catch (error: any) {
+      res.status(error.status || 400).json({ error: error.message });
+    }
+  },
+
+  // POST /acessibilidades/vincular-barreira
+  async vincularBarreira(req: Request, res: Response) {
+    try {
+      const { barreiraId, nome } = req.body;
+      const acessibilidade = await AcessService.createAndVincular(nome, barreiraId);
+      res.status(201).json(acessibilidade);
+    } catch (error: any) {
+      res.status(error.status || 400).json({ error: error.message });
+    }
+  },
+
+  // DELETE /acessibilidades/:id
+  async delete(req: Request, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      await AcessService.delete(id);
+      res.json({ message: "Acessibilidade deletada com sucesso" });
+    } catch (error: any) {
+      res.status(error.status || 400).json({ error: error.message });
+    }
+  },
 };

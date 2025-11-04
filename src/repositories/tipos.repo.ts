@@ -24,4 +24,9 @@ export const TiposRepo = {
   findById(id: number) {
     return prisma.tipoDeficiencia.findUnique({ where: { id } });
   },
+
+  // Deleta um tipo
+  delete(id: number) {
+    return prisma.tipoDeficiencia.delete({ where: { id } });
+  },
 };

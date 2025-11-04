@@ -60,5 +60,13 @@ export const SubtiposService = {
     const subtipos = await SubtiposRepo.findSubtiposByTipo(tipoId);
     
     return subtipos;
-  }
+  },
+
+  // Deleta um subtipo
+  async delete(id: number) {
+    if (!id || isNaN(id))
+      throw Object.assign(new Error("ID inválido"), { status: 400 });
+
+    return SubtiposRepo.delete(id);
+  },
 };

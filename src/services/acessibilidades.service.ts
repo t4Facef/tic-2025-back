@@ -32,4 +32,32 @@ export const AcessService = {
 
     return AcessRepo.create(final);
   },
+
+  // Busca acessibilidades por barreira
+  getByBarreira(barreiraId: number) {
+    if (!barreiraId || isNaN(barreiraId))
+      throw Object.assign(new Error("barreiraId inválido"), { status: 400 });
+    
+    return AcessRepo.findByBarreira(barreiraId);
+  },
+
+  // Cria acessibilidade e vincula a barreira
+  async createAndVincular(nome: string, barreiraId: number) {
+    const final = (nome ?? "").trim();
+    if (!final)
+      throw Object.assign(new Error("O campo 'nome' é obrigatório"), { status: 400 });
+    
+    if (!barreiraId || isNaN(barreiraId))
+      throw Object.assign(new Error("barreiraId inválido"), { status: 400 });
+
+    return AcessRepo.createAndVincular(final, barreiraId);
+  },
+
+  // Deleta uma acessibilidade
+  async delete(id: number) {
+    if (!id || isNaN(id))
+      throw Object.assign(new Error("ID inválido"), { status: 400 });
+
+    return AcessRepo.delete(id);
+  },
 };

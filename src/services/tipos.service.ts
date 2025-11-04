@@ -23,4 +23,12 @@ export const TiposService = {
 
     return TiposRepo.create(final);
   },
+
+  // Deleta um tipo
+  async delete(id: number) {
+    if (!id || isNaN(id))
+      throw Object.assign(new Error("ID inválido"), { status: 400 });
+
+    return TiposRepo.delete(id);
+  },
 };

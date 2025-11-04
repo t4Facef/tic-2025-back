@@ -23,4 +23,24 @@ export const BarreirasService = {
   getBySubtipo(subtipoId: number) {
     return BarreirasRepo.findBySubtipo(subtipoId);
   },
+
+  // Cria barreira e vincula a subtipo
+  async createAndVincular(descricao: string, subtipoId: number) {
+    const final = (descricao ?? "").trim();
+    if (!final)
+      throw Object.assign(new Error("O campo 'descricao' é obrigatório"), { status: 400 });
+    
+    if (!subtipoId || isNaN(subtipoId))
+      throw Object.assign(new Error("subtipoId inválido"), { status: 400 });
+
+    return BarreirasRepo.createAndVincular(final, subtipoId);
+  },
+
+  // Deleta uma barreira
+  async delete(id: number) {
+    if (!id || isNaN(id))
+      throw Object.assign(new Error("ID inválido"), { status: 400 });
+
+    return BarreirasRepo.delete(id);
+  },
 };

@@ -54,4 +54,38 @@ export const AcessRepo = {
       orderBy: { id: "asc" }
     });
   },
+
+  // Busca acessibilidades por barreira
+  findByBarreira(barreiraId: number) {
+    return prisma.acessibilidade.findMany({
+      where: {
+        barreiras: {
+          some: { barreiraId }
+        }
+      },
+      orderBy: { id: "asc" }
+    });
+  },
+
+  // Cria acessibilidade e vincula a barreira
+  async createAndVincular(nome: string, barreiraId: number) {
+    return prisma.acessibilidade.create({
+      data: {
+        nome,
+        barreiras: {
+          create: { barreiraId }
+        }
+      },
+      include: {
+        barreiras: {
+          include: { barreira: true }
+        }
+      }
+    });
+  },
+
+  // Deleta uma acessibilidade
+  delete(id: number) {
+    return prisma.acessibilidade.delete({ where: { id } });
+  },
 };

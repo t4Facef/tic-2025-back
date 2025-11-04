@@ -11,7 +11,7 @@ async function main() {
     return;
   }
 
-  // Criar tipos de deficiência
+  // Criar tipos de deficiência (combinando dados existentes + professor)
   const tipoVisual = await prisma.tipoDeficiencia.create({
     data: { nome: "Deficiência Visual" }
   });
@@ -32,7 +32,7 @@ async function main() {
     data: { nome: "Deficiência Múltipla" }
   });
 
-  // Criar subtipos de deficiência
+  // Criar subtipos de deficiência (incluindo os do professor)
   const cegueira = await prisma.subtipoDeficiencia.create({
     data: { nome: "Cegueira", tipoId: tipoVisual.id }
   });
@@ -49,6 +49,10 @@ async function main() {
     data: { nome: "Surdez", tipoId: tipoAuditiva.id }
   });
 
+  const usuarioLibras = await prisma.subtipoDeficiencia.create({
+    data: { nome: "Usuário de Libras", tipoId: tipoAuditiva.id }
+  });
+
   const deficienciaAuditiva = await prisma.subtipoDeficiencia.create({
     data: { nome: "Deficiência Auditiva Leve", tipoId: tipoAuditiva.id }
   });
@@ -59,6 +63,10 @@ async function main() {
 
   const amputacao = await prisma.subtipoDeficiencia.create({
     data: { nome: "Amputação", tipoId: tipoFisica.id }
+  });
+
+  const amputacaoMuleta = await prisma.subtipoDeficiencia.create({
+    data: { nome: "Amputação MIE com muleta", tipoId: tipoFisica.id }
   });
 
   const paralisiaCerebral = await prisma.subtipoDeficiencia.create({
@@ -77,7 +85,7 @@ async function main() {
     data: { nome: "Surdocegueira", tipoId: tipoMultipla.id }
   });
 
-  // Criar barreiras
+  // Criar barreiras (combinando dados existentes + professor)
   const barreiraLeitura = await prisma.barreira.create({
     data: { descricao: "Dificuldade de leitura de textos" }
   });
@@ -116,6 +124,31 @@ async function main() {
 
   const barreiraConcentracao = await prisma.barreira.create({
     data: { descricao: "Dificuldade de concentração" }
+  });
+
+  // Barreiras específicas do professor
+  const escadas = await prisma.barreira.create({
+    data: { descricao: "Escadas" }
+  });
+
+  const degrausAltos = await prisma.barreira.create({
+    data: { descricao: "Degraus altos" }
+  });
+
+  const pisoIrregular = await prisma.barreira.create({
+    data: { descricao: "Piso irregular" }
+  });
+
+  const faltaInterprete = await prisma.barreira.create({
+    data: { descricao: "Ausência de intérprete de Libras" }
+  });
+
+  const faltaContraste = await prisma.barreira.create({
+    data: { descricao: "Falta de contraste visual" }
+  });
+
+  const faltaSinalizacaoTatil = await prisma.barreira.create({
+    data: { descricao: "Falta de sinalização tátil" }
   });
 
   // Conectar subtipos com barreiras
@@ -582,16 +615,45 @@ async function main() {
     ]
   });
 
+  // Criar usuários de teste solicitados
+  const hashCandidato = await bcrypt.hash('Luciano14@', 10);
+  const hashEmpresa = await bcrypt.hash('Luciano14@', 10);
+  const hashAdmin = await bcrypt.hash('admin123', 10);
+
+  // Candidato de teste
+  await prisma.candidato.create({
+    data: {
+      nome: 'Luciano Mazarao Jr',
+      email: 'lmazaraojr1@gmail.com',
+      senha: hashCandidato,
+      dataNascimento: new Date('1990-01-01'),
+      areaInteresse: 'Tecnologia'
+    }
+  });
+
+  // Empresa de teste
+  await prisma.empresa.create({
+    data: {
+      razaoSocial: 'Empresa Teste Ltda',
+      nomeFantasia: 'Empresa Teste',
+      email: 'lmazaraojr2@gmail.com',
+      senha: hashEmpresa,
+      cnpj: '12345678000199',
+      telefoneComercial: '11999999999',
+      area: 'Tecnologia'
+    }
+  });
+
   // Criar administrador padrão
   const adminExistente = await prisma.administrador.count();
   if (adminExistente === 0) {
     await prisma.administrador.create({
       data: {
-        nome: "administrador",
-        senha: await bcrypt.hash("administrador", 10)
+        nome: "admin",
+        senha: hashAdmin
       }
     });
-    console.log("Administrador padrão criado: login=administrador, senha=administrador");
+    console.log("Administrador padrão criado: login=admin, senha=admin123");
   }
 
   console.log("Seed executado com sucesso!");

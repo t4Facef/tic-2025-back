@@ -34,4 +34,26 @@ export const BarreirasController = {
       res.status(error.status || 400).json({ error: error.message });
     }
   },
+
+  // POST /barreiras/vincular-subtipo
+  async vincularSubtipo(req: Request, res: Response) {
+    try {
+      const { subtipoId, descricao } = req.body;
+      const barreira = await BarreirasService.createAndVincular(descricao, subtipoId);
+      res.status(201).json(barreira);
+    } catch (error: any) {
+      res.status(error.status || 400).json({ error: error.message });
+    }
+  },
+
+  // DELETE /barreiras/:id
+  async delete(req: Request, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      await BarreirasService.delete(id);
+      res.json({ message: "Barreira deletada com sucesso" });
+    } catch (error: any) {
+      res.status(error.status || 400).json({ error: error.message });
+    }
+  },
 };

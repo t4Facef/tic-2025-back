@@ -33,5 +33,16 @@ export const SubtiposController = {
     } catch (error: any) {
       res.status(error.status || 400).json({ error: error.message });
     }
+  },
+
+  // DELETE /subtipos/:id
+  async delete(req: Request, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      await SubtiposService.delete(id);
+      res.json({ message: "Subtipo deletado com sucesso" });
+    } catch (error: any) {
+      res.status(error.status || 400).json({ error: error.message });
+    }
   }
 };

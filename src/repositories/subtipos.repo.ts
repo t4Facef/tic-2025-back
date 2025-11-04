@@ -44,4 +44,9 @@ export const SubtiposRepo = {
       }
     });
   },
+
+  // Deleta um subtipo
+  delete(id: number) {
+    return prisma.subtipoDeficiencia.delete({ where: { id } });
+  },
 };
