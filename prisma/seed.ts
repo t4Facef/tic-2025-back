@@ -440,7 +440,7 @@ async function main() {
       descricao: "Vaga para desenvolvedor frontend com foco em acessibilidade web",
       habilidades: ["React", "JavaScript", "HTML", "CSS", "Acessibilidade Web"],
       apoios: ["Software leitor de tela", "Teclado adaptado"],
-      compatibilidade: 85.5,
+      compatibilidade: 0.855,
       dataInicio: new Date("2024-01-15"),
       dataFim: new Date("2024-12-31"),
       tipoContrato: "CLT",
@@ -459,7 +459,7 @@ async function main() {
       descricao: "Vaga para analista de recursos humanos especializado em inclusão",
       habilidades: ["Recrutamento", "Seleção", "Gestão de Pessoas", "Diversidade e Inclusão"],
       apoios: ["Intérprete de Libras", "Comunicação visual"],
-      compatibilidade: 92.0,
+      compatibilidade: 0.92,
       dataInicio: new Date("2024-02-01"),
       dataFim: new Date("2024-11-30"),
       tipoContrato: "CLT",
@@ -478,7 +478,7 @@ async function main() {
       descricao: "Desenvolvedor Node.js para APIs REST e microserviços",
       habilidades: ["Node.js", "PostgreSQL", "Express", "Docker", "AWS"],
       apoios: ["Software leitor de tela", "Mesa ajustável", "Ambiente silencioso"],
-      compatibilidade: 78.3,
+      compatibilidade: 0.783,
       dataInicio: new Date("2024-03-01"),
       dataFim: new Date("2025-02-28"),
       tipoContrato: "PJ",
@@ -497,7 +497,7 @@ async function main() {
       descricao: "Designer focado em experiência do usuário inclusiva e acessível",
       habilidades: ["Figma", "Adobe XD", "Prototipagem", "Design System", "Acessibilidade"],
       apoios: ["Contraste de cores", "Software leitor de tela", "Linguagem simples"],
-      compatibilidade: 88.7,
+      compatibilidade: 0.887,
       dataInicio: new Date("2024-01-20"),
       dataFim: new Date("2024-10-20"),
       tipoContrato: "CLT",
@@ -516,7 +516,7 @@ async function main() {
       descricao: "Análise de dados e business intelligence para tomada de decisões",
       habilidades: ["Python", "SQL", "Power BI", "Estatística", "Machine Learning"],
       apoios: ["Rampa de acesso", "Banheiro adaptado", "Elevador"],
-      compatibilidade: 91.2,
+      compatibilidade: 0.912,
       dataInicio: new Date("2024-04-01"),
       dataFim: new Date("2025-03-31"),
       tipoContrato: "CLT",
@@ -535,7 +535,7 @@ async function main() {
       descricao: "Estágio em desenvolvimento de software com mentoria especializada",
       habilidades: ["JavaScript", "HTML", "CSS", "Git", "Lógica de Programação"],
       apoios: ["Instruções claras", "Ambiente silencioso", "Software leitor de tela"],
-      compatibilidade: 95.0,
+      compatibilidade: 0.95,
       dataInicio: new Date("2024-02-15"),
       dataFim: new Date("2024-08-15"),
       tipoContrato: "Estágio",
@@ -554,7 +554,7 @@ async function main() {
       descricao: "Gestão de projetos de tecnologia com foco em metodologias ágeis",
       habilidades: ["Scrum", "Kanban", "Jira", "Gestão de Equipes", "Comunicação"],
       apoios: ["Intérprete de Libras", "Comunicação visual", "Legendas"],
-      compatibilidade: 82.4,
+      compatibilidade: 0.824,
       dataInicio: new Date("2024-05-01"),
       dataFim: new Date("2025-04-30"),
       tipoContrato: "CLT",
@@ -573,7 +573,7 @@ async function main() {
       descricao: "Desenvolvimento de aplicativos móveis acessíveis para Android e iOS",
       habilidades: ["React Native", "Flutter", "JavaScript", "TypeScript", "Acessibilidade Mobile"],
       apoios: ["Teclado adaptado", "Software leitor de tela", "Mesa ajustável"],
-      compatibilidade: 87.1,
+      compatibilidade: 0.871,
       dataInicio: new Date("2024-03-15"),
       dataFim: new Date("2024-12-15"),
       tipoContrato: "PJ",
@@ -632,7 +632,7 @@ async function main() {
   });
 
   // Empresa de teste
-  await prisma.empresa.create({
+  const empresaTeste = await prisma.empresa.create({
     data: {
       razaoSocial: 'Empresa Teste Ltda',
       nomeFantasia: 'Empresa Teste',
@@ -642,6 +642,65 @@ async function main() {
       telefoneComercial: '11999999999',
       area: 'Tecnologia'
     }
+  });
+
+  // Candidatos extras para teste
+  const candidatoTeste1 = await prisma.candidato.create({
+    data: {
+      nome: 'Ana Costa',
+      email: 'ana@teste.com',
+      senha: await bcrypt.hash('123456', 10),
+      dataNascimento: new Date('1992-03-15'),
+      areaInteresse: 'Tecnologia',
+      habilidades: ['JavaScript', 'React', 'Node.js']
+    }
+  });
+
+  const candidatoTeste2 = await prisma.candidato.create({
+    data: {
+      nome: 'Carlos Silva',
+      email: 'carlos@teste.com',
+      senha: await bcrypt.hash('123456', 10),
+      dataNascimento: new Date('1988-07-22'),
+      areaInteresse: 'Tecnologia',
+      habilidades: ['Python', 'Django', 'PostgreSQL']
+    }
+  });
+
+  // Associar candidatos com subtipos para compatibilidade
+  await prisma.candidatoSubtipo.createMany({
+    data: [
+      { candidatoId: candidatoTeste1.id, subtipoId: baixaVisao.id },
+      { candidatoId: candidatoTeste2.id, subtipoId: usuarioLibras.id },
+    ]
+  });
+
+  // Vaga da empresa de teste com alta compatibilidade
+  const vagaTeste = await prisma.vagas.create({
+    data: {
+      titulo: 'Desenvolvedor Full Stack',
+      localizacao: 'São Paulo, SP',
+      descricao: 'Vaga para desenvolvedor full stack com foco em acessibilidade',
+      habilidades: ['JavaScript', 'React', 'Node.js', 'Python'],
+      apoios: ['Software leitor de tela', 'Intérprete de Libras', 'Mesa ajustável'],
+      compatibilidade: 0.885,
+      dataInicio: new Date('2024-01-01'),
+      dataFim: new Date('2024-12-31'),
+      tipoContrato: 'CLT',
+      tipoTrabalho: 'Híbrido',
+      pagamento: 'R$ 6.000 - R$ 8.000',
+      nivelTrabalho: 'Pleno',
+      turno: 'Comercial',
+      empresaId: empresaTeste.id
+    }
+  });
+
+  // Candidaturas para a vaga de teste com alta compatibilidade
+  await prisma.candidaturas.createMany({
+    data: [
+      { candidatoId: candidatoTeste1.id, vagaId: vagaTeste.id, status: 'PENDENTE' },
+      { candidatoId: candidatoTeste2.id, vagaId: vagaTeste.id, status: 'PENDENTE' },
+    ]
   });
 
   // Criar administrador padrão
