@@ -147,4 +147,5 @@ vite.config.ts.timestamp-*
 
 *.ini
 
-uploads/
+uploads/candidatos
+uploads/empresas
