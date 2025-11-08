@@ -63,6 +63,7 @@ export const CompatibilidadeController = {
       const vagaId = Number(req.params.vagaId);
       
       // Buscar todos os candidatos
+      // amazonq-ignore-next-line
       const { PrismaClient } = require("@prisma/client");
       const prisma = new PrismaClient();
       

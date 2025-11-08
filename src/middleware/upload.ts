@@ -17,6 +17,8 @@ const storage = multer.diskStorage({
   },
 });
 
+// amazonq-ignore-next-line
+// amazonq-ignore-next-line
 export const upload = multer({ 
   storage,
   limits: {

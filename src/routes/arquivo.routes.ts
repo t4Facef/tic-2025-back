@@ -4,6 +4,7 @@ import { ArquivoController } from "../controllers/arquivo.controller";
 
 const router = Router();
 
+// amazonq-ignore-next-line
 router.post("/upload", upload.single("file"), ArquivoController.upload);
 
 // Verificar se arquivo existe

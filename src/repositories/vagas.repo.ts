@@ -73,7 +73,7 @@ export const VagasRepository = {
       if (filters.setor) {
         where.setor = { contains: filters.setor, mode: 'insensitive' };
       }
-      if (filters.status) {
+      if (filters.status === true) {
         where.status = 'DISPONIVEL';
       }
     }
@@ -138,7 +138,7 @@ export const VagasRepository = {
       }
       
       // Se for filtro de recomendadas, filtrar apenas >= 70%
-      if (filters.recomendadas) {
+      if (filters.recomendadas === true) {
         return vagasComCompatibilidade
           .filter(vaga => vaga.compatibilidadeCalculada >= 0.7)
           .sort((a, b) => b.compatibilidadeCalculada - a.compatibilidadeCalculada)
@@ -253,10 +253,9 @@ export const VagasRepository = {
     if (filters.dataInicioMax) {
       where.dataInicio = { ...where.dataInicio, lte: new Date(filters.dataInicioMax) };
     }
-    if (filters.status) {
+    if (filters.status === true) {
       where.status = 'DISPONIVEL';
     }
-
 
     // Configuração de paginação
     const page = filters.page;
@@ -355,15 +354,13 @@ export const VagasRepository = {
             _count: 'desc'
           }
         },
-        take: 10 // Limitar para evitar problemas de performance
+        take: 10
       });
 
-      // Se não houver empresas, retorna array com IDs padrão
       if (empresasComVagas.length === 0) {
-        return [1, 2, 3, 4, 5, 6, 7]; // IDs de fallback
+        return [1, 2, 3, 4, 5, 6, 7];
       }
 
-      // Se tiver menos de 7 empresas, repete as que têm mais vagas
       const result = [];
       let index = 0;
       
@@ -375,7 +372,6 @@ export const VagasRepository = {
       return result;
     } catch (error) {
       console.error('Erro ao buscar top empresas:', error);
-      // Retorna IDs de fallback em caso de erro
       return [1, 2, 3, 4, 5, 6, 7];
     }
   },

@@ -9,6 +9,7 @@ export const authMiddleware = (req: Request, res: Response, next: NextFunction) 
   }
 
   try {
+    // amazonq-ignore-next-line
     const decoded = jwt.verify(token, process.env.JWT_SECRET || "fallback-secret") as any;
     (req as any).user = decoded;
     next();

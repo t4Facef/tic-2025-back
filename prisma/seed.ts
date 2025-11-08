@@ -720,7 +720,7 @@ async function main() {
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error('Seed execution failed:', e instanceof Error ? e.message : 'Unknown error');
     process.exit(1);
   })
   .finally(async () => {

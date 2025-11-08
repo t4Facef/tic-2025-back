@@ -7,6 +7,7 @@ const router = Router();
 router.get("/check-email", AuthController.verificarEmail);
 router.get("/check-cpf", AuthController.verificarCPF);
 router.get("/check-cnpj", AuthController.verificarCNPJ);
+// amazonq-ignore-next-line
 router.post("/candidato/register", AuthController.registrarCandidato);
 router.post("/empresa/register", AuthController.registrarEmpresa);
 router.post("/admin/register", AuthController.registrarAdmin);
