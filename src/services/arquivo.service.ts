@@ -29,8 +29,7 @@ export const ArquivoService = {
     }
 
     // Nome do arquivo baseado no tipo
-    const ext = path.extname(file.originalname);
-    const filename = `${tipo.toLowerCase()}${ext}`;
+    const filename = tipo === 'FOTO' ? 'foto.jpg' : `${tipo.toLowerCase()}.pdf`;
     const filePath = path.join(userDir, filename);
 
     // Se arquivo já existe, remover

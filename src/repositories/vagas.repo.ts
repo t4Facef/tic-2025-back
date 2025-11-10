@@ -25,6 +25,7 @@ interface VagasSearchFilters extends VagasFilters {
   dataInicioMin?: string;
   dataInicioMax?: string;
   status?: boolean;
+  recomendadas?: boolean;
   candidatoId?: string;
   inscrito?: boolean;
   page?: number;
@@ -260,16 +261,22 @@ export const VagasRepository = {
     // Configuração de paginação
     const page = filters.page;
     const limit = 8;
-    const skip = page ? (page - 1) * limit : undefined;
-    const take = page ? limit : undefined;
     
-    // Contar total se tem paginação
-    const total = page ? await prisma.vagas.count({ where }) : undefined;
+    // Para filtros especiais (recomendadas/compatibilidade), buscar mais dados inicialmente
+    const needsCompatibilityCalc = filters.candidatoId && !filters.inscrito;
+    const initialSkip = needsCompatibilityCalc ? 0 : (page ? (page - 1) * limit : undefined);
+    const initialTake = needsCompatibilityCalc ? undefined : (page ? limit : undefined);
+    
+    // Contar total se tem paginação e não precisa de cálculo de compatibilidade
+    const total = page && !needsCompatibilityCalc ? await prisma.vagas.count({ where }) : undefined;
     const totalPages = page && total ? Math.ceil(total / limit) : undefined;
 
     // Filtro de vagas inscritas
     if (filters.inscrito && filters.candidatoId) {
       const candidatoId = parseInt(filters.candidatoId);
+      const skip = page ? (page - 1) * limit : undefined;
+      const take = page ? limit : undefined;
+      
       const vagas = await prisma.vagas.findMany({
         where: {
           ...where,
@@ -306,7 +313,10 @@ export const VagasRepository = {
     }
 
     // Busca normal
-    const vagas = await prisma.vagas.findMany({
+    const skip = page ? (page - 1) * limit : initialSkip;
+    const take = page ? limit : initialTake;
+    
+    let vagas = await prisma.vagas.findMany({
       where,
       include: { 
         empresa: true,
@@ -318,6 +328,60 @@ export const VagasRepository = {
       skip,
       take
     });
+
+    // Calcular compatibilidade se há candidatoId
+    if (filters.candidatoId) {
+      const { CompatibilidadeService } = require('../services/compatibilidade.service');
+      const candidatoId = parseInt(filters.candidatoId);
+      
+      const vagasComCompatibilidade: any[] = [];
+      for (const vaga of vagas) {
+        try {
+          const compatibilidade = await CompatibilidadeService.calcularCompatibilidade(candidatoId, vaga.id);
+          const { compatibilidade: _, ...vagaSemCompatibilidadeFixa } = vaga;
+          vagasComCompatibilidade.push({
+            ...vagaSemCompatibilidadeFixa,
+            compatibilidadeCalculada: compatibilidade,
+            compatibilidadeFormatada: `${(compatibilidade * 100).toFixed(1)}%`
+          });
+        } catch (error) {
+          const { compatibilidade: _, ...vagaSemCompatibilidadeFixa } = vaga;
+          vagasComCompatibilidade.push({
+            ...vagaSemCompatibilidadeFixa,
+            compatibilidadeCalculada: 0,
+            compatibilidadeFormatada: "0.0%"
+          });
+        }
+      }
+      
+      // Se for filtro de recomendadas, filtrar apenas >= 70%
+      if (filters.recomendadas === true) {
+        vagas = vagasComCompatibilidade
+          .filter(vaga => vaga.compatibilidadeCalculada >= 0.7)
+          .sort((a, b) => b.compatibilidadeCalculada - a.compatibilidadeCalculada);
+      } else {
+        vagas = vagasComCompatibilidade.sort((a, b) => b.compatibilidadeCalculada - a.compatibilidadeCalculada);
+      }
+      
+      // Aplicar paginação depois do cálculo de compatibilidade se necessário
+      if (page) {
+        const totalItemsAfterFilter = vagas.length;
+        const totalPagesAfterFilter = Math.ceil(totalItemsAfterFilter / limit);
+        const startIndex = (page - 1) * limit;
+        const endIndex = startIndex + limit;
+        vagas = vagas.slice(startIndex, endIndex);
+        
+        return {
+          vagas,
+          pagination: {
+            currentPage: page,
+            totalPages: totalPagesAfterFilter,
+            totalItems: totalItemsAfterFilter,
+            itemsPerPage: limit
+          }
+        };
+      }
+    }
 
     if (page) {
       return {

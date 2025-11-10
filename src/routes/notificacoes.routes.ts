@@ -18,4 +18,8 @@ router.get("/empresa/:empresaId/all", NotificacoesController.getAllNotificacoesE
 router.patch("/candidato/:notificacaoId/:candidatoId/lida", NotificacoesController.marcarComoLidaCandidato);
 router.patch("/empresa/:notificacaoId/:empresaId/lida", NotificacoesController.marcarComoLidaEmpresa);
 
+// Marcar todas como lidas
+router.patch("/candidato/:candidatoId/todas-lidas", NotificacoesController.marcarTodasComoLidasCandidato);
+router.patch("/empresa/:empresaId/todas-lidas", NotificacoesController.marcarTodasComoLidasEmpresa);
+
 export default router;

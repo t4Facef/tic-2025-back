@@ -124,5 +124,25 @@ export const NotificacoesService = {
       },
       data: { lida: true }
     });
+  },
+
+  async marcarTodasComoLidasCandidato(candidatoId: number) {
+    return await prisma.notificacaoCandidato.updateMany({
+      where: { 
+        candidatoId,
+        lida: false
+      },
+      data: { lida: true }
+    });
+  },
+
+  async marcarTodasComoLidasEmpresa(empresaId: number) {
+    return await prisma.notificacaoEmpresa.updateMany({
+      where: { 
+        empresaId,
+        lida: false
+      },
+      data: { lida: true }
+    });
   }
 };

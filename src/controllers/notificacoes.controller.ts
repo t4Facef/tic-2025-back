@@ -82,5 +82,25 @@ export const NotificacoesController = {
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
+  },
+
+  async marcarTodasComoLidasCandidato(req: Request, res: Response) {
+    try {
+      const candidatoId = Number(req.params.candidatoId);
+      await NotificacoesService.marcarTodasComoLidasCandidato(candidatoId);
+      res.json({ message: "Todas as notificações foram marcadas como lidas" });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  },
+
+  async marcarTodasComoLidasEmpresa(req: Request, res: Response) {
+    try {
+      const empresaId = Number(req.params.empresaId);
+      await NotificacoesService.marcarTodasComoLidasEmpresa(empresaId);
+      res.json({ message: "Todas as notificações foram marcadas como lidas" });
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
   }
 };

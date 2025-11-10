@@ -40,6 +40,7 @@ interface VagasSearchFilters extends VagasFilters {
   salarioMax?: number;
   dataInicioMin?: string;
   dataInicioMax?: string;
+  recomendadas?: boolean;
   candidatoId?: string;
   inscrito?: boolean;
   page?: number;
