@@ -84,6 +84,14 @@ export const AcessRepo = {
     });
   },
 
+  // Atualiza uma acessibilidade
+  update(id: number, nome: string) {
+    return prisma.acessibilidade.update({
+      where: { id },
+      data: { nome }
+    });
+  },
+
   // Deleta uma acessibilidade
   delete(id: number) {
     return prisma.acessibilidade.delete({ where: { id } });

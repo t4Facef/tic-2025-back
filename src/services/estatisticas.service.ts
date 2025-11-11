@@ -105,5 +105,57 @@ export const EstatisticasService = {
       vagasAbertas,
       metaContratacao
     };
+  },
+
+  async obterEstatisticasAdmin() {
+    // Contagem de tipos de deficiência
+    const tipos = await prisma.tipoDeficiencia.count();
+    
+    // Contagem de subtipos de deficiência
+    const subtipos = await prisma.subtipoDeficiencia.count();
+    
+    // Contagem de barreiras
+    const barreiras = await prisma.barreira.count();
+    
+    // Contagem de acessibilidades
+    const acessibilidades = await prisma.acessibilidade.count();
+    
+    // Contagem de empresas
+    const empresas = await prisma.empresa.count();
+    
+    // Contagem de candidatos
+    const candidatos = await prisma.candidato.count();
+    
+    // Contagem de vagas abertas
+    const vagasAbertas = await prisma.vagas.count({
+      where: { status: "DISPONIVEL" }
+    });
+    
+    // Candidaturas hoje
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    const amanha = new Date(hoje);
+    amanha.setDate(hoje.getDate() + 1);
+    
+    const candidaturasHoje = await prisma.candidaturas.count({
+      where: {
+        dataCandidatura: {
+          gte: hoje,
+          lt: amanha
+        }
+      }
+    });
+
+    return {
+      tipos,
+      subtipos,
+      barreiras,
+      acessibilidades,
+      empresas,
+      candidatos,
+      totalUsuarios: empresas + candidatos,
+      vagasAbertas,
+      candidaturasHoje
+    };
   }
 };

@@ -20,6 +20,14 @@ export const TiposRepo = {
     return prisma.tipoDeficiencia.create({ data: { nome } });
   },
 
+  // Atualiza um tipo
+  update(id: number, nome: string) {
+    return prisma.tipoDeficiencia.update({
+      where: { id },
+      data: { nome }
+    });
+  },
+
   // Busca tipo pelo ID
   findById(id: number) {
     return prisma.tipoDeficiencia.findUnique({ where: { id } });

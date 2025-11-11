@@ -47,6 +47,20 @@ export const SubtiposService = {
     return SubtiposRepo.create(final, tipoId);
   },
 
+  // Atualiza um subtipo
+  async update(id: number, nome: string) {
+    if (!id || isNaN(id))
+      throw Object.assign(new Error("ID inválido"), { status: 400 });
+
+    const final = (nome ?? "").trim();
+    if (!final)
+      throw Object.assign(new Error("O campo 'nome' é obrigatório"), {
+        status: 400,
+      });
+
+    return SubtiposRepo.update(id, final);
+  },
+
   async getByTipoId(tipoId: number) {
     if (!Number.isInteger(tipoId))
       throw Object.assign(new Error("tipoId inválido"), { status: 400 });

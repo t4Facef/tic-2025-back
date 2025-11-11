@@ -14,6 +14,8 @@ router.post("/", AcessibilidadesController.create); // POST /acessibilidades
 // amazonq-ignore-next-line
 router.post("/vincular-barreira", AcessibilidadesController.vincularBarreira); // POST /acessibilidades/vincular-barreira
 // amazonq-ignore-next-line
+router.put("/:id", AcessibilidadesController.update); // PUT /acessibilidades/:id
+// amazonq-ignore-next-line
 router.delete("/:id", AcessibilidadesController.delete); // DELETE /acessibilidades/:id
 
 export default router;

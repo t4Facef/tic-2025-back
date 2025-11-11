@@ -7,6 +7,7 @@ const router = Router();
 router.get("/", TiposController.list);                  // GET /tipos
 router.get("/com-subtipos", TiposController.listWithSubtipos); // GET /tipos/com-subtipos
 router.post("/", TiposController.create);               // POST /tipos
+router.put("/:id", TiposController.update);             // PUT /tipos/:id
 router.delete("/:id", TiposController.delete);          // DELETE /tipos/:id
 
 export default router;

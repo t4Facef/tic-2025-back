@@ -78,6 +78,18 @@ export const AcessibilidadesController = {
     }
   },
 
+  // PUT /acessibilidades/:id
+  async update(req: Request, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      const { nome } = req.body ?? {};
+      const updated = await AcessService.update(id, nome);
+      res.json(updated);
+    } catch (error: any) {
+      res.status(error.status || 400).json({ error: error.message });
+    }
+  },
+
   // DELETE /acessibilidades/:id
   async delete(req: Request, res: Response) {
     try {

@@ -20,5 +20,14 @@ export const EstatisticasController = {
     } catch (error: any) {
       res.status(400).json({ error: error.message });
     }
+  },
+
+  async obterEstatisticasAdmin(_req: Request, res: Response) {
+    try {
+      const estatisticas = await EstatisticasService.obterEstatisticasAdmin();
+      res.json(estatisticas);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
   }
 };

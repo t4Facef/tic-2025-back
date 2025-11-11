@@ -24,6 +24,20 @@ export const TiposService = {
     return TiposRepo.create(final);
   },
 
+  // Atualiza um tipo
+  async update(id: number, nome: string) {
+    if (!id || isNaN(id))
+      throw Object.assign(new Error("ID inválido"), { status: 400 });
+
+    const final = (nome ?? "").trim();
+    if (!final)
+      throw Object.assign(new Error("O campo 'nome' é obrigatório"), {
+        status: 400,
+      });
+
+    return TiposRepo.update(id, final);
+  },
+
   // Deleta um tipo
   async delete(id: number) {
     if (!id || isNaN(id))

@@ -53,6 +53,18 @@ export const AcessService = {
     return AcessRepo.createAndVincular(final, barreiraId);
   },
 
+  // Atualiza uma acessibilidade
+  async update(id: number, nome: string) {
+    if (!id || isNaN(id))
+      throw Object.assign(new Error("ID inválido"), { status: 400 });
+    
+    const final = (nome ?? "").trim();
+    if (!final)
+      throw Object.assign(new Error("O campo 'nome' é obrigatório"), { status: 400 });
+
+    return AcessRepo.update(id, final);
+  },
+
   // Deleta uma acessibilidade
   async delete(id: number) {
     if (!id || isNaN(id))

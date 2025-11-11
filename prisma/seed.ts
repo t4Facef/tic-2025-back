@@ -708,11 +708,11 @@ async function main() {
   if (adminExistente === 0) {
     await prisma.administrador.create({
       data: {
-        nome: "admin",
+        nome: "admin@tic2025.com",
         senha: hashAdmin
       }
     });
-    console.log("Administrador padrão criado: login=admin, senha=admin123");
+    console.log("Administrador padrão criado: email=admin@tic2025.com, senha=admin123");
   }
 
   console.log("Seed executado com sucesso!");
