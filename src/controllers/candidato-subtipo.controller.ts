@@ -41,4 +41,15 @@ export const CandidatoSubtipoController = {
       res.status(400).json({ error: error.message });
     }
   },
+
+  async atualizarSubtiposBatch(req: Request, res: Response) {
+    try {
+      const candidatoId = Number(req.params.candidatoId);
+      const { subtipoIds } = req.body;
+      const results = await CandidatoSubtipoService.atualizarSubtiposBatch(candidatoId, subtipoIds);
+      res.json(results);
+    } catch (error: any) {
+      res.status(400).json({ error: error.message });
+    }
+  },
 };

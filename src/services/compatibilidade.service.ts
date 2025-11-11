@@ -4,7 +4,7 @@ const prisma = new PrismaClient();
 
 export const CompatibilidadeService = {
   async calcularCompatibilidade(candidatoId: number, vagaId: number): Promise<number> {
-    // Buscar dados do candidato com suas deficiências e habilidades
+    // Buscar dados do candidato com suas deficiências, habilidades e barreiras diretas
     const candidato = await prisma.candidato.findUnique({
       where: { id: candidatoId },
       include: {
@@ -19,6 +19,11 @@ export const CompatibilidadeService = {
                 }
               }
             }
+          }
+        },
+        barreiras: {
+          include: {
+            barreira: true
           }
         }
       }
@@ -104,10 +109,18 @@ export const CompatibilidadeService = {
     // Verificar se os apoios da vaga atendem às necessidades do candidato
     const apoiosVaga = vaga.apoios.map((a: string) => a.toLowerCase().trim());
     
-    // Obter barreiras do candidato para verificar se os apoios são relevantes
-    const barreiras = candidato.subtipos.flatMap((cs: any) => 
-      cs.subtipo.barreiras.map((sb: any) => sb.barreira.descricao.toLowerCase())
-    );
+    // Priorizar barreiras diretas do candidato, se não houver, usar as dos subtipos
+    let barreiras: string[] = [];
+    
+    if (candidato.barreiras && candidato.barreiras.length > 0) {
+      // Usar barreiras diretas do candidato
+      barreiras = candidato.barreiras.map((cb: any) => cb.barreira.descricao.toLowerCase());
+    } else {
+      // Fallback para barreiras dos subtipos
+      barreiras = candidato.subtipos.flatMap((cs: any) => 
+        cs.subtipo.barreiras.map((sb: any) => sb.barreira.descricao.toLowerCase())
+      );
+    }
 
     if (barreiras.length === 0) {
       return 1.0; // Se não há barreiras, apoios não são críticos

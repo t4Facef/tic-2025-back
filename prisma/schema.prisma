@@ -74,6 +74,7 @@ model Candidato {
   formacoes    FormacaoOuCurso[]
   candidaturas Candidaturas[]
   subtipos     CandidatoSubtipo[]
+  barreiras    CandidatoBarreira[]
   habilidades  String[]
   experiencia  Experiencias[]
 
@@ -117,11 +118,21 @@ model CandidatoSubtipo {
   @@id([candidatoId, subtipoId])
 }
 
+model CandidatoBarreira {
+  candidatoId Int
+  barreiraId  Int
+  candidato   Candidato @relation(fields: [candidatoId], references: [id], onDelete: Cascade)
+  barreira    Barreira  @relation(fields: [barreiraId], references: [id], onDelete: Cascade)
+
+  @@id([candidatoId, barreiraId])
+}
+
 // Models de Barreiras e Acessibilidades
 model Barreira {
   id              Int                      @id @default(autoincrement())
   descricao       String                   @unique
   subtipos        SubtipoBarreira[]
+  candidatos      CandidatoBarreira[]
   acessibilidades BarreiraAcessibilidade[]
 
   createdAt DateTime @default(now())

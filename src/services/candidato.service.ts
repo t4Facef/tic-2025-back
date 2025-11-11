@@ -31,6 +31,19 @@ export const CandidatoService = {
               }
             }
           }
+        },
+        barreiras: {
+          include: {
+            barreira: {
+              include: {
+                acessibilidades: {
+                  include: {
+                    acessibilidade: true
+                  }
+                }
+              }
+            }
+          }
         }
       }
     });
