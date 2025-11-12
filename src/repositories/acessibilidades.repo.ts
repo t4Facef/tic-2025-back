@@ -17,11 +17,10 @@ export const AcessRepo = {
   listNames(){
     return prisma.acessibilidade.findMany({
       select: {
-        id: true,
         nome: true
       },
       orderBy: { nome: "asc" }
-    })
+    }).then(result => result.map(item => item.nome))
   },
 
   // Cria uma nova acessibilidade padrão
@@ -138,11 +137,10 @@ export const AcessRepo = {
         }
       },
       select: {
-        id: true,
         nome: true
       },
       orderBy: { nome: "asc" }
-    });
+    }).then(result => result.map(item => item.nome));
   },
 
   // Verifica se uma acessibilidade já existe (case insensitive)
