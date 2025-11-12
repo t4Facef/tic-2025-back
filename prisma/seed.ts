@@ -699,6 +699,7 @@ async function main() {
       pagamento: 'R$ 6.000 - R$ 8.000',
       nivelTrabalho: 'Pleno',
       turno: 'Comercial',
+      setor: empresaTeste.area,
       empresaId: empresaTeste.id
     }
   });

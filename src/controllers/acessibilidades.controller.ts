@@ -100,4 +100,26 @@ export const AcessibilidadesController = {
       res.status(error.status || 400).json({ error: error.message });
     }
   },
+
+  // GET /acessibilidades/search?q=termo
+  async search(req: Request, res: Response) {
+    try {
+      const termo = req.query.q as string || '';
+      const data = await AcessService.searchByName(termo);
+      res.json(data);
+    } catch (error: any) {
+      res.status(error.status || 400).json({ error: error.message });
+    }
+  },
+
+  // POST /acessibilidades/find-or-create
+  async findOrCreate(req: Request, res: Response) {
+    try {
+      const { nome } = req.body;
+      const acessibilidade = await AcessService.findOrCreate(nome);
+      res.json(acessibilidade);
+    } catch (error: any) {
+      res.status(error.status || 400).json({ error: error.message });
+    }
+  },
 };

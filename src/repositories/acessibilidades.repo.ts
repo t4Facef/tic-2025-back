@@ -69,13 +69,42 @@ export const AcessRepo = {
 
   // Cria acessibilidade e vincula a barreira
   async createAndVincular(nome: string, barreiraId: number) {
-    return prisma.acessibilidade.create({
-      data: {
-        nome,
-        barreiras: {
-          create: { barreiraId }
+    // Primeiro tenta encontrar ou criar a acessibilidade
+    const acessibilidade = await this.findOrCreate(nome);
+    
+    // Verifica se já existe a relação
+    const existeRelacao = await prisma.barreiraAcessibilidade.findUnique({
+      where: {
+        barreiraId_acessibilidadeId: {
+          barreiraId,
+          acessibilidadeId: acessibilidade.id
         }
-      },
+      }
+    });
+    
+    if (existeRelacao) {
+      // Se a relação já existe, retorna a acessibilidade com as relações
+      return prisma.acessibilidade.findUnique({
+        where: { id: acessibilidade.id },
+        include: {
+          barreiras: {
+            include: { barreira: true }
+          }
+        }
+      });
+    }
+    
+    // Se não existe a relação, cria
+    await prisma.barreiraAcessibilidade.create({
+      data: {
+        barreiraId,
+        acessibilidadeId: acessibilidade.id
+      }
+    });
+    
+    // Retorna a acessibilidade com as relações
+    return prisma.acessibilidade.findUnique({
+      where: { id: acessibilidade.id },
       include: {
         barreiras: {
           include: { barreira: true }
@@ -95,5 +124,50 @@ export const AcessRepo = {
   // Deleta uma acessibilidade
   delete(id: number) {
     return prisma.acessibilidade.delete({ where: { id } });
+  },
+
+  // Busca acessibilidades por nome (busca fuzzy/inteligente)
+  searchByName(termo: string) {
+    if (!termo.trim()) return this.listNames();
+    
+    return prisma.acessibilidade.findMany({
+      where: {
+        nome: {
+          contains: termo.trim(),
+          mode: 'insensitive'
+        }
+      },
+      select: {
+        id: true,
+        nome: true
+      },
+      orderBy: { nome: "asc" }
+    });
+  },
+
+  // Verifica se uma acessibilidade já existe (case insensitive)
+  async findByNameExact(nome: string) {
+    return prisma.acessibilidade.findFirst({
+      where: {
+        nome: {
+          equals: nome.trim(),
+          mode: 'insensitive'
+        }
+      }
+    });
+  },
+
+  // Cria acessibilidade apenas se não existir
+  async findOrCreate(nome: string) {
+    const nomeNormalizado = nome.trim();
+    
+    // Primeiro verifica se já existe
+    const existente = await this.findByNameExact(nomeNormalizado);
+    if (existente) {
+      return existente;
+    }
+    
+    // Se não existe, cria nova
+    return this.create(nomeNormalizado);
   },
 };

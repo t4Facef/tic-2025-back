@@ -8,6 +8,11 @@ const prisma = new PrismaClient();
 
 export const AuthService = {
   async verificarEmailExiste(email: string): Promise<boolean> {
+    // Verificar se é um administrador (por nome)
+    const admin = await prisma.administrador.findUnique({ where: { nome: email } });
+    if (admin) return true;
+    
+    // Verificar candidatos e empresas (por email)
     const candidato = await prisma.candidato.findUnique({ where: { email } });
     const empresa = await prisma.empresa.findUnique({ where: { email } });
     return !!(candidato || empresa);

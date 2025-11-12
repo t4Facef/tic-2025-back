@@ -72,4 +72,25 @@ export const AcessService = {
 
     return AcessRepo.delete(id);
   },
+
+  // Busca acessibilidades por nome (busca inteligente)
+  async searchByName(termo: string) {
+    if (!termo) {
+      return AcessRepo.listNames();
+    }
+    
+    return AcessRepo.searchByName(termo);
+  },
+
+  // Busca ou cria acessibilidade (evita duplicatas)
+  async findOrCreate(nome: string) {
+    const final = (nome ?? "").trim();
+
+    if (!final)
+      throw Object.assign(new Error("O campo 'nome' é obrigatório"), {
+        status: 400,
+      });
+
+    return AcessRepo.findOrCreate(final);
+  },
 };

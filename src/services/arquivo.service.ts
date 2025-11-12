@@ -51,7 +51,7 @@ export const ArquivoService = {
           fs.unlinkSync(filePath);
         }
       } catch (error) {
-        console.log('Erro ao processar imagem, mantendo original:', (error as Error).message);
+        console.error('Erro ao processar imagem, mantendo original:', (error as Error).message);
       }
     }
 

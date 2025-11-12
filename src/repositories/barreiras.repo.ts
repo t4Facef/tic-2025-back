@@ -66,6 +66,14 @@ export const BarreirasRepo = {
     });
   },
 
+  // Atualiza uma barreira
+  update(id: number, descricao: string) {
+    return prisma.barreira.update({
+      where: { id },
+      data: { descricao }
+    });
+  },
+
   // Deleta uma barreira
   delete(id: number) {
     return prisma.barreira.delete({ where: { id } });

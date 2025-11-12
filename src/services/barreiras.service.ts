@@ -36,6 +36,18 @@ export const BarreirasService = {
     return BarreirasRepo.createAndVincular(final, subtipoId);
   },
 
+  // Atualiza uma barreira
+  async update(id: number, descricao: string) {
+    if (!id || isNaN(id))
+      throw Object.assign(new Error("ID inválido"), { status: 400 });
+    
+    const final = (descricao ?? "").trim();
+    if (!final)
+      throw Object.assign(new Error("O campo 'descricao' é obrigatório"), { status: 400 });
+
+    return BarreirasRepo.update(id, final);
+  },
+
   // Deleta uma barreira
   async delete(id: number) {
     if (!id || isNaN(id))
