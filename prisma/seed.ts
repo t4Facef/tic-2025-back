@@ -447,8 +447,9 @@ async function main() {
       tipoTrabalho: "Remoto",
       pagamento: "R$ 5.000 - R$ 7.000",
       nivelTrabalho: "Pleno",
-      turno: "Comercial",
-      empresaId: empresa1.id
+        turno: "Comercial",
+        setor: empresa1.area,
+        empresaId: empresa1.id
     }
   });
 
@@ -466,8 +467,9 @@ async function main() {
       tipoTrabalho: "Presencial",
       pagamento: "R$ 4.000 - R$ 5.500",
       nivelTrabalho: "Pleno",
-      turno: "Comercial",
-      empresaId: empresa2.id
+        turno: "Comercial",
+        setor: empresa2.area,
+        empresaId: empresa2.id
     }
   });
 
@@ -485,8 +487,9 @@ async function main() {
       tipoTrabalho: "Híbrido",
       pagamento: "R$ 6.000 - R$ 9.000",
       nivelTrabalho: "Sênior",
-      turno: "Flexível",
-      empresaId: empresa1.id
+        turno: "Flexível",
+        setor: empresa1.area,
+        empresaId: empresa1.id
     }
   });
 
@@ -504,8 +507,9 @@ async function main() {
       tipoTrabalho: "Remoto",
       pagamento: "R$ 4.500 - R$ 6.500",
       nivelTrabalho: "Pleno",
-      turno: "Comercial",
-      empresaId: empresa2.id
+        turno: "Comercial",
+        setor: empresa2.area,
+        empresaId: empresa2.id
     }
   });
 
@@ -523,8 +527,9 @@ async function main() {
       tipoTrabalho: "Presencial",
       pagamento: "R$ 5.500 - R$ 8.000",
       nivelTrabalho: "Sênior",
-      turno: "Comercial",
-      empresaId: empresa1.id
+        turno: "Comercial",
+        setor: empresa1.area,
+        empresaId: empresa1.id
     }
   });
 
@@ -543,7 +548,8 @@ async function main() {
       pagamento: "R$ 1.200 - R$ 1.500",
       nivelTrabalho: "Júnior",
       turno: "Matutino",
-      empresaId: empresa2.id
+        setor: empresa2.area,
+        empresaId: empresa2.id
     }
   });
 
@@ -562,7 +568,8 @@ async function main() {
       pagamento: "R$ 8.000 - R$ 12.000",
       nivelTrabalho: "Sênior",
       turno: "Comercial",
-      empresaId: empresa1.id
+        setor: empresa1.area,
+        empresaId: empresa1.id
     }
   });
 
@@ -581,7 +588,8 @@ async function main() {
       pagamento: "R$ 7.000 - R$ 10.000",
       nivelTrabalho: "Pleno",
       turno: "Flexível",
-      empresaId: empresa2.id
+        setor: empresa2.area,
+        empresaId: empresa2.id
     }
   });
 
