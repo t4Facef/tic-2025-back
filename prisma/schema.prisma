@@ -302,13 +302,11 @@ enum TipoArquivo {
 
 model Administrador {
   id    Int    @id @default(autoincrement())
-  nome  String
+  nome  String @unique // Tratado como email no código
   senha String
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
-  @@unique([nome])
 }
 
 model Notificacao {

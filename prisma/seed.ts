@@ -712,16 +712,21 @@ async function main() {
     ]
   });
 
-  // Criar administrador padrão
-  const adminExistente = await prisma.administrador.count();
-  if (adminExistente === 0) {
+  // Criar administrador padrão se não existir
+  const adminPadraoExiste = await prisma.administrador.findUnique({
+    where: { nome: "admin@tic2025.com" }
+  });
+  
+  if (!adminPadraoExiste) {
     await prisma.administrador.create({
       data: {
-        nome: "admin@tic2025.com",
+        nome: "admin@tic2025.com", // Armazenado como nome mas é um email
         senha: hashAdmin
       }
     });
     console.log("Administrador padrão criado: email=admin@tic2025.com, senha=admin123");
+  } else {
+    console.log("Administrador padrão já existe: admin@tic2025.com");
   }
 
   console.log("Seed executado com sucesso!");

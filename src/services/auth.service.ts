@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 
 export const AuthService = {
   async verificarEmailExiste(email: string): Promise<boolean> {
-    // Verificar se é um administrador (por nome)
+    // Verificar se é um administrador (por email)
     const admin = await prisma.administrador.findUnique({ where: { nome: email } });
     if (admin) return true;
     
@@ -146,21 +146,25 @@ export const AuthService = {
     });
   },
 
-  async registrarAdmin(dadosAdmin: any) {
-    const { nome, senha } = dadosAdmin;
+  async criarAdmin(dadosAdmin: { email: string, senha: string }) {
+    const { email, senha } = dadosAdmin;
     
-    const existeAdmin = await prisma.administrador.findUnique({ where: { nome } });
-    if (existeAdmin) throw new Error("Nome de administrador já existe");
+    const existeAdmin = await prisma.administrador.findUnique({ where: { nome: email } });
+    if (existeAdmin) throw new Error("Email de administrador já existe");
 
     const hash = await bcrypt.hash(senha, 10);
     
     return prisma.administrador.create({
-      data: { nome, senha: hash }
+      data: { nome: email, senha: hash }
     });
   },
 
+  async registrarAdmin(dadosAdmin: { email: string, senha: string }) {
+    return this.criarAdmin(dadosAdmin);
+  },
+
   async login(email: string, senha: string) {
-    // Verificar se é login de admin (por nome ao invés de email)
+    // Verificar se é login de admin (por email)
     const admin = await prisma.administrador.findUnique({ where: { nome: email } });
     
     if (admin) {
@@ -168,12 +172,12 @@ export const AuthService = {
       if (!valido) throw Object.assign(new Error("Senha inválida"), { status: 401 });
       
       const token = jwt.sign(
-        { id: admin.id, nome: admin.nome, role: "ADMIN" },
+        { id: admin.id, email: admin.nome, role: "ADMIN" },
         process.env.JWT_SECRET || "fallback-secret",
         { expiresIn: "24h" }
       );
       
-      return { token, role: "ADMIN", user: { id: admin.id, nome: admin.nome } };
+      return { token, role: "ADMIN", user: { id: admin.id, email: admin.nome } };
     }
 
     // Login normal (candidato/empresa)
