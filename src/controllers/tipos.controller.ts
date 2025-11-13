@@ -56,4 +56,15 @@ export const TiposController = {
       res.status(error.status || 400).json({ error: error.message });
     }
   },
+
+  // DELETE /tipos/:id/cascade
+  async deleteCascade(req: Request, res: Response) {
+    try {
+      const id = Number(req.params.id);
+      const result = await TiposService.deleteCascade(id);
+      res.json(result);
+    } catch (error: any) {
+      res.status(error.status || 400).json({ error: error.message });
+    }
+  },
 };

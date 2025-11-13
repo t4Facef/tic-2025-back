@@ -68,4 +68,37 @@ export const BarreirasController = {
       res.status(error.status || 400).json({ error: error.message });
     }
   },
+
+  // GET /barreiras/search?q=termo
+  async search(req: Request, res: Response) {
+    try {
+      const termo = req.query.q as string || '';
+      const data = await BarreirasService.searchByDescricao(termo);
+      res.json(data);
+    } catch (error: any) {
+      res.status(error.status || 400).json({ error: error.message });
+    }
+  },
+
+  // POST /barreiras/find-or-create
+  async findOrCreate(req: Request, res: Response) {
+    try {
+      const { descricao } = req.body;
+      const barreira = await BarreirasService.findOrCreate(descricao);
+      res.json(barreira);
+    } catch (error: any) {
+      res.status(error.status || 400).json({ error: error.message });
+    }
+  },
+
+  // POST /barreiras/vincular-subtipo-inteligente
+  async vincularSubtipoInteligente(req: Request, res: Response) {
+    try {
+      const { subtipoId, descricao } = req.body;
+      const barreira = await BarreirasService.findOrCreateAndVincular(descricao, subtipoId);
+      res.status(201).json(barreira);
+    } catch (error: any) {
+      res.status(error.status || 400).json({ error: error.message });
+    }
+  },
 };

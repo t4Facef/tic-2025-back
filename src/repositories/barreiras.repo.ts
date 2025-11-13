@@ -78,4 +78,95 @@ export const BarreirasRepo = {
   delete(id: number) {
     return prisma.barreira.delete({ where: { id } });
   },
+
+  // Busca barreiras por descrição (busca fuzzy/inteligente)
+  searchByDescricao(termo: string) {
+    if (!termo.trim()) return this.list();
+    
+    return prisma.barreira.findMany({
+      where: {
+        descricao: {
+          contains: termo.trim(),
+          mode: 'insensitive'
+        }
+      },
+      orderBy: { descricao: "asc" }
+    });
+  },
+
+  // Verifica se uma barreira já existe (case insensitive)
+  async findByDescricaoExact(descricao: string) {
+    return prisma.barreira.findFirst({
+      where: {
+        descricao: {
+          equals: descricao.trim(),
+          mode: 'insensitive'
+        }
+      }
+    });
+  },
+
+  // Cria barreira apenas se não existir
+  async findOrCreate(descricao: string) {
+    const descricaoNormalizada = descricao.trim();
+    
+    // Primeiro verifica se já existe
+    const existente = await this.findByDescricaoExact(descricaoNormalizada);
+    if (existente) {
+      return { ...existente, wasCreated: false };
+    }
+    
+    // Se não existe, cria nova
+    const nova = await this.create(descricaoNormalizada);
+    return { ...nova, wasCreated: true };
+  },
+
+  // Busca ou cria barreira e vincula a subtipo (inteligente)
+  async findOrCreateAndVincular(descricao: string, subtipoId: number) {
+    const descricaoNormalizada = descricao.trim();
+    
+    // Primeiro busca ou cria a barreira
+    const barreiraResult = await this.findOrCreate(descricaoNormalizada);
+    const barreira = barreiraResult;
+    
+    // Verifica se já existe a relação subtipo-barreira
+    const existeRelacao = await prisma.subtipoBarreira.findUnique({
+      where: {
+        subtipoId_barreiraId: {
+          subtipoId,
+          barreiraId: barreira.id
+        }
+      }
+    });
+    
+    if (existeRelacao) {
+      // Se a relação já existe, retorna a barreira com as relações
+      return prisma.barreira.findUnique({
+        where: { id: barreira.id },
+        include: {
+          subtipos: {
+            include: { subtipo: true }
+          }
+        }
+      });
+    }
+    
+    // Se não existe a relação, cria
+    await prisma.subtipoBarreira.create({
+      data: {
+        subtipoId,
+        barreiraId: barreira.id
+      }
+    });
+    
+    // Retorna a barreira com as relações
+    return prisma.barreira.findUnique({
+      where: { id: barreira.id },
+      include: {
+        subtipos: {
+          include: { subtipo: true }
+        }
+      }
+    });
+  },
 };

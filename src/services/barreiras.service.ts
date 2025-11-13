@@ -55,4 +55,37 @@ export const BarreirasService = {
 
     return BarreirasRepo.delete(id);
   },
+
+  // Busca barreiras por descrição (busca inteligente)
+  async searchByDescricao(termo: string) {
+    if (!termo) {
+      return BarreirasRepo.list();
+    }
+    
+    return BarreirasRepo.searchByDescricao(termo);
+  },
+
+  // Busca ou cria barreira (evita duplicatas)
+  async findOrCreate(descricao: string) {
+    const final = (descricao ?? "").trim();
+
+    if (!final)
+      throw Object.assign(new Error("O campo 'descricao' é obrigatório"), {
+        status: 400,
+      });
+
+    return BarreirasRepo.findOrCreate(final);
+  },
+
+  // Busca ou cria barreira e vincula a subtipo (inteligente)
+  async findOrCreateAndVincular(descricao: string, subtipoId: number) {
+    const final = (descricao ?? "").trim();
+    if (!final)
+      throw Object.assign(new Error("O campo 'descricao' é obrigatório"), { status: 400 });
+    
+    if (!subtipoId || isNaN(subtipoId))
+      throw Object.assign(new Error("subtipoId inválido"), { status: 400 });
+
+    return BarreirasRepo.findOrCreateAndVincular(final, subtipoId);
+  },
 };

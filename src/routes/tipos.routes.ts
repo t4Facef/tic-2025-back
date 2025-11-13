@@ -9,5 +9,6 @@ router.get("/com-subtipos", TiposController.listWithSubtipos); // GET /tipos/com
 router.post("/", TiposController.create);               // POST /tipos
 router.put("/:id", TiposController.update);             // PUT /tipos/:id
 router.delete("/:id", TiposController.delete);          // DELETE /tipos/:id
+router.delete("/:id/cascade", TiposController.deleteCascade); // DELETE /tipos/:id/cascade
 
 export default router;

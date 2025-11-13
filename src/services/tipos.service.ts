@@ -45,4 +45,12 @@ export const TiposService = {
 
     return TiposRepo.delete(id);
   },
+
+  // Deleta um tipo em cascata
+  async deleteCascade(id: number) {
+    if (!id || isNaN(id))
+      throw Object.assign(new Error("ID inválido"), { status: 400 });
+
+    return TiposRepo.deleteCascade(id);
+  },
 };
