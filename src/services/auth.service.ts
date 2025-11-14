@@ -29,7 +29,7 @@ export const AuthService = {
   },
 
   async registrarCandidato(dadosCandidato: any) {
-    const { nome, email, senha, cpf, dataNascimento, sexo, genero, telefones, endereco, areaInteresse, formacao, experiencia, subtiposDeficiencia } = dadosCandidato;
+    const { nome, email, senha, cpf, dataNascimento, sexo, genero, telefones, endereco, areaInteresse, formacao, experiencia, subtiposDeficiencia, barreiraIds } = dadosCandidato;
     
     const existeEmail = await prisma.candidato.findUnique({ where: { email } }) || 
                        await prisma.empresa.findUnique({ where: { email } });
@@ -92,12 +92,21 @@ export const AuthService = {
           }
         } : undefined,
         
-        // Conectar subtipos de deficiência (apenas IDs)
+        // Conectar subtipos de deficiência (array de IDs)
         subtipos: subtiposDeficiencia && subtiposDeficiencia.length > 0 ? {
           create: subtiposDeficiencia
-            .filter((id: any) => !isNaN(Number(id)))
+            .filter((id: any) => !isNaN(Number(id)) && Number(id) > 0)
             .map((subtipoId: any) => ({
               subtipoId: Number(subtipoId)
+            }))
+        } : undefined,
+
+        // Conectar barreiras de acessibilidade (se fornecidas)
+        barreiras: barreiraIds && barreiraIds.length > 0 ? {
+          create: barreiraIds
+            .filter((id: any) => !isNaN(Number(id)) && Number(id) > 0)
+            .map((barreiraId: any) => ({
+              barreiraId: Number(barreiraId)
             }))
         } : undefined,
       },
