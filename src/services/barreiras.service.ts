@@ -88,4 +88,19 @@ export const BarreirasService = {
 
     return BarreirasRepo.findOrCreateAndVincular(final, subtipoId);
   },
+
+  // Busca barreiras de múltiplos subtipos (sem duplicação)
+  getByMultiplosSubtipos(subtipoIds: number[]) {
+    if (!Array.isArray(subtipoIds) || subtipoIds.length === 0) {
+      throw Object.assign(new Error("Lista de subtipos é obrigatória"), { status: 400 });
+    }
+    
+    // Validar se todos os IDs são números válidos
+    const validIds = subtipoIds.filter(id => !isNaN(id) && id > 0);
+    if (validIds.length === 0) {
+      throw Object.assign(new Error("Nenhum ID de subtipo válido fornecido"), { status: 400 });
+    }
+
+    return BarreirasRepo.findByMultiplosSubtipos(validIds);
+  },
 };

@@ -7,6 +7,7 @@ const router = Router();
 router.get("/", BarreirasController.list);   // GET /barreiras
 router.get("/search", BarreirasController.search); // GET /barreiras/search?q=termo
 router.get("/subtipo/:subtipoId", BarreirasController.getBySubtipo); // GET /barreiras/subtipo/:subtipoId
+router.post("/multiplos-subtipos", BarreirasController.getByMultiplosSubtipos); // POST /barreiras/multiplos-subtipos
 router.post("/", BarreirasController.create); // POST /barreiras
 router.post("/find-or-create", BarreirasController.findOrCreate); // POST /barreiras/find-or-create
 router.post("/vincular-subtipo", BarreirasController.vincularSubtipo); // POST /barreiras/vincular-subtipo

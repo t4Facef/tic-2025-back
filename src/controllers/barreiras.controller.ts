@@ -101,4 +101,18 @@ export const BarreirasController = {
       res.status(error.status || 400).json({ error: error.message });
     }
   },
+
+  // POST /barreiras/multiplos-subtipos
+  async getByMultiplosSubtipos(req: Request, res: Response) {
+    try {
+      const { subtipoIds } = req.body;
+      if (!Array.isArray(subtipoIds) || subtipoIds.length === 0) {
+        return res.status(400).json({ error: 'subtipoIds deve ser um array não vazio' });
+      }
+      const data = await BarreirasService.getByMultiplosSubtipos(subtipoIds);
+      res.json(data);
+    } catch (error: any) {
+      res.status(error.status || 400).json({ error: error.message });
+    }
+  },
 };

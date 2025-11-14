@@ -31,6 +31,34 @@ export const BarreirasRepo = {
     });
   },
 
+  // Busca barreiras por múltiplos subtipos (sem duplicação)
+  findByMultiplosSubtipos(subtipoIds: number[]) {
+    return prisma.barreira.findMany({
+      where: {
+        subtipos: {
+          some: {
+            subtipoId: {
+              in: subtipoIds
+            }
+          }
+        }
+      },
+      include: {
+        acessibilidades: {
+          include: {
+            acessibilidade: true
+          }
+        },
+        subtipos: {
+          include: {
+            subtipo: true
+          }
+        }
+      },
+      orderBy: { id: "asc" }
+    });
+  },
+
   // Busca barreira por ID
   findById(id: number) {
     return prisma.barreira.findUnique({ where: { id } });
