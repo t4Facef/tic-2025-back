@@ -20,4 +20,16 @@ export const VinculosRepo = {
       skipDuplicates: true,
     });
   },
+
+  // Desvincula uma acessibilidade específica de uma barreira
+  desvincularAcessibilidadeBarreira(barreiraId: number, acessibilidadeId: number) {
+    return prisma.barreiraAcessibilidade.delete({
+      where: {
+        barreiraId_acessibilidadeId: {
+          barreiraId,
+          acessibilidadeId
+        }
+      }
+    });
+  },
 };

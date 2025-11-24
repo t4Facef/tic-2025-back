@@ -60,4 +60,24 @@ export const VinculosService = {
     await VinculosRepo.vincularAcessBarreira(barreiraId, acessibilidadeIds);
     return { ok: true };
   },
+
+  // Desvincula uma acessibilidade específica de uma barreira
+  async desvincularAcessibilidade(barreiraId: number, acessibilidadeId: number) {
+    // Verifica se a barreira existe
+    const barreira = await BarreirasRepo.findById(barreiraId);
+    if (!barreira)
+      throw Object.assign(new Error("Barreira não encontrada"), { status: 404 });
+
+    // Verifica se a acessibilidade existe
+    const acessibilidade = await AcessRepo.findById(acessibilidadeId);
+    if (!acessibilidade)
+      throw Object.assign(new Error("Acessibilidade não encontrada"), { status: 404 });
+
+    // Realiza a desvinculação
+    await VinculosRepo.desvincularAcessibilidadeBarreira(barreiraId, acessibilidadeId);
+    return { 
+      ok: true, 
+      message: `Acessibilidade "${acessibilidade.nome}" desvinculada da barreira "${barreira.descricao}"` 
+    };
+  },
 };

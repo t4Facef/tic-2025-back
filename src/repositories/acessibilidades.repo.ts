@@ -9,6 +9,9 @@ export const AcessRepo = {
       include: { 
         EmpresaAcessibilidade: {
           include: { empresa: true }
+        },
+        barreiras: {
+          include: { barreira: true }
         }
       }
     });
@@ -37,6 +40,12 @@ export const AcessRepo = {
       include: { 
         EmpresaAcessibilidade: {
           include: { empresa: true }
+        },
+        barreiras: {
+          include: { barreira: true }
+        },
+        VagaAcessibilidade: {
+          include: { vaga: true }
         }
       }
     });
