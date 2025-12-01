@@ -4,13 +4,6 @@ import * as bcrypt from 'bcrypt';
 const prisma = new PrismaClient();
 
 async function main() {
-  // Verificar se já existem dados básicos
-  const tiposExistentes = await prisma.tipoDeficiencia.count();
-  if (tiposExistentes > 0) {
-    console.log('Dados básicos já existem. Pulando seed para preservar dados do usuário.');
-    return;
-  }
-
   // Criar tipos de deficiência (combinando dados existentes + professor)
   const tipoVisual = await prisma.tipoDeficiencia.create({
     data: { nome: "Deficiência Visual" }
@@ -208,6 +201,50 @@ async function main() {
       cidade: "Rio de Janeiro",
       bairro: "Copacabana",
       rua: "Av. Atlântica",
+      numero: "500"
+    }
+  });
+
+  const endereco3 = await prisma.endereco.create({
+    data: {
+      cep: "01310-200",
+      estado: "SP",
+      cidade: "São Paulo",
+      bairro: "Bela Vista",
+      rua: "Rua Augusta",
+      numero: "2000"
+    }
+  });
+
+  const endereco4 = await prisma.endereco.create({
+    data: {
+      cep: "22020-000",
+      estado: "RJ",
+      cidade: "Rio de Janeiro",
+      bairro: "Botafogo",
+      rua: "Praia de Botafogo",
+      numero: "300"
+    }
+  });
+
+  const endereco5 = await prisma.endereco.create({
+    data: {
+      cep: "04038-001",
+      estado: "SP",
+      cidade: "São Paulo",
+      bairro: "Vila Olímpia",
+      rua: "Rua Funchal",
+      numero: "418"
+    }
+  });
+
+  const endereco6 = await prisma.endereco.create({
+    data: {
+      cep: "05426-000",
+      estado: "SP",
+      cidade: "São Paulo",
+      bairro: "Vila Madalena",
+      rua: "Rua Harmonia",
       numero: "500"
     }
   });
@@ -867,7 +904,8 @@ async function main() {
       numFunc: 80,
       numFuncPcd: 8,
       area: 'Educação',
-      site: 'https://edutech.com.br'
+      site: 'https://edutech.com.br',
+      enderecoId: endereco3.id
     }
   });
 
@@ -882,7 +920,8 @@ async function main() {
       numFunc: 120,
       numFuncPcd: 12,
       area: 'Saúde',
-      site: 'https://medcare.com.br'
+      site: 'https://medcare.com.br',
+      enderecoId: endereco4.id
     }
   });
 
@@ -897,7 +936,8 @@ async function main() {
       numFunc: 200,
       numFuncPcd: 20,
       area: 'Financeiro',
-      site: 'https://fintechpro.com.br'
+      site: 'https://fintechpro.com.br',
+      enderecoId: endereco5.id
     }
   });
 
@@ -912,7 +952,8 @@ async function main() {
       numFunc: 60,
       numFuncPcd: 6,
       area: 'Marketing',
-      site: 'https://creative.com.br'
+      site: 'https://creative.com.br',
+      enderecoId: endereco6.id
     }
   });
 
@@ -1161,6 +1202,24 @@ async function main() {
     console.log("Administrador padrão criado: email=admin@tic2025.com, senha=admin123");
   } else {
     console.log("Administrador padrão já existe: admin@tic2025.com");
+  }
+
+  // Criar admin adicional para Luciano
+  const adminLucianoExiste = await prisma.administrador.findUnique({
+    where: { nome: "lmazaraojr@gmail.com" }
+  });
+  
+  if (!adminLucianoExiste) {
+    const hashAdminLuciano = await bcrypt.hash('1', 10);
+    await prisma.administrador.create({
+      data: {
+        nome: "lmazaraojr@gmail.com",
+        senha: hashAdminLuciano
+      }
+    });
+    console.log("Admin adicional criado: email=lmazaraojr@gmail.com, senha=1");
+  } else {
+    console.log("Admin adicional já existe: lmazaraojr@gmail.com");
   }
 
   console.log("🎯 Seed executado com sucesso para apresentação!");

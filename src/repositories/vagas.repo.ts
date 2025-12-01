@@ -110,7 +110,27 @@ export const VagasRepository = {
         take: 3
       });
       
-      return candidaturas.map(c => c.vaga);
+      // Calcular compatibilidade para vagas aplicadas
+      const { CompatibilidadeService } = require('../services/compatibilidade.service');
+      const vagasComCompatibilidade = [];
+      
+      for (const candidatura of candidaturas) {
+        try {
+          const compatibilidade = await CompatibilidadeService.calcularCompatibilidade(candidatoId, candidatura.vaga.id);
+          vagasComCompatibilidade.push({
+            ...candidatura.vaga,
+            compatibilidadeCalculada: compatibilidade
+          });
+        } catch (error) {
+          console.warn(`Erro ao calcular compatibilidade para vaga ${candidatura.vaga.id}:`, error);
+          vagasComCompatibilidade.push({
+            ...candidatura.vaga,
+            compatibilidadeCalculada: 0
+          });
+        }
+      }
+      
+      return vagasComCompatibilidade;
     }
 
     // Filtro de recomendação com candidatoId
