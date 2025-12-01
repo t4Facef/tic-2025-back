@@ -47,14 +47,14 @@ export const CompatibilidadeService = {
     // 2. Calcular compatibilidade de habilidades (40% do peso total)
     const compatibilidadeHabilidades = this.calcularCompatibilidadeHabilidades(candidato, vaga);
     
-    // 3. Calcular compatibilidade de apoios da vaga (10% do peso total)
-    const compatibilidadeApoios = this.calcularCompatibilidadeApoios(candidato, vaga);
+    // 3. Calcular compatibilidade de localização (10% do peso total)
+    const compatibilidadeLocalizacao = this.calcularCompatibilidadeLocalizacao(candidato, vaga);
 
     // Calcular compatibilidade final com pesos
     const compatibilidadeFinal = (
       compatibilidadeAcessibilidade * 0.5 +
       compatibilidadeHabilidades * 0.4 +
-      compatibilidadeApoios * 0.1
+      compatibilidadeLocalizacao * 0.1
     );
 
     return Math.round(compatibilidadeFinal * 100) / 100; // Arredondar para 2 casas decimais
@@ -166,6 +166,71 @@ export const CompatibilidadeService = {
     }
 
     return barreiras.length > 0 ? Math.min(apoiosRelevantes / barreiras.length, 1.0) : 1.0;
+  },
+
+  calcularCompatibilidadeLocalizacao(candidato: any, vaga: any): number {
+    // Se a vaga for remota, compatibilidade máxima
+    if (vaga.tipoTrabalho && vaga.tipoTrabalho.toLowerCase().includes('remot')) {
+      return 1.0;
+    }
+
+    // Se não houver endereço do candidato, compatibilidade neutra
+    if (!candidato.endereco || !vaga.localizacao) {
+      return 0.5;
+    }
+
+    const estadoCandidato = candidato.endereco.estado?.toLowerCase().trim();
+    const cidadeCandidato = candidato.endereco.cidade?.toLowerCase().trim();
+    
+    // Extrair estado e cidade da localização da vaga (formato: "Cidade, UF")
+    const localizacaoVaga = vaga.localizacao.toLowerCase();
+    const partesLocalizacao = localizacaoVaga.split(',');
+    
+    if (partesLocalizacao.length < 2) {
+      return 0.5; // Formato inválido, compatibilidade neutra
+    }
+    
+    const cidadeVaga = partesLocalizacao[0]?.trim();
+    const estadoVaga = partesLocalizacao[1]?.trim();
+
+    // Normalizar estados - converter nome completo para sigla se necessário
+    const estadosMap: { [key: string]: string } = {
+      'acre': 'ac', 'alagoas': 'al', 'amapá': 'ap', 'amazonas': 'am',
+      'bahia': 'ba', 'ceará': 'ce', 'distrito federal': 'df', 'espírito santo': 'es',
+      'goiás': 'go', 'maranhão': 'ma', 'mato grosso': 'mt', 'mato grosso do sul': 'ms',
+      'minas gerais': 'mg', 'pará': 'pa', 'paraíba': 'pb', 'paraná': 'pr',
+      'pernambuco': 'pe', 'piauí': 'pi', 'rio de janeiro': 'rj', 'rio grande do norte': 'rn',
+      'rio grande do sul': 'rs', 'rondônia': 'ro', 'roraima': 'rr', 'santa catarina': 'sc',
+      'são paulo': 'sp', 'sergipe': 'se', 'tocantins': 'to'
+    };
+
+    // Normalizar estados para siglas
+    const estadoCandidatoNorm = estadosMap[estadoCandidato] || estadoCandidato;
+    const estadoVagaNorm = estadosMap[estadoVaga] || estadoVaga;
+
+    // Normalizar cidades removendo acentos e caracteres especiais
+    const normalizarCidade = (cidade: string) => {
+      return cidade
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^\w\s]/gi, '');
+    };
+
+    const cidadeCandidatoNorm = normalizarCidade(cidadeCandidato);
+    const cidadeVagaNorm = normalizarCidade(cidadeVaga);
+
+    // Mesma cidade e estado = 100%
+    if (cidadeCandidatoNorm === cidadeVagaNorm && estadoCandidatoNorm === estadoVagaNorm) {
+      return 1.0;
+    }
+
+    // Mesmo estado = 50%
+    if (estadoCandidatoNorm === estadoVagaNorm) {
+      return 0.5;
+    }
+
+    // Estados diferentes = 0%
+    return 0.0;
   },
 
   async calcularCompatibilidadeParaTodasVagas(candidatoId: number) {

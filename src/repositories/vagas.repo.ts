@@ -145,7 +145,12 @@ export const VagasRepository = {
           .sort((a, b) => b.compatibilidadeCalculada - a.compatibilidadeCalculada)
           .slice(0, 3);
       } else {
-        return vagasComCompatibilidade.sort((a, b) => b.compatibilidadeCalculada - a.compatibilidadeCalculada);
+        return vagasComCompatibilidade.sort((a, b) => {
+          // Primeiro por compatibilidade, depois por data de criação
+          const compatDiff = b.compatibilidadeCalculada - a.compatibilidadeCalculada;
+          if (compatDiff !== 0) return compatDiff;
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        });
       }
     }
 
@@ -267,8 +272,8 @@ export const VagasRepository = {
     const initialSkip = needsCompatibilityCalc ? 0 : (page ? (page - 1) * limit : undefined);
     const initialTake = needsCompatibilityCalc ? undefined : (page ? limit : undefined);
     
-    // Contar total se tem paginação e não precisa de cálculo de compatibilidade
-    const total = page && !needsCompatibilityCalc ? await prisma.vagas.count({ where }) : undefined;
+    // Contar total se tem paginação
+    const total = page ? await prisma.vagas.count({ where }) : undefined;
     const totalPages = page && total ? Math.ceil(total / limit) : undefined;
 
     // Filtro de vagas inscritas
@@ -312,9 +317,9 @@ export const VagasRepository = {
       return vagas;
     }
 
-    // Busca normal
-    const skip = page ? (page - 1) * limit : initialSkip;
-    const take = page ? limit : initialTake;
+    // Se tem candidatoId, buscar TODAS as vagas para calcular compatibilidade primeiro
+    const skip = page && !filters.candidatoId ? (page - 1) * limit : initialSkip;
+    const take = page && !filters.candidatoId ? limit : (filters.candidatoId ? undefined : initialTake);
     
     let vagas = await prisma.vagas.findMany({
       where,
@@ -332,7 +337,7 @@ export const VagasRepository = {
     // Calcular compatibilidade se há candidatoId
     if (filters.candidatoId) {
       const { CompatibilidadeService } = require('../services/compatibilidade.service');
-      const candidatoId = parseInt(filters.candidatoId);
+      const candidatoId = parseInt(filters.candidatoId!);
       
       const vagasComCompatibilidade: any[] = [];
       for (const vaga of vagas) {
@@ -360,7 +365,12 @@ export const VagasRepository = {
           .filter(vaga => vaga.compatibilidadeCalculada >= 0.7)
           .sort((a, b) => b.compatibilidadeCalculada - a.compatibilidadeCalculada);
       } else {
-        vagas = vagasComCompatibilidade.sort((a, b) => b.compatibilidadeCalculada - a.compatibilidadeCalculada);
+        vagas = vagasComCompatibilidade.sort((a, b) => {
+          // Primeiro por compatibilidade, depois por data de criação
+          const compatDiff = b.compatibilidadeCalculada - a.compatibilidadeCalculada;
+          if (compatDiff !== 0) return compatDiff;
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        });
       }
       
       // Aplicar paginação depois do cálculo de compatibilidade se necessário
@@ -371,28 +381,39 @@ export const VagasRepository = {
         const endIndex = startIndex + limit;
         vagas = vagas.slice(startIndex, endIndex);
         
+        // Só retornar objeto de paginação se há mais de 1 página
+        if (totalPagesAfterFilter > 1) {
+          return {
+            vagas,
+            pagination: {
+              currentPage: page,
+              totalPages: totalPagesAfterFilter,
+              totalItems: totalItemsAfterFilter,
+              itemsPerPage: limit
+            }
+          };
+        } else {
+          return vagas;
+        }
+      }
+    }
+
+    // Retornar com paginação se solicitado (para casos sem candidatoId)
+    if (page && !filters.candidatoId) {
+      // Só retornar objeto de paginação se há mais de 1 página
+      if (totalPages! > 1) {
         return {
           vagas,
           pagination: {
             currentPage: page,
-            totalPages: totalPagesAfterFilter,
-            totalItems: totalItemsAfterFilter,
+            totalPages: totalPages!,
+            totalItems: total!,
             itemsPerPage: limit
           }
         };
+      } else {
+        return vagas;
       }
-    }
-
-    if (page) {
-      return {
-        vagas,
-        pagination: {
-          currentPage: page,
-          totalPages: totalPages!,
-          totalItems: total!,
-          itemsPerPage: limit
-        }
-      };
     }
 
     return vagas;

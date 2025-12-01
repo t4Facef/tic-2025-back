@@ -628,14 +628,65 @@ async function main() {
   const hashEmpresa = await bcrypt.hash('Luciano14@', 10);
   const hashAdmin = await bcrypt.hash('admin123', 10);
 
-  // Candidato de teste
-  await prisma.candidato.create({
+  // Criar endereços para candidatos de teste
+  const enderecoLuciano = await prisma.endereco.create({
+    data: {
+      cep: "04038-001",
+      estado: "SP",
+      cidade: "São Paulo",
+      bairro: "Vila Olímpia",
+      rua: "Rua Funchal",
+      numero: "263"
+    }
+  });
+
+  const enderecoAna = await prisma.endereco.create({
+    data: {
+      cep: "01310-100",
+      estado: "SP", 
+      cidade: "São Paulo",
+      bairro: "Bela Vista",
+      rua: "Av. Paulista",
+      numero: "1500"
+    }
+  });
+
+  const enderecoCarlos = await prisma.endereco.create({
+    data: {
+      cep: "04567-000",
+      estado: "SP",
+      cidade: "São Paulo", 
+      bairro: "Itaim Bibi",
+      rua: "Av. Faria Lima",
+      numero: "1000"
+    }
+  });
+
+  const enderecoMarcos = await prisma.endereco.create({
+    data: {
+      cep: "01310-200",
+      estado: "SP",
+      cidade: "São Paulo",
+      bairro: "Consolação", 
+      rua: "Rua Augusta",
+      numero: "800"
+    }
+  });
+
+  // Candidato de teste principal (Luciano) com perfil completo
+  const luciano = await prisma.candidato.create({
     data: {
       nome: 'Luciano Mazarao Jr',
       email: 'lmazaraojr1@gmail.com',
       senha: hashCandidato,
-      dataNascimento: new Date('1990-01-01'),
-      areaInteresse: 'Tecnologia'
+      cpf: '11122233344',
+      dataNascimento: new Date('1995-08-15'),
+      sexo: 'Masculino',
+      genero: 'Masculino',
+      telefones: ['11987654321', '1133334444'],
+      areaInteresse: 'Tecnologia',
+      habilidades: ['JavaScript', 'TypeScript', 'React', 'Node.js', 'Python', 'PostgreSQL', 'Docker', 'Git'],
+      enderecoId: enderecoLuciano.id
     }
   });
 
@@ -643,60 +694,242 @@ async function main() {
   const empresaTeste = await prisma.empresa.create({
     data: {
       razaoSocial: 'Empresa Teste Ltda',
-      nomeFantasia: 'Empresa Teste',
+      nomeFantasia: 'Inovação Tech',
       email: 'lmazaraojr2@gmail.com',
       senha: hashEmpresa,
       cnpj: '12345678000199',
       telefoneComercial: '11999999999',
-      area: 'Tecnologia'
+      numFunc: 150,
+      numFuncPcd: 15,
+      area: 'Tecnologia',
+      site: 'https://inovacaotech.com.br',
+      descricao: 'Empresa focada em soluções tecnológicas inovadoras e inclusivas',
+      historia: 'Fundada em 2020 com o objetivo de criar tecnologia acessível para todos',
+      missao: 'Desenvolver soluções tecnológicas que promovam a inclusão digital',
+      valores: 'Inovação, Inclusão, Excelência, Colaboração',
+      anoFundacao: 2020,
+      certificacoes: ['ISO 9001', 'Empresa Cidadã']
     }
   });
 
-  // Candidatos extras para teste
-  const candidatoTeste1 = await prisma.candidato.create({
+  // Candidatos extras para teste com perfis completos
+  const candidatoAna = await prisma.candidato.create({
     data: {
-      nome: 'Ana Costa',
+      nome: 'Ana Costa Silva',
       email: 'ana@teste.com',
       senha: await bcrypt.hash('123456', 10),
+      cpf: '12345678901',
       dataNascimento: new Date('1992-03-15'),
+      sexo: 'Feminino',
+      genero: 'Feminino',
+      telefones: ['11987651234'],
       areaInteresse: 'Tecnologia',
-      habilidades: ['JavaScript', 'React', 'Node.js']
+      habilidades: ['JavaScript', 'React', 'Vue.js', 'CSS', 'HTML'],
+      enderecoId: enderecoAna.id
     }
   });
 
-  const candidatoTeste2 = await prisma.candidato.create({
+  const candidatoCarlos = await prisma.candidato.create({
     data: {
-      nome: 'Carlos Silva',
+      nome: 'Carlos Silva Santos',
       email: 'carlos@teste.com',
       senha: await bcrypt.hash('123456', 10),
+      cpf: '98765432101',
       dataNascimento: new Date('1988-07-22'),
+      sexo: 'Masculino',
+      genero: 'Masculino',
+      telefones: ['11987659876'],
       areaInteresse: 'Tecnologia',
-      habilidades: ['Python', 'Django', 'PostgreSQL']
+      habilidades: ['Python', 'Django', 'PostgreSQL', 'Linux', 'Docker'],
+      enderecoId: enderecoCarlos.id
     }
   });
 
-  // Associar candidatos com subtipos para compatibilidade
+  const candidatoMarcos = await prisma.candidato.create({
+    data: {
+      nome: 'Marcos Pereira Lima',
+      email: 'marcos@teste.com', 
+      senha: await bcrypt.hash('123456', 10),
+      cpf: '11223344556',
+      dataNascimento: new Date('1990-12-10'),
+      sexo: 'Masculino',
+      genero: 'Masculino',
+      telefones: ['11987654567'],
+      areaInteresse: 'Design',
+      habilidades: ['Figma', 'Adobe XD', 'Photoshop', 'Illustrator', 'UX/UI'],
+      enderecoId: enderecoMarcos.id
+    }
+  });
+
+  // Associar candidatos com subtipos de deficiência
   await prisma.candidatoSubtipo.createMany({
     data: [
-      { candidatoId: candidatoTeste1.id, subtipoId: baixaVisao.id },
-      { candidatoId: candidatoTeste2.id, subtipoId: usuarioLibras.id },
+      { candidatoId: luciano.id, subtipoId: baixaVisao.id },
+      { candidatoId: candidatoAna.id, subtipoId: daltonismo.id },
+      { candidatoId: candidatoCarlos.id, subtipoId: surdez.id },
+      { candidatoId: candidatoMarcos.id, subtipoId: cadeirante.id },
     ]
   });
 
-  // Vaga da empresa de teste com alta compatibilidade
-  const vagaTeste = await prisma.vagas.create({
+  // Criar formações para candidatos de teste
+  await prisma.formacaoOuCurso.createMany({
+    data: [
+      {
+        candidatoId: luciano.id,
+        nomeCurso: "Análise e Desenvolvimento de Sistemas",
+        tipoFormacao: "Superior",
+        instituicao: "FATEC São Paulo",
+        situacao: "Concluído",
+        dataInicio: new Date("2018-02-01"),
+        dataFim: new Date("2021-12-01"),
+        descricao: "Graduação focada em desenvolvimento de software e gestão de projetos"
+      },
+      {
+        candidatoId: candidatoAna.id,
+        nomeCurso: "Engenharia da Computação",
+        tipoFormacao: "Superior", 
+        instituicao: "Universidade de São Paulo",
+        situacao: "Concluído",
+        dataInicio: new Date("2010-02-01"),
+        dataFim: new Date("2014-12-01"),
+        descricao: "Engenharia com foco em hardware e software"
+      },
+      {
+        candidatoId: candidatoCarlos.id,
+        nomeCurso: "Ciência da Computação",
+        tipoFormacao: "Superior",
+        instituicao: "PUC-SP",
+        situacao: "Concluído", 
+        dataInicio: new Date("2006-02-01"),
+        dataFim: new Date("2010-12-01"),
+        descricao: "Graduação em Ciência da Computação com foco em IA"
+      }
+    ]
+  });
+
+  // Criar experiências para candidatos de teste
+  await prisma.experiencias.createMany({
+    data: [
+      {
+        candidatoId: luciano.id,
+        titulo: "Desenvolvedor Full Stack Pleno",
+        instituicao: "TechCorp Solutions",
+        dataInicio: new Date("2022-01-15"),
+        dataFim: new Date("2024-11-30"),
+        descricao: "Desenvolvimento de aplicações web responsivas utilizando React, Node.js e PostgreSQL. Implementação de funcionalidades de acessibilidade seguindo padrões WCAG.",
+        tipoContrato: "CLT"
+      },
+      {
+        candidatoId: candidatoAna.id,
+        titulo: "Desenvolvedora Frontend",
+        instituicao: "WebDesign Pro",
+        dataInicio: new Date("2020-03-01"),
+        dataFim: new Date("2024-10-31"),
+        descricao: "Criação de interfaces modernas e acessíveis, trabalhando com React, Vue.js e design responsivo.",
+        tipoContrato: "CLT"
+      },
+      {
+        candidatoId: candidatoCarlos.id,
+        titulo: "Desenvolvedor Backend Sênior", 
+        instituicao: "DataTech Innovations",
+        dataInicio: new Date("2018-08-01"),
+        dataFim: new Date("2024-09-30"),
+        descricao: "Desenvolvimento de APIs REST e microserviços usando Python/Django. Gestão de bancos de dados e infraestrutura cloud.",
+        tipoContrato: "CLT"
+      }
+    ]
+  });
+
+  // Associar acessibilidades com a empresa de teste
+  await prisma.empresaAcessibilidade.createMany({
+    data: [
+      { empresaId: empresaTeste.id, acessibilidadeId: acessLeitor!.id },
+      { empresaId: empresaTeste.id, acessibilidadeId: acessBraille!.id },
+      { empresaId: empresaTeste.id, acessibilidadeId: acessLibras!.id },
+      { empresaId: empresaTeste.id, acessibilidadeId: acessRampa!.id },
+      { empresaId: empresaTeste.id, acessibilidadeId: acessElevador!.id },
+      { empresaId: empresaTeste.id, acessibilidadeId: acessBanheiro!.id },
+      { empresaId: empresaTeste.id, acessibilidadeId: acessMesa!.id },
+      { empresaId: empresaTeste.id, acessibilidadeId: acessTeclado!.id },
+      { empresaId: empresaTeste.id, acessibilidadeId: acessCores!.id },
+    ]
+  });
+
+  // Criar empresas de diferentes ramos
+  const empresaEducacao = await prisma.empresa.create({
     data: {
-      titulo: 'Desenvolvedor Full Stack',
+      razaoSocial: 'EduTech Brasil Ltda',
+      nomeFantasia: 'EduTech',
+      email: 'contato@edutech.com.br',
+      senha: await bcrypt.hash('123456', 10),
+      cnpj: '11222333000144',
+      telefoneComercial: '1133445566',
+      numFunc: 80,
+      numFuncPcd: 8,
+      area: 'Educação',
+      site: 'https://edutech.com.br'
+    }
+  });
+
+  const empresaSaude = await prisma.empresa.create({
+    data: {
+      razaoSocial: 'MedCare Soluções Ltda',
+      nomeFantasia: 'MedCare',
+      email: 'rh@medcare.com.br',
+      senha: await bcrypt.hash('123456', 10),
+      cnpj: '22333444000155',
+      telefoneComercial: '1144556677',
+      numFunc: 120,
+      numFuncPcd: 12,
+      area: 'Saúde',
+      site: 'https://medcare.com.br'
+    }
+  });
+
+  const empresaFinancas = await prisma.empresa.create({
+    data: {
+      razaoSocial: 'FinTech Solutions Ltda',
+      nomeFantasia: 'FinTech Pro',
+      email: 'vagas@fintechpro.com.br',
+      senha: await bcrypt.hash('123456', 10),
+      cnpj: '33444555000166', 
+      telefoneComercial: '1155667788',
+      numFunc: 200,
+      numFuncPcd: 20,
+      area: 'Financeiro',
+      site: 'https://fintechpro.com.br'
+    }
+  });
+
+  const empresaMarketing = await prisma.empresa.create({
+    data: {
+      razaoSocial: 'Creative Marketing Ltda',
+      nomeFantasia: 'Creative',
+      email: 'jobs@creative.com.br',
+      senha: await bcrypt.hash('123456', 10),
+      cnpj: '44555666000177',
+      telefoneComercial: '1166778899',
+      numFunc: 60,
+      numFuncPcd: 6,
+      area: 'Marketing',
+      site: 'https://creative.com.br'
+    }
+  });
+
+  // Vaga da empresa de teste com 100% de compatibilidade com Luciano
+  const vagaLuciano = await prisma.vagas.create({
+    data: {
+      titulo: 'Desenvolvedor Full Stack Pleno',
       localizacao: 'São Paulo, SP',
-      descricao: 'Vaga para desenvolvedor full stack com foco em acessibilidade',
-      habilidades: ['JavaScript', 'React', 'Node.js', 'Python'],
-      apoios: ['Software leitor de tela', 'Intérprete de Libras', 'Mesa ajustável'],
-      compatibilidade: 0.885,
-      dataInicio: new Date('2024-01-01'),
-      dataFim: new Date('2024-12-31'),
+      descricao: 'Buscamos desenvolvedor experiente para criar aplicações web modernas e acessíveis. Trabalho em equipe multidisciplinar com foco em inclusão digital.',
+      habilidades: ['JavaScript', 'TypeScript', 'React', 'Node.js'],
+      apoios: ['Software leitor de tela', 'Contraste de cores', 'Teclado adaptado'],
+      compatibilidade: 1.0,
+      dataInicio: new Date('2024-12-01'),
+      dataFim: new Date('2025-11-30'),
       tipoContrato: 'CLT',
-      tipoTrabalho: 'Híbrido',
-      pagamento: 'R$ 6.000 - R$ 8.000',
+      tipoTrabalho: 'Remoto',
+      pagamento: 'R$ 7.500 - R$ 9.500',
       nivelTrabalho: 'Pleno',
       turno: 'Comercial',
       setor: empresaTeste.area,
@@ -704,11 +937,212 @@ async function main() {
     }
   });
 
-  // Candidaturas para a vaga de teste com alta compatibilidade
+  // Segunda vaga da empresa de teste
+  const vagaTeste2 = await prisma.vagas.create({
+    data: {
+      titulo: 'Analista de Sistemas Júnior',
+      localizacao: 'São Paulo, SP', 
+      descricao: 'Oportunidade para analista iniciante trabalhar com levantamento de requisitos e documentação técnica.',
+      habilidades: ['SQL', 'UML', 'Análise de Sistemas', 'Documentação'],
+      apoios: ['Intérprete de Libras', 'Instruções claras', 'Ambiente silencioso'],
+      compatibilidade: 0.78,
+      dataInicio: new Date('2024-12-15'),
+      dataFim: new Date('2025-12-14'),
+      tipoContrato: 'CLT',
+      tipoTrabalho: 'Presencial', 
+      pagamento: 'R$ 4.000 - R$ 5.500',
+      nivelTrabalho: 'Júnior',
+      turno: 'Comercial',
+      setor: empresaTeste.area,
+      empresaId: empresaTeste.id
+    }
+  });
+
+  // 8 vagas adicionais de diferentes ramos
+  const vaga9 = await prisma.vagas.create({
+    data: {
+      titulo: "Professor de Matemática",
+      localizacao: "São Paulo, SP",
+      descricao: "Lecionar matemática para ensino médio com metodologias inclusivas",
+      habilidades: ["Didática", "Matemática", "Inclusão", "Tecnologia Educacional"],
+      apoios: ["Intérprete de Libras", "Material em Braille", "Recursos visuais"],
+      compatibilidade: 0.82,
+      dataInicio: new Date("2025-02-01"),
+      dataFim: new Date("2025-12-20"),
+      tipoContrato: "CLT",
+      tipoTrabalho: "Presencial",
+      pagamento: "R$ 3.500 - R$ 5.000",
+      nivelTrabalho: "Pleno",
+      turno: "Matutino",
+      setor: empresaEducacao.area,
+      empresaId: empresaEducacao.id
+    }
+  });
+
+  const vaga10 = await prisma.vagas.create({
+    data: {
+      titulo: "Enfermeiro Assistencial",
+      localizacao: "Rio de Janeiro, RJ", 
+      descricao: "Assistência direta ao paciente em ambiente hospitalar inclusivo",
+      habilidades: ["Enfermagem", "Cuidados Intensivos", "Comunicação", "Empatia"],
+      apoios: ["Rampa de acesso", "Banheiro adaptado", "Comunicação visual"],
+      compatibilidade: 0.89,
+      dataInicio: new Date("2025-01-15"),
+      dataFim: new Date("2025-12-31"),
+      tipoContrato: "CLT",
+      tipoTrabalho: "Presencial",
+      pagamento: "R$ 4.500 - R$ 6.500",
+      nivelTrabalho: "Pleno",
+      turno: "Plantão",
+      setor: empresaSaude.area,
+      empresaId: empresaSaude.id
+    }
+  });
+
+  const vaga11 = await prisma.vagas.create({
+    data: {
+      titulo: "Analista Financeiro",
+      localizacao: "Brasília, DF",
+      descricao: "Análise de investimentos e relatórios financeiros para clientes PF e PJ",
+      habilidades: ["Excel Avançado", "Power BI", "Análise Financeira", "Matemática Financeira"],
+      apoios: ["Software leitor de tela", "Instruções claras", "Mesa ajustável"],
+      compatibilidade: 0.75,
+      dataInicio: new Date("2025-01-20"),
+      dataFim: new Date("2026-01-19"),
+      tipoContrato: "CLT", 
+      tipoTrabalho: "Híbrido",
+      pagamento: "R$ 5.000 - R$ 7.500",
+      nivelTrabalho: "Pleno",
+      turno: "Comercial",
+      setor: empresaFinancas.area,
+      empresaId: empresaFinancas.id
+    }
+  });
+
+  const vaga12 = await prisma.vagas.create({
+    data: {
+      titulo: "Designer Gráfico",
+      localizacao: "Belo Horizonte, MG",
+      descricao: "Criação de materiais visuais para campanhas publicitárias inclusivas",
+      habilidades: ["Photoshop", "Illustrator", "InDesign", "Design Gráfico", "Criatividade"],
+      apoios: ["Contraste de cores", "Software leitor de tela", "Ambiente silencioso"],
+      compatibilidade: 0.88,
+      dataInicio: new Date("2025-02-10"),
+      dataFim: new Date("2025-11-30"),
+      tipoContrato: "PJ",
+      tipoTrabalho: "Remoto",
+      pagamento: "R$ 3.500 - R$ 5.500",
+      nivelTrabalho: "Júnior",
+      turno: "Flexível", 
+      setor: empresaMarketing.area,
+      empresaId: empresaMarketing.id
+    }
+  });
+
+  const vaga13 = await prisma.vagas.create({
+    data: {
+      titulo: "Assistente Administrativo",
+      localizacao: "Porto Alegre, RS",
+      descricao: "Suporte administrativo geral com foco em organização e atendimento",
+      habilidades: ["Organização", "Atendimento", "Pacote Office", "Comunicação"],
+      apoios: ["Intérprete de Libras", "Linguagem simples", "Instruções claras"],
+      compatibilidade: 0.72,
+      dataInicio: new Date("2025-01-08"),
+      dataFim: new Date("2025-12-31"),
+      tipoContrato: "CLT",
+      tipoTrabalho: "Presencial",
+      pagamento: "R$ 2.500 - R$ 3.500",
+      nivelTrabalho: "Júnior",
+      turno: "Comercial",
+      setor: "Administração",
+      empresaId: empresa2.id
+    }
+  });
+
+  const vaga14 = await prisma.vagas.create({
+    data: {
+      titulo: "Coordenador Pedagógico",
+      localizacao: "Curitiba, PR",
+      descricao: "Coordenação de projetos educacionais com foco em educação inclusiva",
+      habilidades: ["Pedagogia", "Gestão Educacional", "Inclusão", "Liderança"],
+      apoios: ["Material em Braille", "Ambiente acessível", "Tecnologia assistiva"],
+      compatibilidade: 0.91,
+      dataInicio: new Date("2025-03-01"),
+      dataFim: new Date("2025-12-20"),
+      tipoContrato: "CLT",
+      tipoTrabalho: "Presencial",
+      pagamento: "R$ 6.000 - R$ 8.500",
+      nivelTrabalho: "Sênior",
+      turno: "Comercial",
+      setor: empresaEducacao.area,
+      empresaId: empresaEducacao.id
+    }
+  });
+
+  const vaga15 = await prisma.vagas.create({
+    data: {
+      titulo: "Fisioterapeuta",
+      localizacao: "Salvador, BA",
+      descricao: "Atendimento fisioterapêutico especializado em reabilitação",
+      habilidades: ["Fisioterapia", "Reabilitação", "Anatomia", "Cuidado Humanizado"],
+      apoios: ["Elevador", "Equipamentos adaptados", "Comunicação visual"],
+      compatibilidade: 0.86,
+      dataInicio: new Date("2025-01-30"),
+      dataFim: new Date("2026-01-29"),
+      tipoContrato: "CLT",
+      tipoTrabalho: "Presencial", 
+      pagamento: "R$ 4.000 - R$ 6.000",
+      nivelTrabalho: "Pleno",
+      turno: "Comercial",
+      setor: empresaSaude.area,
+      empresaId: empresaSaude.id
+    }
+  });
+
+  const vaga16 = await prisma.vagas.create({
+    data: {
+      titulo: "Consultor de Vendas",
+      localizacao: "Fortaleza, CE",
+      descricao: "Vendas consultivas de produtos financeiros com atendimento humanizado",
+      habilidades: ["Vendas", "Relacionamento", "Produtos Financeiros", "Negociação"],
+      apoios: ["Ambiente acessível", "Material em formatos alternativos", "Flexibilidade"],
+      compatibilidade: 0.77,
+      dataInicio: new Date("2025-02-15"),
+      dataFim: new Date("2025-12-31"),
+      tipoContrato: "CLT",
+      tipoTrabalho: "Presencial",
+      pagamento: "R$ 3.000 + comissões",
+      nivelTrabalho: "Júnior",
+      turno: "Comercial",
+      setor: empresaFinancas.area,
+      empresaId: empresaFinancas.id
+    }
+  });
+
+  // Candidaturas com mensagens para a vaga do Luciano (vaga que terá 100% compatibilidade)
   await prisma.candidaturas.createMany({
     data: [
-      { candidatoId: candidatoTeste1.id, vagaId: vagaTeste.id, status: 'PENDENTE' },
-      { candidatoId: candidatoTeste2.id, vagaId: vagaTeste.id, status: 'PENDENTE' },
+      {
+        candidatoId: candidatoAna.id,
+        vagaId: vagaLuciano.id,
+        status: "PENDENTE",
+        mensagem: "Olá! Tenho grande interesse nesta vaga. Sou desenvolvedora frontend com 4 anos de experiência e estou sempre buscando trabalhar em projetos que priorizem acessibilidade. Acredito que posso contribuir muito com a equipe!",
+        dataCandidatura: new Date("2024-12-01T09:30:00")
+      },
+      {
+        candidatoId: candidatoCarlos.id,
+        vagaId: vagaLuciano.id,
+        status: "PENDENTE", 
+        mensagem: "Bom dia! Esta oportunidade me chamou muito a atenção pela proposta de trabalhar com inclusão digital. Tenho sólida experiência em backend com Python e bancos de dados, e gostaria de expandir meus conhecimentos para full stack.",
+        dataCandidatura: new Date("2024-12-01T14:15:00")
+      },
+      {
+        candidatoId: candidatoMarcos.id,
+        vagaId: vagaLuciano.id, 
+        status: "PENDENTE",
+        mensagem: "Prezados, embora minha experiência seja mais focada em design, tenho interesse em fazer a transição para desenvolvimento. Acredito que minha visão de UX/UI pode agregar valor ao time técnico.",
+        dataCandidatura: new Date("2024-12-01T16:45:00")
+      }
     ]
   });
 
@@ -729,7 +1163,29 @@ async function main() {
     console.log("Administrador padrão já existe: admin@tic2025.com");
   }
 
-  console.log("Seed executado com sucesso!");
+  console.log("🎯 Seed executado com sucesso para apresentação!");
+  console.log("");
+  console.log("📋 DADOS PARA APRESENTAÇÃO:");
+  console.log("==============================");
+  console.log("👤 SEU CANDIDATO:");
+  console.log("   Email: lmazaraojr1@gmail.com");
+  console.log("   Senha: Luciano14@");
+  console.log("");
+  console.log("🏢 SUA EMPRESA:");
+  console.log("   Email: lmazaraojr2@gmail.com");
+  console.log("   Senha: Luciano14@");
+  console.log("");
+  console.log("🔧 ADMIN:");
+  console.log("   Email: admin@tic2025.com");
+  console.log("   Senha: admin123");
+  console.log("");
+  console.log("✅ Sistema pronto com:");
+  console.log("   • 16 vagas de diferentes ramos");
+  console.log("   • 2 vagas da sua empresa de teste");
+  console.log("   • 4 candidatos com perfis completos");
+  console.log("   • 3 candidaturas com mensagens na vaga principal");
+  console.log("   • 1 vaga com 100% de compatibilidade para seu perfil");
+  console.log("");
 }
 
 main()

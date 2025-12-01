@@ -334,10 +334,9 @@ POST   /api/compatibilidade/calcular   # Calcular match candidato-vaga
 ```
 
 Algoritmo considera:
-- Habilidades correspondentes
-- Acessibilidades necessárias vs oferecidas
-- Experiência e formação
-- Localização
+- **Acessibilidade (50%)**: Apoios oferecidos vs barreiras do candidato
+- **Habilidades (40%)**: Correspondência entre competências técnicas
+- **Localização (10%)**: Proximidade geográfica (remoto = 100%, mesmo estado = 50%)
 
 ### 📊 Estatísticas
 
