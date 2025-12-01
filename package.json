@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "tsx src/server.ts",
     "build": "npx prisma generate",
-    "start": "node src/server.js",
+    "start": "tsx src/server.ts",
     "seed": "tsx prisma/seed.ts"
   },
   "prisma": {
