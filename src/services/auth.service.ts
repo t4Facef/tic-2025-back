@@ -9,9 +9,9 @@ export const AuthService = {
     try {
       console.log('verificarEmailExiste: iniciando verificação para email:', email);
       
-      // Verificar se é um administrador (por nome que é tratado como email)
+      // Verificar se é um administrador (por email)
       console.log('verificarEmailExiste: verificando administrador...');
-      const admin = await prisma.administrador.findUnique({ where: { nome: email } });
+      const admin = await prisma.administrador.findUnique({ where: { email: email } });
       console.log('verificarEmailExiste: admin encontrado:', !!admin);
       if (admin) return true;
       
