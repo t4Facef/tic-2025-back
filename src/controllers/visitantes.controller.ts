@@ -32,14 +32,13 @@ export const registrarVisitante = async (req: Request, res: Response) => {
 
 export const obterEstatisticasVisitantes = async (req: Request, res: Response) => {
   try {
-    // Últimos 30 dias
-    const dataInicio = new Date();
-    dataInicio.setDate(dataInicio.getDate() - 30);
-
     // Total de visitantes
     const totalVisitantes = await prisma.visitante.count();
     
     // Visitantes dos últimos 30 dias
+    const dataInicio = new Date();
+    dataInicio.setDate(dataInicio.getDate() - 30);
+    
     const visitantesRecentes = await prisma.visitante.count({
       where: {
         createdAt: {
@@ -48,40 +47,11 @@ export const obterEstatisticasVisitantes = async (req: Request, res: Response) =
       }
     });
 
-    // Visitantes por dia (últimos 7 dias)
-    const visitantesPorDia = await prisma.$queryRaw`
-      SELECT 
-        DATE(created_at) as data,
-        COUNT(*) as total
-      FROM "Visitante" 
-      WHERE created_at >= NOW() - INTERVAL '7 days'
-      GROUP BY DATE(created_at)
-      ORDER BY data DESC
-    `;
-
-    // Visitantes por origem
-    const visitantesPorOrigem = await prisma.visitante.groupBy({
-      by: ['origem'],
-      _count: {
-        id: true
-      },
-      where: {
-        createdAt: {
-          gte: dataInicio
-        }
-      },
-      orderBy: {
-        _count: {
-          id: 'desc'
-        }
-      }
-    });
-
     res.json({
       totalVisitantes,
       visitantesRecentes,
-      visitantesPorDia,
-      visitantesPorOrigem: visitantesPorOrigem
+      visitantesPorDia: [],
+      visitantesPorOrigem: []
     });
   } catch (error) {
     console.error('Erro ao obter estatísticas:', error);
