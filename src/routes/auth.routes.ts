@@ -3,6 +3,15 @@ import { AuthController } from "../controllers/auth.controller";
 
 const router = Router();
 
+// Rota de debug
+router.get("/debug", (req, res) => {
+  res.json({ 
+    message: "Auth routes working", 
+    timestamp: new Date().toISOString(),
+    env: process.env.NODE_ENV
+  });
+});
+
 // Rotas de autenticação
 router.get("/check-email", AuthController.verificarEmail);
 router.get("/check-cpf", AuthController.verificarCPF);
