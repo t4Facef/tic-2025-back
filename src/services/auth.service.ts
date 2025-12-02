@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 
 export const AuthService = {
   async verificarEmailExiste(email: string): Promise<boolean> {
-    // Verificar se é um administrador (por email)
+    // Verificar se é um administrador (por nome que é tratado como email)
     const admin = await prisma.administrador.findUnique({ where: { nome: email } });
     if (admin) return true;
     
