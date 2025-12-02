@@ -2,11 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import path from 'path';
 import fs from 'fs';
-import { PrismaClient } from '@prisma/client';
+import { prisma } from './lib/prisma';
 import routes from './routes/index';
 
 const app = express();
-const prisma = new PrismaClient();
 
 app.use(cors({
   origin: [
@@ -189,6 +188,27 @@ app.get('/api/candidaturas', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3001;
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
   console.log(`Servidor rodando na porta ${PORT}`);
 });
+
+// Graceful shutdown
+const gracefulShutdown = async (signal: string) => {
+  console.log(`\n${signal} signal received: closing HTTP server`);
+  
+  server.close(() => {
+    console.log('HTTP server closed');
+  });
+  
+  try {
+    await prisma.$disconnect();
+    console.log('Database connection closed');
+  } catch (error) {
+    console.error('Error closing database connection:', error);
+  } finally {
+    process.exit(0);
+  }
+};
+
+process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+process.on('SIGINT', () => gracefulShutdown('SIGINT'));

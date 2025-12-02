@@ -64,8 +64,7 @@ export const CompatibilidadeController = {
       
       // Buscar todos os candidatos
       // amazonq-ignore-next-line
-      const { PrismaClient } = require("@prisma/client");
-      const prisma = new PrismaClient();
+      const { prisma } = require("../lib/prisma");
       
       const candidatos = await prisma.candidato.findMany({
         select: {
