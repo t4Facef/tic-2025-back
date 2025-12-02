@@ -7,17 +7,33 @@ import { prisma } from "../repositories/prisma";
 export const AuthService = {
   async verificarEmailExiste(email: string): Promise<boolean> {
     try {
+      console.log('verificarEmailExiste: iniciando verificação para email:', email);
+      
       // Verificar se é um administrador (por nome que é tratado como email)
+      console.log('verificarEmailExiste: verificando administrador...');
       const admin = await prisma.administrador.findUnique({ where: { nome: email } });
+      console.log('verificarEmailExiste: admin encontrado:', !!admin);
       if (admin) return true;
       
       // Verificar candidatos e empresas (por email)
+      console.log('verificarEmailExiste: verificando candidato...');
       const candidato = await prisma.candidato.findUnique({ where: { email } });
+      console.log('verificarEmailExiste: candidato encontrado:', !!candidato);
+      
+      console.log('verificarEmailExiste: verificando empresa...');
       const empresa = await prisma.empresa.findUnique({ where: { email } });
-      return !!(candidato || empresa);
-    } catch (error) {
-      console.error('Erro ao verificar email:', error);
-      return false; // Em caso de erro, assume que não existe
+      console.log('verificarEmailExiste: empresa encontrada:', !!empresa);
+      
+      const result = !!(candidato || empresa);
+      console.log('verificarEmailExiste: resultado final:', result);
+      return result;
+    } catch (error: any) {
+      console.error('verificarEmailExiste: Erro detalhado:', {
+        message: error.message,
+        stack: error.stack,
+        email: email
+      });
+      throw error; // Re-throw para capturar no controller
     }
   },
 

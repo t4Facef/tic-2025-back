@@ -4,13 +4,17 @@ import { AuthService } from "../services/auth.service";
 export const AuthController = {
   async verificarEmail(req: Request, res: Response) {
     try {
+      console.log('verificarEmail called with query:', req.query);
       const { email } = req.query;
       if (!email || typeof email !== 'string') {
         return res.status(400).json({ error: 'Email é obrigatório' });
       }
+      console.log('Checking email:', email);
       const exists = await AuthService.verificarEmailExiste(email);
+      console.log('Email exists result:', exists);
       res.json({ exists });
     } catch (error: any) {
+      console.error('Erro no verificarEmail controller:', error);
       res.status(500).json({ error: error.message });
     }
   },
