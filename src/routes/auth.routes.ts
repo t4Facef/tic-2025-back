@@ -12,6 +12,16 @@ router.get("/debug", (req, res) => {
   });
 });
 
+// Rota de teste simples para check-email
+router.get("/check-email-test", (req, res) => {
+  const { email } = req.query;
+  res.json({ 
+    message: "Check email test working",
+    email: email,
+    exists: false 
+  });
+});
+
 // Rotas de autenticação
 router.get("/check-email", AuthController.verificarEmail);
 router.get("/check-cpf", AuthController.verificarCPF);
