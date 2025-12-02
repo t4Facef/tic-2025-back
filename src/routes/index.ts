@@ -20,6 +20,7 @@ import arquivoRoutes from "./arquivo.routes";
 import empresaRoutes from "./empresa.routes";
 import notificacoesRoutes from "./notificacoes.routes";
 import adminRoutes from "./admin.routes";
+import visitantesRoutes from "./visitantes.routes";
 import { AuthController } from "../controllers/auth.controller";
 
 const router = Router();
@@ -46,5 +47,6 @@ router.use("/arquivos", arquivoRoutes);
 router.use("/empresa", empresaRoutes);
 router.use("/notificacoes", notificacoesRoutes);
 router.use("/admin", adminRoutes);
+router.use("/visitantes", visitantesRoutes);
 
 export default router;

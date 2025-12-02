@@ -354,3 +354,12 @@ model NotificacaoEmpresa {
   
   @@id([notificacaoId, empresaId])
 }
+
+// Tabela simples para tracking de visitantes
+model Visitante {
+  id        Int      @id @default(autoincrement())
+  ip        String?  // IP do visitante (opcional)
+  userAgent String?  // Browser info (opcional)
+  origem    String?  // De onde veio (home, cold-start, etc)
+  createdAt DateTime @default(now())
+}
