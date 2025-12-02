@@ -13,6 +13,7 @@ app.use(cors({
     'http://localhost:5173', 
     'http://localhost:3000',
     'https://tic-2025-front.vercel.app',
+    'https://apojobs.vercel.app',
     process.env.FRONTEND_URL || 'http://localhost:5173'
   ],
   credentials: true
