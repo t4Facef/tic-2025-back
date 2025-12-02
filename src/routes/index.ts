@@ -95,11 +95,43 @@ router.get("/visitantes/estatisticas", authMiddleware, async (req, res) => {
       }
     });
 
+    // Dados para gráfico semanal (últimos 7 dias)
+    const visitantesPorSemana = await prisma.$queryRaw`
+      SELECT 
+        CASE EXTRACT(DOW FROM "createdAt")
+          WHEN 0 THEN 'Dom'
+          WHEN 1 THEN 'Seg'
+          WHEN 2 THEN 'Ter' 
+          WHEN 3 THEN 'Qua'
+          WHEN 4 THEN 'Qui'
+          WHEN 5 THEN 'Sex'
+          WHEN 6 THEN 'Sáb'
+        END as "diaSemana",
+        COUNT(*)::integer as total
+      FROM "Visitante"
+      WHERE "createdAt" >= NOW() - INTERVAL '7 days'
+      GROUP BY EXTRACT(DOW FROM "createdAt")
+      ORDER BY EXTRACT(DOW FROM "createdAt")
+    `;
+
+    // Dados para gráfico mensal (últimos 6 meses)
+    const visitantesPorMes = await prisma.$queryRaw`
+      SELECT 
+        TO_CHAR("createdAt", 'Mon/YY') as mes,
+        COUNT(*)::integer as total
+      FROM "Visitante"
+      WHERE "createdAt" >= NOW() - INTERVAL '6 months'
+      GROUP BY TO_CHAR("createdAt", 'Mon/YY'), EXTRACT(YEAR FROM "createdAt"), EXTRACT(MONTH FROM "createdAt")
+      ORDER BY EXTRACT(YEAR FROM "createdAt"), EXTRACT(MONTH FROM "createdAt")
+    `;
+
     res.json({
       totalVisitantes,
       visitantesRecentes,
       visitantesPorDia: [],
-      visitantesPorOrigem: []
+      visitantesPorOrigem: [],
+      visitantesPorSemana,
+      visitantesPorMes
     });
   } catch (error: any) {
     console.error('Erro ao obter estatísticas:', error);
