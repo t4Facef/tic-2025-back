@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { AuthController } from "../controllers/auth.controller";
+import { prisma } from "../repositories/prisma";
 
 const router = Router();
 
@@ -10,6 +11,28 @@ router.get("/debug", (req, res) => {
     timestamp: new Date().toISOString(),
     env: process.env.NODE_ENV
   });
+});
+
+// Rota para testar conexão com banco
+router.get("/test-db", async (req, res) => {
+  try {
+    // Teste simples de conexão
+    await prisma.$connect();
+    const result = await prisma.$queryRaw`SELECT 1 as test`;
+    res.json({ 
+      message: "Database connection working",
+      result: result,
+      timestamp: new Date().toISOString()
+    });
+  } catch (error: any) {
+    res.status(500).json({ 
+      message: "Database connection failed",
+      error: error.message,
+      stack: error.stack
+    });
+  } finally {
+    await prisma.$disconnect();
+  }
 });
 
 // Rota de teste simples para check-email
