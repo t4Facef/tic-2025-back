@@ -6,24 +6,39 @@ import { prisma } from "../repositories/prisma";
 
 export const AuthService = {
   async verificarEmailExiste(email: string): Promise<boolean> {
-    // Verificar se é um administrador (por nome que é tratado como email)
-    const admin = await prisma.administrador.findUnique({ where: { nome: email } });
-    if (admin) return true;
-    
-    // Verificar candidatos e empresas (por email)
-    const candidato = await prisma.candidato.findUnique({ where: { email } });
-    const empresa = await prisma.empresa.findUnique({ where: { email } });
-    return !!(candidato || empresa);
+    try {
+      // Verificar se é um administrador (por nome que é tratado como email)
+      const admin = await prisma.administrador.findUnique({ where: { nome: email } });
+      if (admin) return true;
+      
+      // Verificar candidatos e empresas (por email)
+      const candidato = await prisma.candidato.findUnique({ where: { email } });
+      const empresa = await prisma.empresa.findUnique({ where: { email } });
+      return !!(candidato || empresa);
+    } catch (error) {
+      console.error('Erro ao verificar email:', error);
+      return false; // Em caso de erro, assume que não existe
+    }
   },
 
   async VerificarCPFExiste(cpf: string): Promise<boolean> {
-    const candidato = await prisma.candidato.findUnique({ where: { cpf } });
-    return !!candidato;
+    try {
+      const candidato = await prisma.candidato.findUnique({ where: { cpf } });
+      return !!candidato;
+    } catch (error) {
+      console.error('Erro ao verificar CPF:', error);
+      return false;
+    }
   },
 
   async VerificarCNPJExiste(cnpj: string): Promise<boolean> {
-    const empresa = await prisma.empresa.findUnique({ where: { cnpj } });
-    return !!empresa;
+    try {
+      const empresa = await prisma.empresa.findUnique({ where: { cnpj } });
+      return !!empresa;
+    } catch (error) {
+      console.error('Erro ao verificar CNPJ:', error);
+      return false;
+    }
   },
 
   async registrarCandidato(dadosCandidato: any) {
