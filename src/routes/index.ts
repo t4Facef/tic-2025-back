@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { PrismaClient } from "@prisma/client";
+import { authMiddleware } from "../middleware/auth.middleware";
 import tiposRoutes from "./tipos.routes";
 import subtiposRoutes from "./subtipos.routes";
 import barreirasRoutes from "./barreiras.routes";
@@ -79,7 +80,7 @@ router.post("/visitantes/registrar", async (req, res) => {
   }
 });
 
-router.get("/visitantes/estatisticas", async (req, res) => {
+router.get("/visitantes/estatisticas", authMiddleware, async (req, res) => {
   try {
     const totalVisitantes = await prisma.visitante.count();
     
