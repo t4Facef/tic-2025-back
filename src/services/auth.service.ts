@@ -1,10 +1,8 @@
 import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import { randomBytes } from "crypto";
-import { PrismaClient } from "@prisma/client";
 import { EmailService } from "./email.service";
-
-const prisma = new PrismaClient();
+import { prisma } from "../repositories/prisma";
 
 export const AuthService = {
   async verificarEmailExiste(email: string): Promise<boolean> {
