@@ -23,10 +23,10 @@ router.get("/list", async (req, res) => {
       }
     });
 
-    // Mapear nome para email na resposta
+    // Mapear dados dos administradores para resposta
     const adminList = administradores.map((admin: any) => ({
       id: admin.id,
-      email: admin.nome,
+      email: admin.email,
       createdAt: admin.createdAt
     }));
 

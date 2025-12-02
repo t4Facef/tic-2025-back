@@ -1187,43 +1187,40 @@ async function main() {
     ]
   });
 
-  console.log("Seed básico concluído. Administradores serão criados em uma segunda etapa.");
-
-  // COMENTADO TEMPORARIAMENTE PARA EVITAR PROBLEMAS NO RESET
-  // // Criar administrador padrão se não existir
-  // const adminPadraoExiste = await prisma.administrador.findUnique({
-  //   where: { nome: "admin@tic2025.com" }
-  // });
+  // Criar administrador padrão se não existir
+  const adminPadraoExiste = await prisma.administrador.findUnique({
+    where: { email: "admin@tic2025.com" }
+  });
   
-  // if (!adminPadraoExiste) {
-  //   await prisma.administrador.create({
-  //     data: {
-  //       nome: "admin@tic2025.com", // Armazenado como nome mas é um email
-  //       senha: hashAdmin
-  //     }
-  //   });
-  //   console.log("Administrador padrão criado: email=admin@tic2025.com, senha=admin123");
-  // } else {
-  //   console.log("Administrador padrão já existe: admin@tic2025.com");
-  // }
+  if (!adminPadraoExiste) {
+    await prisma.administrador.create({
+      data: {
+        email: "admin@tic2025.com",
+        senha: hashAdmin
+      }
+    });
+    console.log("Administrador padrão criado: email=admin@tic2025.com, senha=admin123");
+  } else {
+    console.log("Administrador padrão já existe: admin@tic2025.com");
+  }
 
-  // // Criar admin adicional para Luciano
-  // const adminLucianoExiste = await prisma.administrador.findUnique({
-  //   where: { nome: "lmazaraojr@gmail.com" }
-  // });
+  // Criar admin adicional para Luciano
+  const adminLucianoExiste = await prisma.administrador.findUnique({
+    where: { email: "lmazaraojr@gmail.com" }
+  });
   
-  // if (!adminLucianoExiste) {
-  //   const hashAdminLuciano = await bcrypt.hash('1', 10);
-  //   await prisma.administrador.create({
-  //     data: {
-  //       nome: "lmazaraojr@gmail.com",
-  //       senha: hashAdminLuciano
-  //     }
-  //   });
-  //   console.log("Admin adicional criado: email=lmazaraojr@gmail.com, senha=1");
-  // } else {
-  //   console.log("Admin adicional já existe: lmazaraojr@gmail.com");
-  // }
+  if (!adminLucianoExiste) {
+    const hashAdminLuciano = await bcrypt.hash('1', 10);
+    await prisma.administrador.create({
+      data: {
+        email: "lmazaraojr@gmail.com",
+        senha: hashAdminLuciano
+      }
+    });
+    console.log("Admin adicional criado: email=lmazaraojr@gmail.com, senha=1");
+  } else {
+    console.log("Admin adicional já existe: lmazaraojr@gmail.com");
+  }
 
   console.log("🎯 Seed executado com sucesso para apresentação!");
   console.log("");

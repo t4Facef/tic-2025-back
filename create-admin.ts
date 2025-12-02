@@ -46,7 +46,7 @@ async function createDefaultAdmin() {
   
   console.log('\n📋 Todos os administradores:');
   allAdmins.forEach(admin => {
-    console.log(`- ID: ${admin.id}, Email: ${admin.nome}, Criado: ${admin.createdAt}`);
+    console.log(`- ID: ${admin.id}, Email: ${admin.email}, Criado: ${admin.createdAt}`);
   });
   
   await prisma.$disconnect();

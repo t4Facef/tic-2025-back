@@ -10,7 +10,7 @@ async function testEmailCheck() {
       console.log(`\n🧪 Testando email: ${email}`);
       
       // Teste direto da lógica
-      const admin = await prisma.administrador.findUnique({ where: { nome: email } });
+      const admin = await prisma.administrador.findUnique({ where: { email: email } });
       console.log('- Admin encontrado:', admin ? `ID: ${admin.id}` : 'Não');
       
       const candidato = await prisma.candidato.findUnique({ where: { email } });

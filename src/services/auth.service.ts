@@ -187,13 +187,13 @@ export const AuthService = {
   async criarAdmin(dadosAdmin: { email: string, senha: string }) {
     const { email, senha } = dadosAdmin;
     
-    const existeAdmin = await prisma.administrador.findUnique({ where: { nome: email } });
+    const existeAdmin = await prisma.administrador.findUnique({ where: { email: email } });
     if (existeAdmin) throw new Error("Email de administrador já existe");
 
     const hash = await bcrypt.hash(senha, 10);
     
     return prisma.administrador.create({
-      data: { nome: email, senha: hash }
+      data: { email: email, senha: hash }
     });
   },
 
@@ -203,19 +203,19 @@ export const AuthService = {
 
   async login(email: string, senha: string) {
     // Verificar se é login de admin (por email)
-    const admin = await prisma.administrador.findUnique({ where: { nome: email } });
+    const admin = await prisma.administrador.findUnique({ where: { email: email } });
     
     if (admin) {
       const valido = await bcrypt.compare(senha, admin.senha);
       if (!valido) throw Object.assign(new Error("Senha inválida"), { status: 401 });
       
       const token = jwt.sign(
-        { id: admin.id, email: admin.nome, role: "ADMIN" },
+        { id: admin.id, email: admin.email, role: "ADMIN" },
         process.env.JWT_SECRET || "fallback-secret",
         { expiresIn: "24h" }
       );
       
-      return { token, role: "ADMIN", user: { id: admin.id, email: admin.nome } };
+      return { token, role: "ADMIN", user: { id: admin.id, email: admin.email } };
     }
 
     // Login normal (candidato/empresa)
