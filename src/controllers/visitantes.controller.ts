@@ -3,7 +3,8 @@ import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export const registrarVisitante = async (req: Request, res: Response) => {
+// Função para registrar visitante
+async function registrarVisitante(req: Request, res: Response) {
   try {
     const origem = req.body?.origem || 'unknown';
     const ip = req.ip || 'unknown';
@@ -28,9 +29,10 @@ export const registrarVisitante = async (req: Request, res: Response) => {
       error: 'Erro interno do servidor' 
     });
   }
-};
+}
 
-export const obterEstatisticasVisitantes = async (req: Request, res: Response) => {
+// Função para obter estatísticas
+async function obterEstatisticasVisitantes(req: Request, res: Response) {
   try {
     const totalVisitantes = await prisma.visitante.count();
     
@@ -57,4 +59,7 @@ export const obterEstatisticasVisitantes = async (req: Request, res: Response) =
       error: 'Erro ao obter estatísticas' 
     });
   }
-};
+}
+
+// Named exports explícitos
+export { registrarVisitante, obterEstatisticasVisitantes };
