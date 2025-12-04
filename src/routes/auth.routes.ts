@@ -1,37 +1,53 @@
 import { Router } from "express";
 import { AuthController } from "../controllers/auth.controller";
-import { prisma } from "../repositories/prisma";
+import { healthCheck } from "../lib/database";
 
 const router = Router();
 
-// Rota de debug
-router.get("/debug", (req, res) => {
-  res.json({ 
-    message: "Auth routes working", 
-    timestamp: new Date().toISOString(),
-    env: process.env.NODE_ENV
-  });
+// Rota de debug melhorada
+router.get("/debug", async (req, res) => {
+  try {
+    const dbHealthy = await healthCheck();
+    res.json({ 
+      message: "Auth routes working", 
+      timestamp: new Date().toISOString(),
+      env: process.env.NODE_ENV,
+      database: {
+        status: dbHealthy ? 'healthy' : 'unhealthy',
+        provider: 'postgresql',
+        pooler: 'neon'
+      },
+      server: {
+        uptime: process.uptime(),
+        memory: process.memoryUsage(),
+        version: process.version
+      }
+    });
+  } catch (error: any) {
+    res.status(500).json({
+      message: "Health check failed",
+      error: error.message,
+      timestamp: new Date().toISOString()
+    });
+  }
 });
 
 // Rota para testar conexão com banco
 router.get("/test-db", async (req, res) => {
   try {
-    // Teste simples de conexão
-    await prisma.$connect();
-    const result = await prisma.$queryRaw`SELECT 1 as test`;
+    // Teste usando nossa função de health check
+    const isHealthy = await healthCheck();
     res.json({ 
-      message: "Database connection working",
-      result: result,
+      message: isHealthy ? "Database connection working" : "Database connection issues",
+      status: isHealthy ? "healthy" : "unhealthy",
       timestamp: new Date().toISOString()
     });
   } catch (error: any) {
     res.status(500).json({ 
       message: "Database connection failed",
       error: error.message,
-      stack: error.stack
+      timestamp: new Date().toISOString()
     });
-  } finally {
-    await prisma.$disconnect();
   }
 });
 

@@ -2,6 +2,7 @@ import * as bcrypt from "bcrypt";
 import * as jwt from "jsonwebtoken";
 import { randomBytes } from "crypto";
 import { EmailService } from "./email.service";
+import { safeQuery } from "../lib/database";
 import { prisma } from "../repositories/prisma";
 
 export const AuthService = {
@@ -9,19 +10,22 @@ export const AuthService = {
     try {
       console.log('verificarEmailExiste: iniciando verificação para email:', email);
       
-      // Verificar se é um administrador (por email)
+      // Usar safeQuery para operações mais robustas
       console.log('verificarEmailExiste: verificando administrador...');
-      const admin = await prisma.administrador.findUnique({ where: { email: email } });
+      const admin = await safeQuery.findUnique(() => 
+        prisma.administrador.findUnique({ where: { email: email } })
+      );
       console.log('verificarEmailExiste: admin encontrado:', !!admin);
       if (admin) return true;
       
-      // Verificar candidatos e empresas (por email)
-      console.log('verificarEmailExiste: verificando candidato...');
-      const candidato = await prisma.candidato.findUnique({ where: { email } });
-      console.log('verificarEmailExiste: candidato encontrado:', !!candidato);
+      // Verificar candidatos e empresas em paralelo com retry
+      console.log('verificarEmailExiste: verificando candidato e empresa...');
+      const [candidato, empresa] = await Promise.all([
+        safeQuery.findUnique(() => prisma.candidato.findUnique({ where: { email } })),
+        safeQuery.findUnique(() => prisma.empresa.findUnique({ where: { email } }))
+      ]);
       
-      console.log('verificarEmailExiste: verificando empresa...');
-      const empresa = await prisma.empresa.findUnique({ where: { email } });
+      console.log('verificarEmailExiste: candidato encontrado:', !!candidato);
       console.log('verificarEmailExiste: empresa encontrada:', !!empresa);
       
       const result = !!(candidato || empresa);
